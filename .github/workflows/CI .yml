@@ -1,10 +1,9 @@
 name : Amra Codeigniter 3 Auto Pull Request
 
-on:
-  push:
-    branches:
-    - development
-
+on: 
+  push : 
+    branches: [development]
+    
 jobs:
   pull-request:
     runs-on: ubuntu-latest
