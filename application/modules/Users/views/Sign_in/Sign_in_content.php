@@ -201,7 +201,7 @@
                                 }
                                 ?>
                                  <label class="mb-1">
-                                    <h6 class="mb-0 text-sm">Level Akun WOW</h6>
+                                    <h6 class="mb-0 text-sm">Level Akun Ya Salam</h6>
                                  </label>
                                  <select class="mb-4 form-select form-control" id="level_akun" name="level_akun" style="font-size: 14px;" onChange="filterUsename()">
                                     <option value="administrator">Administrator</option>
