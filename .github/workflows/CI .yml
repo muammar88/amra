@@ -1,16 +1,28 @@
-name : Amra Codeigniter 3 Auto Pull Request
+name: Auto PR from Development to Master
 
-on: 
+on:
   push:
-    branches: [development]
-    
+    branches:
+      - development
+
 jobs:
-  pull-request:
+  create_pull_request:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - name: pull-request
-        uses: diillson/auto-pull-request@latest
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create Pull Request
+        id: create_pr
+        uses: peter-evans/create-pull-request@v3
         with:
-          source_branch: "development"
-          destination_branch: "master"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: development
+          base: master
+          title: 'Auto PR: Merge Development into Master'
+          body: |
+            This pull request was created automatically by a GitHub Action.
+            It merges the changes from the development branch into the master branch.
+          labels: 'auto-merge'
+          draft: false
