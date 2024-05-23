@@ -16,3 +16,12 @@ application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess
 /vendor/
+
+# 
+image/*
+files/*
+assets/landing_pages/*
+assets/material_template/dist/*
+assets/material_template/img/*
+assets/material_template/plugins/*
+application/config/database.php
