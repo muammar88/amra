@@ -2,7 +2,8 @@ name : Amra Codeigniter 3 Auto Pull Request
 
 on: 
   push : 
-    branches: [development]
+    branches: 
+      - development
     
 jobs:
   pull-request:
@@ -10,6 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: pull-request
-        uses: diillson/auto-pull-request@v1.0.1
+        uses: diillson/auto-pull-request@latest
         with:
           destination_branch: "master"
