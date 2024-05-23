@@ -1,0 +1,24 @@
+name: CD Codeigniter 3
+
+on: 
+  push : 
+    branches: [master]
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Deploy Using SSh
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /opt/lampp/htdocs/amra
+            git pull origin master
+            sudo /opt/lampp/lampp restart
