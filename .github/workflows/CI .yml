@@ -2,7 +2,7 @@ name : Amra Codeigniter 3 Auto Pull Request
 
 on: 
   push:
-    branches: [ "development" ]
+    branches: [development]
     
 jobs:
   pull-request:
