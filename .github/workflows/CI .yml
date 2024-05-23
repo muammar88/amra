@@ -1,9 +1,8 @@
 name : Amra Codeigniter 3 Auto Pull Request
 
 on: 
-  push : 
-    branches: 
-      - development
+  pull_request:
+    branches: [ "master" ]
     
 jobs:
   pull-request:
@@ -13,4 +12,5 @@ jobs:
       - name: pull-request
         uses: diillson/auto-pull-request@latest
         with:
+          source_branch: "development"
           destination_branch: "master"
