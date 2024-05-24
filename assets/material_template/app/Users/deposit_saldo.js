@@ -3,6 +3,9 @@ function deposit_saldo_Pages(){
                <button class="btn btn-default" type="button" onclick="start_deposit_saldo()">
                   <i class="fas fa-hand-holding-usd"></i> Deposit Saldo
                </button>
+               <button class="btn btn-default mx-3" type="button" onclick="()">
+                  <i class="fas fa-print"></i> Download Excel Data Jamaah
+               </button>
                <label class="float-right py-2 my-0">Filter :</label>
             </div>
             <div class="col-6 col-lg-4 my-3">
