@@ -84,4 +84,31 @@ class Info_saldo_member extends CI_Controller
       echo json_encode($return);
    }
 
+   function download_excel_info_saldo_member(){
+      $error = 0;
+      // # generated invoice
+      // $nomor_transaksi = $this->random_code_ops->generated_nomor_transaksi_deposit_saldo();
+      // # get list member
+      // $list_member = $this->model_deposit_saldo->get_list_member();
+      // if ($error != 0) {
+      //    $return = array(
+      //       'error'   => true,
+      //       'error_msg' => 'Data info deposit tidak ditemukan.',
+      //       $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+      //    );
+      // } else {
+      //    $return = array(
+      //       'error'   => false,
+      //       'error_msg' => 'Data info deposit berhasil ditemukan.',
+      //       'data' => array(
+      //          'nomor_transaksi' => $nomor_transaksi,
+      //          'list_member' => $list_member
+      //       ),
+      //       $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+      //    );
+      // }
+      echo json_encode($return);
+
+   }
+
 }

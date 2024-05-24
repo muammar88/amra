@@ -2,7 +2,9 @@ function info_saldo_member_Pages(){
    return  `<div class="col-12 col-lg-12 px-2 pb-0 pt-0">
                <div class="row" id="contentDaftarAirlines">
                   <div class="col-6 col-lg-9 my-3 ">
-                   
+                     <button class="btn btn-default mx-3" type="button" onclick="download_excel_info_saldo_member()">
+                        <i class="fas fa-print"></i> Download Excel Data Jamaah
+                     </button>
                      <label class="float-right py-2 my-0">Filter :</label>
                   </div>
                   <div class="col-6 col-lg-3 my-3 text-right">
@@ -38,6 +40,18 @@ function info_saldo_member_Pages(){
             </div>`;
 }
 
+
+function download_excel_info_saldo_member(){
+   ajax_x(
+      baseUrl + "Info_saldo_member/download_excel_info_saldo_member", function(e) {
+         if( e['error'] == false ){
+            window.open(baseUrl + "Kwitansi/", "_blank");
+         }else{
+            frown_alert(e['error_msg']);
+         }
+      },[]
+   );
+}
 
 
 function info_saldo_member_getData(){
