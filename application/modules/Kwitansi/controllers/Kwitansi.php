@@ -109,10 +109,17 @@ class Kwitansi extends CI_Controller
          $this->_cetak_kwitansi_pertama_paket_la();
       }elseif( $sesi['type'] == 'cetak_riwayat_transaksi_peminjaman'){
          $this->_cetak_riwayat_transaksi_peminjaman();
+      }elseif( $sesi['type'] == 'download_excel_info_saldo_member'){
+         $this->_download_excel_info_saldo_member();
       }
    }
 
-      // cetak riwaya deposit tabungan
+
+   function _download_excel_info_saldo_member(){
+      
+   }
+
+   // cetak riwaya deposit tabungan
    function _cetak_riwayat_transaksi_peminjaman(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getRiwayatTransaksiPeminjaman( $sesi );

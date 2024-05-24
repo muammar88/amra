@@ -1112,4 +1112,17 @@ class Model_download extends CI_Model
       }
       return  $html;
    }
+
+   function model_download_excel_info_saldo_member() {
+
+       $html = '<tr>
+                  <th>NAMA</th>
+                  <th>TOTAL DEPOSIT</th>
+                  <th>TOTAL TABUNGAN</th>
+               </tr>';
+
+
+      return $html;
+
+   }
 }

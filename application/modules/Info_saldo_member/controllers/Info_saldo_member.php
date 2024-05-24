@@ -85,30 +85,37 @@ class Info_saldo_member extends CI_Controller
    }
 
    function download_excel_info_saldo_member(){
+      $return = array();
       $error = 0;
-      // # generated invoice
-      // $nomor_transaksi = $this->random_code_ops->generated_nomor_transaksi_deposit_saldo();
-      // # get list member
-      // $list_member = $this->model_deposit_saldo->get_list_member();
-      // if ($error != 0) {
-      //    $return = array(
-      //       'error'   => true,
-      //       'error_msg' => 'Data info deposit tidak ditemukan.',
-      //       $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
-      //    );
-      // } else {
-      //    $return = array(
-      //       'error'   => false,
-      //       'error_msg' => 'Data info deposit berhasil ditemukan.',
-      //       'data' => array(
-      //          'nomor_transaksi' => $nomor_transaksi,
-      //          'list_member' => $list_member
-      //       ),
-      //       $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
-      //    );
-      // }
+      $error_msg = '';
+      $this->form_validation->set_rules('search_saldo_member',   '<b>Search<b>',    'trim|xss_clean|min_length[1]');
+      /*
+      Validation process
+      */
+      if ($this->form_validation->run()) {
+         # search
+         $search = $this->input->post('search');
+         # set session
+         $this->session->set_userdata(array('download_to_excel' => 
+                                      array('type' => 'download_excel_info_saldo_member',
+                                            'filter' => array('search' => $search))));
+         # return
+         $return = array(
+            'error'  => false,
+            'error_msg' => 'Proses download info saldo member berhasil dilakukan.',
+            $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+         );
+      } else {
+         if (validation_errors()) {
+            // define return error
+            $return = array(
+               'error'         => true,
+               'error_msg'    => validation_errors(),
+               $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+            );
+         }
+      }
       echo json_encode($return);
-
    }
 
 }

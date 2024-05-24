@@ -54,7 +54,10 @@ class Download extends CI_Controller
 			header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] .".xls");
 		}elseif( $this->sesi['type'] == 'download_all_jamaah_to_excel'){
 			header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] .".xls");
-		}else{
+		}elseif( $this->sesi['type'] == 'download_excel_info_saldo_member'){
+			header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] .".xls");
+		}
+		else{
 			header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] . ".xls");
 		}
 		echo "<table>" . $this->model_download->$type($this->sesi) . '</table>';
