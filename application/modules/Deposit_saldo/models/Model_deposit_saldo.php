@@ -45,7 +45,7 @@ class Model_deposit_saldo extends CI_Model
 
    function get_index_deposit_saldo($limit = 6, $start = 0, $search = '')
    {
-      $this->db->select('dt.id, p.fullname, p.identity_number, dt.debet,
+      $this->db->select('dt.id, p.fullname, p.identity_number, dt.debet, dt.kredit, dt.saldo_sebelum, dt.saldo_sesudah,
                          dt.approver, dt.info, dt.nomor_transaction, dt.last_update')
          ->from('deposit_transaction AS dt')
          ->join('personal AS p', 'dt.personal_id=p.personal_id', 'inner')
@@ -69,7 +69,10 @@ class Model_deposit_saldo extends CI_Model
                'fullname' => $row->fullname,
                'identity_number' => $row->identity_number,
                'debet' => $row->debet,
+               'kredit' => $row->kredit,
                'penerima' => $row->approver,
+               'saldo_sebelum' => $row->saldo_sebelum, 
+               'saldo_sesudah' => $row->saldo_sesudah,
                'info' => $row->info,
                'waktu_transaksi' => $row->last_update
             );

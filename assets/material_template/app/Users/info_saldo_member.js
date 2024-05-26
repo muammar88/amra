@@ -21,14 +21,14 @@ function info_saldo_member_Pages(){
                      <table class="table table-hover tablebuka">
                         <thead>
                            <tr>
-                              <th style="width:40%;">Info Member</th>
-                              <th style="width:13%;">Status Member</th>
-                              <th style="width:47%;">Info Saldo</th>
+                              <th style="width:30%;">Info Member</th>
+                              <th style="width:60%;">Riwayat Deposit</th>
+                              <th style="width:10%;">Aksi</th>
                            </tr>
                         </thead>
                         <tbody id="bodyTable_info_saldo_member">
                            <tr>
-                              <td colspan="4">Daftar member tidak ditemukan</td>
+                              <td colspan="3">Daftar member tidak ditemukan</td>
                            </tr>
                         </tbody>
                      </table>
@@ -64,7 +64,7 @@ function get_info_saldo_member(perpage){
                pagination_id: 'pagination_info_saldo_member',
                bodyTable_id: 'bodyTable_info_saldo_member',
                fn: 'ListInfoSaldoMember',
-               warning_text: '<td colspan="4">Daftar member tidak ditemukan</td>',
+               warning_text: '<td colspan="3">Daftar member tidak ditemukan</td>',
                param : { search : $('#search_saldo_member').val() } } );
 }
 
@@ -75,65 +75,105 @@ function ListInfoSaldoMember(JSONData){
                      <table class="table table-hover mb-0">
                         <tbody>
                            <tr>
-                              <td class="text-left border-0" style="width:3%;"><b><i class="fas fa-arrow-right"></b></td>
-                              <td class="text-left px-0 border-0" style="width:20%;"><b>Nama Member</b></td>
-                              <td class="px-0 border-0" style="width:1%;">:</td>
-                              <td class="text-left border-0" style="width:76%;">${json.fullname}</td>
+                              <td class="text-left px-2 border border-right-0" style="width:30%;"><b>Nama Member</b></td>
+                              <td class="px-0 border border-right-0 border-left-0" style="width:1%;">:</td>
+                              <td class="text-left border border-left-0" >${json.fullname}</td>
                            </tr>
                            <tr>
-                              <td class="text-left border-0" style="width:3%;"><b><i class="fas fa-arrow-right"></b></td>
-                              <td class="text-left px-0 border-0" style="width:20%;"><b>Nomor Identitas</b></td>
-                              <td class="px-0 border-0" style="width:1%;">:</td>
-                              <td class="text-left border-0" style="width:76%;">${json.identity_number}</td>
+                              <td class="text-left px-2 border border-right-0" ><b>Nomor Identitas</b></td>
+                              <td class="px-0 border border-right-0 border-left-0" >:</td>
+                              <td class="text-left border border-left-0" >${json.identity_number}</td>
                            </tr>
                            <tr>
-                              <td class="text-left border-0" style="width:3%;"><b><i class="fas fa-arrow-right"></b></td>
-                              <td class="text-left px-0 border-0" style="width:20%;"><b>Jenis Kelamin</b></td>
-                              <td class="px-0 border-0" style="width:1%;">:</td>
-                              <td class="text-left border-0" style="width:76%;">${json.gender}</td>
+                              <td class="text-left px-2 border border-right-0" ><b>Jenis Kelamin</b></td>
+                              <td class="px-0 border border-right-0 border-left-0" >:</td>
+                              <td class="text-left border border-left-0" >${json.gender}</td>
                            </tr>
                            <tr>
-                              <td class="text-left border-0" style="width:3%;"><b><i class="fas fa-arrow-right"></b></td>
-                              <td class="text-left px-0 border-0" style="width:20%;"><b>Tempat / Tgl Lahir</b></td>
-                              <td class="px-0 border-0" style="width:1%;">:</td>
-                              <td class="text-left border-0" style="width:76%;">${json.birth_place} / ${json.birth_date}</td>
+                              <td class="text-left px-2 border border-right-0" ><b>Tempat / Tgl Lahir</b></td>
+                              <td class="px-0 border border-right-0 border-left-0" >:</td>
+                              <td class="text-left border border-left-0" >${json.birth_place} / ${json.birth_date}</td>
+                           </tr>
+                           <tr>
+                              <td class="text-left px-2 border border-right-0" ><b>Status Member</b></td>
+                              <td class="px-0 border border-right-0 border-left-0" >:</td>
+                              <td class="text-left border border-left-0" style="font-weight:bold;">Member, `;
+            for( x in json.register_as ){
+               html += json.register_as[x] + ', ';
+            }
+            html +=    `     </td>
+                           </tr>
+
+                            <tr>
+                              <td class="text-left px-2 border border-right-0" ><b>Total Deposit</b></td>
+                              <td class="px-0 border border-right-0 border-left-0" >:</td>
+                              <td class="text-left border border-left-0" ><b style="color:red">Rp ${numberFormat(json.deposit)}</b></td>
+                           </tr>
+                            <tr>
+                              <td class="text-left px-2 border border-right-0" ><b>Total Tabungan</b></td>
+                              <td class="px-0 border border-right-0 border-left-0" >:</td>
+                              <td class="text-left border border-left-0" ><b style="color:red">Rp ${numberFormat(json.tabungan)}</b></td>
                            </tr>
                         </tbody>
                      </table>
                   </td>
                   <td>
-                     <table class="table table-hover">
-                        <tbody>
+                     <table class="table table-hover mt-0 ">
+                         <tbody>
                            <tr>
-                              <td class="text-left border-0" style="width:3%;"><b><i class="fas fa-arrow-right"></b></td>
-                              <td class="border-0 text-left px-0"><b>Member</b></td>
+                              <td class="text-left" colspan="7" style="background-color: #e7e7e7;"><b>RIWAYAT DEPOSIT</b></td>
+                           </tr>
+                           <tr>
+                              <td class="text-center" style="width:5%;">#</td>
+                              <td class="text-center" style="width:10%;"><b>INVOICE</b></td>
+                              <td class="text-center" style="width:40%;"><b>BIAYA</b></td>
+                              <td class="text-center" style="width:20%;"><b>TANGGAL TRANSAKSI</b></td>
+                              <td class="text-center" style="width:20%;"><b>PENERIMA</b></td>
+                              <td class="text-center" style="width:5%;"><b>AKSI</b></td>
                            </tr>`;
-               for( x in json.register_as ){
-                  html += `<tr>
-                              <td class="text-left border-0" style="width:3%;"><b><i class="fas fa-arrow-right"></b></td>
-                              <td class="border-0 text-left px-0"><b>${json.register_as[x]}</b></td>
-                           </tr>`;
-               }
-            html +=    `</tbody>
+
+                           if( json.riwayat_deposit.length > 0  ) {
+                              var n = 1;
+                              for ( x in json.riwayat_deposit ) {
+                                 html +=  `<tr>
+                                             <td class="text-center align-middle">${n}</td>
+                                             <td class="text-center align-middle">${json.riwayat_deposit[x].nomor_transaksi}</td>
+                                             <td class="text-center px-0 align-middle" >
+                                                <ul class="list my-0">
+                                                   <li>Biaya <b>DEBET</b>: Rp ${numberFormat(json.riwayat_deposit[x].debet)}</li>
+                                                   <li>Biaya <b>KREDIT</b>: Rp ${numberFormat(json.riwayat_deposit[x].kredit)}</li>
+                                                   <li>Deposit Sebelum : Rp ${numberFormat(json.riwayat_deposit[x].saldo_sebelum)}</li>
+                                                   <li>Deposit Sesudah : Rp ${numberFormat(json.riwayat_deposit[x].saldo_sesudah)}</li>
+                                                </ul>
+
+                                             </td>
+                                             <td class="text-center align-middle">2024-04-22 10:27:51</td>
+                                             <td class="text-center align-middle">${json.riwayat_deposit[x].penerima}</td>
+                                             <td class="text-center align-middle">
+                                                <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Deposit" onclick="cetak_kwitansi_deposit_saldo('${json.riwayat_deposit[x].id}')" style="margin:.15rem .1rem  !important">
+                                                   <i class="fas fa-print" style="font-size: 11px;"></i>
+                                                </button>
+                                             </td>
+                                          </tr>`;
+                                 n++;         
+                              }
+                           }else{
+                              html += `<tr>
+                                          <td class="text-center" colspan="6">Riwayat deposit saldo tidak ditemukan</td>
+                                       </tr>`;
+                           }
+
+         html +=       `</tbody>
                      </table>
+
                   </td>
                   <td>
-                     <table class="table table-hover">
-                        <tbody>
-                           <tr>
-                              <td class="text-left border-0" style="width:3%;"><b><i class="fas fa-arrow-right"></b></td>
-                              <td class="text-left border-0 px-0" style="width:20%;"><b>Total Deposit</b></td>
-                              <td class="px-0 border-0" style="width:1%;">:</td>
-                              <td class="text-left border-0" style="width:76%;"><b style="color:red">Rp ${numberFormat(json.deposit)}</b></td>
-                           </tr>
-                           <tr>
-                              <td class="text-left border-0" style="width:3%;"><b><i class="fas fa-arrow-right"></b></td>
-                              <td class="text-left border-0 px-0" style="width:20%;"><b>Total Tabungan</b></td>
-                              <td class="px-0 border-0" style="width:1%;">:</td>
-                              <td class="text-left border-0" style="width:76%;"><b style="color:red">Rp ${numberFormat(json.tabungan)}</b></td>
-                           </tr>
-                        </tbody>
-                     </table>
+                     <button type="button" class="btn btn-default btn-action" title="Deposit" onclick="deposit_paket('1160')" style="margin:.15rem .1rem  !important">
+                        <i class="fas fa-hand-holding-usd" style="font-size: 11px;"></i>
+                     </button>
+                     <button type="button" class="btn btn-default btn-action" title="Refund Tabungan Paket" onclick="refund_tabungan_paket('1160')" style="margin:.15rem .1rem  !important">
+                        <i class="fas fa-box-open" style="font-size: 11px;"></i>
+                     </button>
                   </td>
                   
                </tr>`;

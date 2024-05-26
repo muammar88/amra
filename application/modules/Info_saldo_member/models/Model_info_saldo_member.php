@@ -35,6 +35,72 @@ class Model_info_saldo_member extends CI_Model
       return $r->num_rows();
    }
 
+
+   function get_info_deposit_jamaah($jamaah_id, $pool_id){
+      $this->db->select('dt.nomor_transaction, dt.debet, dt.kredit, dt.approver, dt.last_update, pdt.transaction_status')
+         ->from('deposit_transaction AS dt')
+         ->join('pool_deposit_transaction AS pdt', 'dt.id=pdt.deposit_transaction_id', 'inner')
+         ->join('pool AS p', 'pdt.pool_id=p.id', 'inner')
+         // ->where('p.active', 'active')
+         ->where('p.jamaah_id', $jamaah_id)
+         ->where('dt.company_id', $this->company_id)
+         ->where('p.id', $pool_id)
+         ->order_by('dt.last_update', 'desc');
+      $q = $this->db->get();
+      $total = 0;
+      $list = array();
+      if( $q->num_rows() > 0 ){
+         foreach ($q->result() as $rows) {
+
+            $biaya = ( $rows->transaction_status == 'cash' ? $rows->debet : $rows->kredit   );
+            
+            $list[] = array('invoice' => $rows->nomor_transaction,
+                            'biaya' => $biaya,
+                            'penerima' => $rows->approver,
+                            'date_transaction' => $rows->last_update,
+                            'transaction_status' => $rows->transaction_status);
+
+            if( $rows->transaction_status == 'cash' ){
+               $total = $total + $rows->debet;
+            }else{
+               $total = $total - $rows->kredit;
+            }
+         }
+      }
+      return array('list' => $list, 'total' => $total);
+   }
+
+   function riwayat_deposit_saldo($company_id, $personal_id){
+       $this->db->select('dt.id, p.fullname, p.identity_number, dt.debet, dt.kredit, dt.saldo_sebelum, dt.saldo_sesudah, 
+                          dt.approver, dt.info, dt.nomor_transaction, dt.last_update')
+         ->from('deposit_transaction AS dt')
+         ->join('personal AS p', 'dt.personal_id=p.personal_id', 'inner')
+         ->where('dt.company_id', $company_id)
+         ->where('dt.personal_id', $personal_id)
+         ->where('dt.transaction_requirement','deposit');
+      $this->db->order_by('dt.id', 'desc')->limit(5, 0);
+      $q = $this->db->get();
+      $list = array();
+      if ($q->num_rows() > 0) {
+         foreach ($q->result() as $row) {
+            $list[] = array(
+               'id' => $row->id,
+               'nomor_transaksi' => $row->nomor_transaction,
+               'fullname' => $row->fullname,
+               'identity_number' => $row->identity_number,
+               'debet' => $row->debet,
+               'kredit' => $row->kredit,
+               'saldo_sebelum' => $row->saldo_sebelum, 
+               'saldo_sesudah' => $row->saldo_sesudah,
+               'penerima' => $row->approver,
+               'info' => $row->info,
+               'waktu_transaksi' => $row->last_update
+            );
+         }
+      }
+      return $list;
+   }
+
    // get index daftar member
    function get_index_daftar_member($limit = 6, $start = 0, $search = ''){
       $this->db->select('p.personal_id, p.fullname, p.identity_number, p.gender, p.birth_place, p.birth_date, p.address, p.email, 
@@ -72,6 +138,8 @@ class Model_info_saldo_member extends CI_Model
          foreach ($q->result() as $row) {
             // saldo
             $saldo = $this->info_deposit_tabungan($this->company_id, $row->personal_id);
+            // riwayat deposit saldo 
+            $riwayat = $this->riwayat_deposit_saldo($this->company_id, $row->personal_id);
             // register as
             $register_as = array();
             if ($row->userExist != '') {
@@ -103,6 +171,7 @@ class Model_info_saldo_member extends CI_Model
                'deposit' => $saldo['deposit'],
                'tabungan' => $saldo['tabungan'],
                'register_as' => $register_as,
+               'riwayat_deposit' => $riwayat
             );
          }
       }

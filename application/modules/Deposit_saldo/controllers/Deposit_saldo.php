@@ -181,6 +181,10 @@ class Deposit_saldo extends CI_Controller
          $data['deposit_transaction']['personal_id'] = $this->input->post('member');
          $data['deposit_transaction']['debet'] = $this->text_ops->hide_currency($this->input->post('biaya_deposit'));
          $data['deposit_transaction']['kredit'] = 0;
+
+         $data['deposit_transaction']['saldo_sebelum'] = 0;
+         $data['deposit_transaction']['saldo_sebelum'] = 0;
+
          $data['deposit_transaction']['transaction_requirement'] = 'deposit';
          # penerima
          if ($this->session->userdata($this->config->item('apps_name'))['level_akun'] == 'administrator') {

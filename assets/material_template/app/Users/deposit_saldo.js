@@ -62,7 +62,10 @@ function ListRiwayatDepositSaldo(JSONData){
                   <td>${json.fullname} <br>(${json.identity_number})</td>
                   <td>
                      <ul class="list my-0">
-                        <li>Biaya Deposit : Rp ${numberFormat(json.debet)}</li>
+                        <li>Biaya <b>Debet</b>: Rp ${numberFormat(json.debet)}</li>
+                        <li>Biaya <b>Kredit</b>: Rp ${numberFormat(json.kredit)}</li>
+                        <li>Biaya <b>Saldo Sebelumnya</b>: Rp ${numberFormat(json.saldo_sebelum)}</li>
+                        <li>Biaya <b>Saldo Sesudahnya</b>: Rp ${numberFormat(json.saldo_sesudah)}</li>
                         <li>Penerima : ${json.penerima}</li>
                         <li>Info : ${json.info}</li>
                      </ul>
