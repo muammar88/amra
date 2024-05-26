@@ -167,11 +167,7 @@ function ListInfoSaldoMember(JSONData){
                      <button type="button" class="btn btn-default btn-action" title="Tambah Deposit Saldo" onclick="add_deposit_saldo(${json.id})" style="margin:.15rem .1rem  !important">
                         <i class="fas fa-hand-holding-usd" style="font-size: 11px;"></i>
                      </button>
-                     <button type="button" class="btn btn-default btn-action" title="Tambah Tabungan Paket" onclick="add_tabungan_paket(${json.id})" style="margin:.15rem .1rem  !important">
-                        <i class="fas fa-box-open" style="font-size: 11px;"></i>
-                     </button>
                   </td>
-                  
                </tr>`;
    return html;
 }
@@ -213,17 +209,6 @@ function add_deposit_saldo(id) {
       },[]
    );
 }
-
-// <div class="col-12">
-//    <div class="form-group">
-//       <label>Nama Member</label>
-//       <select class="form-control form-control-sm" name="member" id="jamaah_id">`;
-// for( x in json.list_member ) {
-//   html += `<option value="${json.list_member[x]['id']}" >${json.list_member[x]['fullname']} (${json.list_member[x]['nomor_identitas']})</option>`;
-// }
-// html += `</select>
-//    </div>
-// </div>
 
 function formaddupdate_transaksi_deposit_saldo_info_saldo_member(JSONData, id) {
    var json = JSON.parse(JSONData);
@@ -282,5 +267,4 @@ function formaddupdate_transaksi_deposit_saldo_info_saldo_member(JSONData, id) {
                   } );
                </script>`;
    return html;
-
 }

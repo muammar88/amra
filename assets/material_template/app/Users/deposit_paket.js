@@ -549,8 +549,14 @@ function CheckDepositJamaah() {
    }
 }
 
-function getInfoAgen() {
-  var jamaah_id = $("#jamaah_id option:selected").val();
+function getInfoAgen(id) {
+  var jamaah_id = '';
+  if( id != undefined ) {
+    jamaah_id = id;
+  }else{
+    jamaah_id = $("#jamaah_id option:selected").val();
+  }
+  
   ajax_x(
     baseUrl + "Deposit_paket/get_info_agen_deposit_paket",
     function (e) {
