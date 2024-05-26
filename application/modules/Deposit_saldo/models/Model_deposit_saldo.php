@@ -158,4 +158,76 @@ class Model_deposit_saldo extends CI_Model
       }
       return $nomor_transaction;   
    }
+
+   # saldo
+   function info_deposit_tabungan($company_id, $personal_id)
+   {
+        $this->db->select('dt.debet, dt.kredit, dt.transaction_requirement')
+                 ->from('deposit_transaction AS dt')
+                 ->where('dt.personal_id', $personal_id)
+                 ->where('dt.company_id', $company_id)
+                 ->order_by('dt.id', 'desc');
+        $q = $this->db->get();
+
+        $debet_deposit = 0;
+        $kredit_deposit = 0;
+
+        if ($q->num_rows() > 0) {
+            foreach ($q->result() as $rows) {
+                if( $rows->transaction_requirement == 'deposit' ){
+                    if( $rows->debet != 0 ) {
+                        $debet_deposit = $debet_deposit + $rows->debet;    
+                    }
+                    if( $rows->kredit != 0 ){
+                        $kredit_deposit = $kredit_deposit + $rows->kredit;    
+                    }
+                }
+            }
+        }
+
+        $total_deposit = $debet_deposit - $kredit_deposit;
+
+        $this->db->select('dt.debet, dt.kredit, dt.transaction_requirement')
+                 ->from('deposit_transaction AS dt')
+                 ->join('pool_deposit_transaction AS pdt', 'dt.id=pdt.deposit_transaction_id', 'inner')
+                 ->join('pool AS p', 'pdt.pool_id=p.id', 'inner')
+                 ->where('dt.personal_id', $personal_id)
+                 ->where('dt.company_id', $company_id)
+                 ->where('p.active', 'active')
+                 ->order_by('dt.id', 'desc');
+        $q = $this->db->get();
+
+        $debet_tabungan = 0;
+        $kredit_tabungan = 0;
+
+        if ($q->num_rows() > 0) {
+            foreach ($q->result() as $rows) {
+                if ( $rows->transaction_requirement == 'paket_deposit' ) {
+                    if( $rows->debet != 0 ) {
+                        $debet_tabungan = $debet_tabungan + $rows->debet;    
+                    }
+                    if( $rows->kredit != 0 ){
+                        $kredit_tabungan = $kredit_tabungan + $rows->kredit;    
+                    }
+                }
+            }
+        }
+
+        $total_tabungan = $debet_tabungan - $kredit_tabungan;
+
+        // get markup withdraw
+        $this->db->select('markup_withdraw')
+                 ->from('company')
+                 ->where('id', $company_id);
+        $q = $this->db->get();
+        $markup_withdraw = 0;
+        if( $q->num_rows() > 0 ) {
+            foreach ( $q->result() as $rows ) {
+                $markup_withdraw = $rows->markup_withdraw;
+            }
+        }
+
+        # return
+        return array('deposit' => $total_deposit, 'tabungan' => $total_tabungan, 'markup_withdraw' => $markup_withdraw);
+   }
 }

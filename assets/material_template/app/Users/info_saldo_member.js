@@ -98,18 +98,17 @@ function ListInfoSaldoMember(JSONData){
                               <td class="text-left px-2 border border-right-0" ><b>Status Member</b></td>
                               <td class="px-0 border border-right-0 border-left-0" >:</td>
                               <td class="text-left border border-left-0" style="font-weight:bold;">Member, `;
-            for( x in json.register_as ){
-               html += json.register_as[x] + ', ';
-            }
-            html +=    `     </td>
+            for( x in json.register_as ) { 
+               html += json.register_as[x] + ', '; 
+            } 
+            html +=    `      </td>
                            </tr>
-
-                            <tr>
+                           <tr>
                               <td class="text-left px-2 border border-right-0" ><b>Total Deposit</b></td>
                               <td class="px-0 border border-right-0 border-left-0" >:</td>
                               <td class="text-left border border-left-0" ><b style="color:red">Rp ${numberFormat(json.deposit)}</b></td>
                            </tr>
-                            <tr>
+                           <tr>
                               <td class="text-left px-2 border border-right-0" ><b>Total Tabungan</b></td>
                               <td class="px-0 border border-right-0 border-left-0" >:</td>
                               <td class="text-left border border-left-0" ><b style="color:red">Rp ${numberFormat(json.tabungan)}</b></td>
@@ -119,7 +118,7 @@ function ListInfoSaldoMember(JSONData){
                   </td>
                   <td>
                      <table class="table table-hover mt-0 ">
-                         <tbody>
+                        <tbody>
                            <tr>
                               <td class="text-left" colspan="7" style="background-color: #e7e7e7;"><b>RIWAYAT DEPOSIT</b></td>
                            </tr>
@@ -131,11 +130,10 @@ function ListInfoSaldoMember(JSONData){
                               <td class="text-center" style="width:20%;"><b>PENERIMA</b></td>
                               <td class="text-center" style="width:5%;"><b>AKSI</b></td>
                            </tr>`;
-
                            if( json.riwayat_deposit.length > 0  ) {
                               var n = 1;
                               for ( x in json.riwayat_deposit ) {
-                                 html +=  `<tr>
+                                 html += `<tr>
                                              <td class="text-center align-middle">${n}</td>
                                              <td class="text-center align-middle">${json.riwayat_deposit[x].nomor_transaksi}</td>
                                              <td class="text-center px-0 align-middle" >
@@ -162,20 +160,127 @@ function ListInfoSaldoMember(JSONData){
                                           <td class="text-center" colspan="6">Riwayat deposit saldo tidak ditemukan</td>
                                        </tr>`;
                            }
-
          html +=       `</tbody>
                      </table>
-
                   </td>
                   <td>
-                     <button type="button" class="btn btn-default btn-action" title="Deposit" onclick="deposit_paket('1160')" style="margin:.15rem .1rem  !important">
+                     <button type="button" class="btn btn-default btn-action" title="Tambah Deposit Saldo" onclick="add_deposit_saldo(${json.id})" style="margin:.15rem .1rem  !important">
                         <i class="fas fa-hand-holding-usd" style="font-size: 11px;"></i>
                      </button>
-                     <button type="button" class="btn btn-default btn-action" title="Refund Tabungan Paket" onclick="refund_tabungan_paket('1160')" style="margin:.15rem .1rem  !important">
+                     <button type="button" class="btn btn-default btn-action" title="Tambah Tabungan Paket" onclick="add_tabungan_paket(${json.id})" style="margin:.15rem .1rem  !important">
                         <i class="fas fa-box-open" style="font-size: 11px;"></i>
                      </button>
                   </td>
                   
                </tr>`;
    return html;
+}
+
+function add_deposit_saldo(id) {
+    ajax_x(
+      baseUrl + "Deposit_saldo/get_info_deposit_saldo", function(e) {
+         if( e['error'] == false ){
+            $.confirm({
+               columnClass: 'col-4',
+               title: 'Form Transaksi Deposit Saldo',
+               theme: 'material',
+               content: formaddupdate_transaksi_deposit_saldo_info_saldo_member(JSON.stringify(e['data']), id),
+               closeIcon: false,
+               buttons: {
+                  cancel:function () {
+                      return true;
+                  },
+                  simpan: {
+                     text: 'Simpan',
+                     btnClass: 'btn-blue',
+                     action: function () {
+                        ajax_submit_t1("#form_utama", function(e) {
+                           e['error'] == true ? frown_alert(e['error_msg']) : smile_alert(e['error_msg']);
+                           if ( e['error'] == true ) {
+                              return false;
+                           } else {
+                              window.open(baseUrl + "Kwitansi/", "_blank");
+                              get_info_saldo_member(20);
+                           }
+                        });
+                     }
+                  }
+               }
+            });
+         }else{
+            frown_alert(e['error_msg']);
+         }
+      },[]
+   );
+}
+
+// <div class="col-12">
+//    <div class="form-group">
+//       <label>Nama Member</label>
+//       <select class="form-control form-control-sm" name="member" id="jamaah_id">`;
+// for( x in json.list_member ) {
+//   html += `<option value="${json.list_member[x]['id']}" >${json.list_member[x]['fullname']} (${json.list_member[x]['nomor_identitas']})</option>`;
+// }
+// html += `</select>
+//    </div>
+// </div>
+
+function formaddupdate_transaksi_deposit_saldo_info_saldo_member(JSONData, id) {
+   var json = JSON.parse(JSONData);
+   var html = `<form action="${baseUrl }Deposit_saldo/proses_addupdate_deposit_saldo" id="form_utama" class="formName ">
+                  <div class="row px-0 mx-0">
+                     <div class="col-12">
+                        <div class="row">
+                           <div class="col-5">
+                              <div class="form-group">
+                                 <label>Nomor Transaksi</label>
+                                 <input type="text" name="nomor_transaksi" value="${json.nomor_transaksi}" class="form-control form-control-sm"  readonly/>
+                                 <input type="hidden" name="member" value="${id}" >
+                              </div>
+                           </div>
+                           <div class="col-12">
+                              <div class="form-group">
+                                 <label>Biaya Deposit</label>
+                                 <input type="text" name="biaya_deposit" value="" class="form-control form-control-sm currency" placeholder="Biaya Deposit" required />
+                              </div>
+                           </div>
+                           <div class="col-12">
+                              <div class="form-group">
+                                 <label>Info Deposit</label>
+                                 <textarea class="form-control form-control-sm" name="info" rows="6"
+                                    style="resize: none;" placeholder="Info Deposit" required></textarea>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="row"></div>
+                     </div>
+                  </div>
+               </form>
+               <script>
+                  $("#jamaah_id").select2({
+                     dropdownParent: $(".jconfirm")
+                  });
+                  $(document).on( "keyup", ".currency", function(e){
+                      var e = window.event || e;
+                      var keyUnicode = e.charCode || e.keyCode;
+                          if (e !== undefined) {
+                              switch (keyUnicode) {
+                                  case 16: break;
+                                  case 27: this.value = ''; break;
+                                  case 35: break;
+                                  case 36: break;
+                                  case 37: break;
+                                  case 38: break;
+                                  case 39: break;
+                                  case 40: break;
+                                  case 78: break;
+                                  case 110: break;
+                                  case 190: break;
+                                  default: $(this).formatCurrency({ colorize: true, negativeFormat: '-%s%n', roundToDecimalPlace: -1, eventOnDecimalsEntered: true });
+                              }
+                          }
+                  } );
+               </script>`;
+   return html;
+
 }

@@ -174,16 +174,25 @@ class Deposit_saldo extends CI_Controller
          Validation process
       */
       if ($this->form_validation->run()) {
+
+         $nomor_transaksi = $this->input->post('nomor_transaksi');
+         $biaya = $this->text_ops->hide_currency($this->input->post('biaya_deposit'));
+         $member = $this->input->post('member');
+
+         $saldo = $this->model_deposit_saldo->info_deposit_tabungan( $this->company_id, $member);
+         $sesudah = $saldo['deposit'] + $biaya; 
+         
+
          #  receive data
          $data = array();
-         $data['deposit_transaction']['nomor_transaction'] = $this->input->post('nomor_transaksi');
+         $data['deposit_transaction']['nomor_transaction'] = $nomor_transaksi;
          $data['deposit_transaction']['company_id'] = $this->company_id;
-         $data['deposit_transaction']['personal_id'] = $this->input->post('member');
-         $data['deposit_transaction']['debet'] = $this->text_ops->hide_currency($this->input->post('biaya_deposit'));
+         $data['deposit_transaction']['personal_id'] = $member;
+         $data['deposit_transaction']['debet'] = $biaya;
          $data['deposit_transaction']['kredit'] = 0;
 
-         $data['deposit_transaction']['saldo_sebelum'] = 0;
-         $data['deposit_transaction']['saldo_sebelum'] = 0;
+         $data['deposit_transaction']['saldo_sebelum'] = $saldo['deposit'];
+         $data['deposit_transaction']['saldo_sesudah'] = $sesudah;
 
          $data['deposit_transaction']['transaction_requirement'] = 'deposit';
          # penerima
