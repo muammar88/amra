@@ -2058,7 +2058,11 @@ class Model_kwitansi extends CI_Model
                break;
             }else{
                if( $rows->transaction_requirement == 'paket_deposit' || $rows->transaction_requirement == 'deposit'){
-                  $saldo = $saldo + $rows->debet;
+                  if( $rows->debet != 0) {
+                     $saldo = $saldo + $rows->debet;
+                  }else if( $rows->kredit != 0 ) {
+                     $saldo = $saldo + $rows->kredit;
+                  }
                }elseif ( $rows->transaction_requirement == 'paket_paymnet' || $rows->transaction_requirement == 'transaction' ) {
                   $saldo = $saldo - $rows->kredit;
                }

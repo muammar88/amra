@@ -117,17 +117,58 @@ class Model_trans_paket_la extends CI_Model
       return $r->num_rows();
    }
 
+   function get_detail_fasilitas_transaction($id) {
+      $this->db->select('description, check_in, check_out, day, pax, price')
+               ->from('paket_la_detail_fasilitas_transaction')
+               ->where('company_id', $this->company_id)
+               ->where('id', $id);
+      $q = $this->db->get();
+      $list = array();
+      if( $q->num_rows() > 0 ){
+         foreach ($q->result() as $rows) {
+            $list[] = array('description' => $rows->description, 
+                            'check_in' => $rows->check_in, 
+                            'check_out' => $rows->check_out,
+                            'day' => $rows->day, 
+                            'pax' => $rows->pax, 
+                            'price' => $rows->price);
+         }
+      }
+      return $list;
+   }
+
+   function get_fasilitas_transaction($id){
+      $this->db->select('id, invoice, type, total_price')
+               ->from('paket_la_fasilitas_transaction')
+               ->where('company_id', $this->company_id)
+               ->where('id', $id);
+      $q = $this->db->get();
+      $list = array();
+      if( $q->num_rows() > 0 ){
+         foreach ($q->result() as $rows) {
+            $list[] = array('invoice' => $rows->invoice, 
+                            'type' => $rows->type, 
+                            'total_price' => $rows->total_price, 
+                            'detail' => $this->get_detail_fasilitas_transaction($rows->id));
+         }
+      }
+      return $list;
+   }
+
+
    function get_index_daftar_transaksi_paket_la($limit = 6, $start = 0, $search = '')
    {
-      $this->db->select('p.id, p.register_number, p.client_name, p.client_hp_number, p.client_address, p.status,
-                        p.description, p.facilities, p.discount, p.total_price, p.departure_date, p.arrival_date, p.jamaah, p.input_date, p.last_update,
+      // p.client_name, p.client_hp_number, p.client_address,
+      $this->db->select('p.id, p.register_number,  p.status, pc.name, pc.mobile_number, pc.address,
+                        p.description, p.discount, p.total_price, p.departure_date, p.arrival_date, p.jamaah, p.input_date, p.last_update,
                         (SELECT SUM(paid) FROM paket_la_transaction_history
                         WHERE company_id="' . $this->company_id . '" AND status="payment" AND paket_la_transaction_id=p.id) AS wasPayment,
                         (SELECT SUM(paid) FROM paket_la_transaction_history
                         WHERE company_id="' . $this->company_id . '" AND status="refund" AND paket_la_transaction_id=p.id) AS wasRefund,
                         (SELECT GROUP_CONCAT( CONCAT_WS(\'$\', id, paket_type_name ) SEPARATOR \';\')
                            FROM mst_paket_type_la  WHERE company_id="' . $this->company_id . '") AS list_tipe_paket')
-         ->from('paket_la_transaction AS p')
+         ->from('paket_la_transaction_temp AS p')
+         ->join('paket_la_costumer AS pc', 'p.costumer_id=pc.id', 'inner')
          ->where('p.company_id', $this->company_id);
       if ($search != '' or $search != null or !empty($search)) {
          $this->db->group_start()
@@ -139,28 +180,32 @@ class Model_trans_paket_la extends CI_Model
       $list = array();
       if ($q->num_rows() > 0) {
          foreach ($q->result() as $rows) {
-            $tipe_paket_name = array();
-            foreach (explode(';', $rows->list_tipe_paket) as $key => $value) {
-               $exp = explode('$', $value);
-               $tipe_paket_name[$exp[0]] = $exp[1];
-            }
-            $unserialize = unserialize($rows->facilities);
-            if (isset($unserialize['tipe_paket_la_id'])) {
-               $tipe_paket = $tipe_paket_name[$unserialize['tipe_paket_la_id']];
-            } else {
-               $tipe_paket = 'Tipe paket tidak ditemukan.';
-            }
+            // $tipe_paket_name = array();
+            // foreach (explode(';', $rows->list_tipe_paket) as $key => $value) {
+            //    $exp = explode('$', $value);
+            //    $tipe_paket_name[$exp[0]] = $exp[1];
+            // }
+            // $unserialize = unserialize($rows->facilities);
+            // if (isset($unserialize['tipe_paket_la_id'])) {
+            //    $tipe_paket = $tipe_paket_name[$unserialize['tipe_paket_la_id']];
+            // } else {
+            //    $tipe_paket = 'Tipe paket tidak ditemukan.';
+            // }
 
-            $fasilitas = $unserialize['list_fasilitas'];
+            // $tipe_paket = 'Tipe paket tidak ditemukan.';
+
+            // $fasilitas = $unserialize['list_fasilitas'];
+
+
             $list[] = array(
                'id' => $rows->id,
                'register_number' => $rows->register_number,
-               'client_name' => $rows->client_name,
-               'client_hp_number' => $rows->client_hp_number,
-               'client_address' => $rows->client_address,
+               'client_name' => $rows->name,
+               'client_hp_number' => $rows->mobile_number,
+               'client_address' => $rows->address,
                'description' => $rows->description,
-               'tipe_paket' => $tipe_paket,
-               'fasilitas' => $fasilitas,
+               // 'tipe_paket' => $tipe_paket,
+               'fasilitas' => $this->get_fasilitas_transaction($rows->id),
                'discount' => $rows->discount,
                'total_price' => $rows->total_price,
                'departure_date' => $this->date_ops->change_date_t3($rows->departure_date),

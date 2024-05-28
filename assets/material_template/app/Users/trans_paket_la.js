@@ -21,10 +21,10 @@ function trans_paket_la_Pages(){
                      <table class="table table-hover tablebuka">
                         <thead>
                            <tr>
-                              <th style="width:13%;">Nomor Register</th>
-                              <th style="width:27%;">Info Klien</th>
-                              <th style="width:30%;">Info Transaksi</th>
-                              <th style="width:22%;">Info Harga</th>
+                              <th style="width:8%;">Nomor Register</th>
+                              <th style="width:18%;">Info Klien</th>
+                              <th style="width:51%;">Info Transaksi</th>
+                              <th style="width:15%;">Info Harga</th>
                               <th style="width:8%;">Aksi</th>
                            </tr>
                         </thead>
@@ -60,11 +60,46 @@ function get_trans_paket_la(perpage){
 function ListDaftarTransPaketLA(JSONData){
    var json = JSON.parse(JSONData);
    var tipe_paket = 'tipe paket tidak ditemukan.';
-   var fasilitas = `<ul class="list">`;
-   for( x in json.fasilitas ){
-      fasilitas += `<li>${json.fasilitas[x]['name']} (Pax: ${json.fasilitas[x]['pax']} - Harga : Rp ${numberFormat(json.fasilitas[x]['harga'])})</li>`;
+   var except_type = ['hotel', 'handling'];
+   var fasilitas = '';
+   if( json.fasilitas.length > 0 ) {
+      for ( let x in json.fasilitas ) {
+         fasilitas = `<table class="table mb-3">
+                        <thead>
+                           <tr>
+                              <th class="text-left border-right-0" style="width:10%;">Invoice</th>
+                              <th class="border-left-0 border-right-0" style="width:1%;">:</th>
+                              <th class="border-left-0"></th>
+                           <tr>
+                           <tr>
+                              <th class="text-left border-right-0">Type</th>
+                              <th class="border-left-0 border-right-0">:</th>
+                              <th class="border-left-0"></th>
+                           <tr>
+                           <tr>
+                              <th class="text-left border-right-0">Total</th>
+                              <th class="border-left-0 border-right-0">:</th>
+                              <th class="border-left-0"></th>
+                           <tr>
+                        </thead>
+                      </table>`;
+      }
+   }else{
+      fasilitas = `<center>Daftar Item Fasilitas Tidak Ditemukan</center>`;
    }
-   fasilitas += `</ul>`;
+   // var fasilitas = `<ul class="list">`;
+   // for( x in json.fasilitas ){
+   //    fasilitas += `<li>${json.fasilitas[x]['name']} (Pax: ${json.fasilitas[x]['pax']} - Harga : Rp ${numberFormat(json.fasilitas[x]['harga'])})</li>`;
+   // }
+   // fasilitas += `</ul>`;
+
+   // <ul class="pl-2 list">
+   //    <li>Tipe Paket : ${json.tipe_paket}</li>
+   //    <li>Tanggal Keberangkatan : ${json.departure_date}</li>
+   //    <li>Tanggal Kepulangan : ${json.arrival_date}</li>
+   //    <li>Deskripsi : ${json.description}</li>
+   //    <li>Fasilitas : ${fasilitas}</li>
+   // </ul>
 
    var html =  `<tr>
                   <td>${json.register_number}</td>
@@ -75,14 +110,8 @@ function ListDaftarTransPaketLA(JSONData){
                         <li>Alamat Klien : ${json.client_address}</li>
                      </ul>
                   </td>
-                  <td>
-                     <ul class="pl-2 list">
-                        <li>Tipe Paket : ${json.tipe_paket}</li>
-                        <li>Tanggal Keberangkatan : ${json.departure_date}</li>
-                        <li>Tanggal Kepulangan : ${json.arrival_date}</li>
-                        <li>Deskripsi : ${json.description}</li>
-                        <li>Fasilitas : ${fasilitas}</li>
-                     </ul>
+                  <td >
+                     ${fasilitas}
                   </td>
                   <td>
                      <ul class="pl-2 list">
