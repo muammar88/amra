@@ -1,5 +1,6 @@
 function trans_paket_la_Pages(){
    return  `<div class="col-12 col-lg-12 px-2 pb-0 pt-0">
+                <input type="hidden" id="nums" value="1">
                <div class="row" id="contentTransPaketLA">
                   <div class="col-6 col-lg-8 my-3 ">
                      <button class="btn btn-default" type="button" onclick="add_trans_paket_la()">
@@ -23,7 +24,7 @@ function trans_paket_la_Pages(){
                            <tr>
                               <th style="width:8%;">Nomor Register</th>
                               <th style="width:18%;">Info Klien</th>
-                              <th style="width:51%;">Info Transaksi</th>
+                              <th style="width:51%;">Info Item Transaksi</th>
                               <th style="width:15%;">Info Harga</th>
                               <th style="width:8%;">Aksi</th>
                            </tr>
@@ -57,50 +58,115 @@ function get_trans_paket_la(perpage){
                param : { search : $('#searchNamaKlien').val() } } );
 }
 
+
+
 function ListDaftarTransPaketLA(JSONData){
    var json = JSON.parse(JSONData);
    var tipe_paket = 'tipe paket tidak ditemukan.';
    var except_type = ['hotel', 'handling'];
+
+   var except_header = ['Deskripsi', 'Check-in/Check-out', 'Day', 'Pax', 'Price', 'Amount'];
    var fasilitas = '';
    if( json.fasilitas.length > 0 ) {
       for ( let x in json.fasilitas ) {
-         fasilitas = `<table class="table mb-3">
-                        <thead>
+         fasilitas += `<table class="table mb-0">
+                        <tbody>
                            <tr>
-                              <th class="text-left border-right-0" style="width:10%;">Invoice</th>
-                              <th class="border-left-0 border-right-0" style="width:1%;">:</th>
-                              <th class="border-left-0"></th>
-                           <tr>
-                           <tr>
-                              <th class="text-left border-right-0">Type</th>
-                              <th class="border-left-0 border-right-0">:</th>
-                              <th class="border-left-0"></th>
+                              <td class="text-left border border-right-0 " style="width:10%;background-color: #e7e7e7;">INVOICE</td>
+                              <td class="border border-left-0 border-right-0 border-top-1 px-2" style="width:1%;">:</td>
+                              <td class="border text-left border-left-0 border-top-1 px-0" style="width:39%;">${json.fasilitas[x].invoice}</td>
+                              <td class="text-left border border-right-0 " style="width:10%;background-color: #e7e7e7;">TYPE</td>
+                              <td class="border border-left-0 border-right-0 border-top-1 px-2" style="width:1%;">:</td>
+                              <td class="border text-left border-left-0 border-top-1 px-0"  style="width:39%;text-transform:uppercase;">${json.fasilitas[x].type.replace('_', ' ')}</td>
                            <tr>
                            <tr>
-                              <th class="text-left border-right-0">Total</th>
-                              <th class="border-left-0 border-right-0">:</th>
-                              <th class="border-left-0"></th>
+                             <td class="text-left border border-right-0 " style="width:10%;background-color: #e7e7e7;">TOTAL</td>
+                              <td class="border border-left-0 border-right-0 border-top-1 px-2" style="width:1%;">:</td>
+                              <td class="border text-left border-left-0 border-top-1 px-0" colspan="4" style="width:39%;">Rp ${numberFormat(json.fasilitas[x].total_price)}</td>
                            <tr>
-                        </thead>
+                        </tbody>
+                     </table>`;
+
+         fasilitas +=`<table class="table mb-4 mt-1">
+                        <thead>`;
+            if( json.fasilitas[x].type == 'hotel' || json.fasilitas[x].type == 'handling') {
+               fasilitas +=  `<tr>
+                                 <th style="width:25%;background-color: #e7e7e7;">Deskripsi</th>
+                                 <th style="background-color: #e7e7e7;">Check-in</th>
+                                 <th style="background-color: #e7e7e7;">Check-out</th>
+                                 <th style="background-color: #e7e7e7;">Day</th>
+                                 <th style="background-color: #e7e7e7;">Pax</th>
+                                 <th style="background-color: #e7e7e7;">Price</th>
+                                 <th style="width:15%;background-color: #e7e7e7;">Aksi</th>
+                              </tr>`;
+            }else{
+               fasilitas +=  `<tr>
+                                 <th style="background-color: #e7e7e7;">Deskripsi</th>
+                                 <th style="background-color: #e7e7e7;">Pax</th>
+                                 <th style="background-color: #e7e7e7;">Price</th>
+                                 <th style="width:15%;background-color: #e7e7e7;">Aksi</th>
+                              </tr>`;
+            }
+         fasilitas +=  `</thead>
+                        <tbody>`;
+         if( json.fasilitas[x].type == 'hotel' || json.fasilitas[x].type == 'handling') {
+            if( json.fasilitas[x].detail.length > 0  ) {
+               for ( let c in  json.fasilitas[x].detail ) {
+                  fasilitas += `<tr>
+                                    <td class="align-middle">${json.fasilitas[x].detail[c].description}</td>
+                                    <td class="align-middle">${json.fasilitas[x].detail[c].check_in}</td>
+                                    <td class="align-middle">${json.fasilitas[x].detail[c].check_out}</td>
+                                    <td class="align-middle">${json.fasilitas[x].detail[c].day}</td>
+                                    <td class="align-middle">${json.fasilitas[x].detail[c].pax}</td>
+                                    <td class="align-middle">Rp ${numberFormat(json.fasilitas[x].detail[c].price)}</td>
+                                    <td class="align-middle">
+                                       <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Detail Item Paket LA"
+                                          onclick="cetak_kwitansi_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
+                                           <i class="fas fa-print" style="font-size: 11px;"></i>
+                                       </button>
+                                       <button type="button" class="btn btn-danger btn-action" title="Delete Detail Item Paket LA"
+                                          onclick="delete_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
+                                           <i class="fas fa-times" style="font-size: 11px;"></i>
+                                       </button>
+                                    </td>
+                                </tr>`;  
+               }
+            }else{
+                fasilitas =   `<tr>
+                                 <td colspan="7">Detail Item Tidak Ditemukan</td>
+                               </tr>`;
+            }
+         }else{
+            if( json.fasilitas[x].detail.length > 0  ) {
+               for ( let c in  json.fasilitas[x].detail ) {
+                  fasilitas += `<tr>
+                                    <td class="align-middle">${json.fasilitas[x].detail[c].description}</td>
+                                    <td class="align-middle">${json.fasilitas[x].detail[c].pax}</td>
+                                    <td class="align-middle">Rp ${numberFormat(json.fasilitas[x].detail[c].price)}</td>
+                                    <td class="align-middle">
+                                       <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Detail Item Paket LA"
+                                          onclick="cetak_kwitansi_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
+                                           <i class="fas fa-print" style="font-size: 11px;"></i>
+                                       </button>
+                                       <button type="button" class="btn btn-danger btn-action" title="Delete Paket LA"
+                                          onclick="delete_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
+                                           <i class="fas fa-times" style="font-size: 11px;"></i>
+                                       </button>
+                                    </td>
+                                </tr>`;  
+               }
+            }else{
+               fasilitas =    `<tr>
+                                 <td colspan="4">Detail Item Tidak Ditemukan</td>
+                              </tr>`;
+            }
+         }               
+         fasilitas +=  `</tbody>
                       </table>`;
       }
    }else{
       fasilitas = `<center>Daftar Item Fasilitas Tidak Ditemukan</center>`;
    }
-   // var fasilitas = `<ul class="list">`;
-   // for( x in json.fasilitas ){
-   //    fasilitas += `<li>${json.fasilitas[x]['name']} (Pax: ${json.fasilitas[x]['pax']} - Harga : Rp ${numberFormat(json.fasilitas[x]['harga'])})</li>`;
-   // }
-   // fasilitas += `</ul>`;
-
-   // <ul class="pl-2 list">
-   //    <li>Tipe Paket : ${json.tipe_paket}</li>
-   //    <li>Tanggal Keberangkatan : ${json.departure_date}</li>
-   //    <li>Tanggal Kepulangan : ${json.arrival_date}</li>
-   //    <li>Deskripsi : ${json.description}</li>
-   //    <li>Fasilitas : ${fasilitas}</li>
-   // </ul>
-
    var html =  `<tr>
                   <td>${json.register_number}</td>
                   <td>
@@ -122,29 +188,33 @@ function ListDaftarTransPaketLA(JSONData){
                      </ul>
                   </td>
                   <td>`;
-
          if( json.status == 'close' ) {
             html += `<span class="float-center">Paket La ini sudah ditutup.</span>`;
          }else{
-            html += `<button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Awal Paket LA"
+            html += `<button type="button" class="btn btn-default btn-action" title="Tambah Item Detail Paket LA"
+                        onclick="add_item_detail_paket_la('${json.id}')" style="margin:.15rem .1rem  !important">
+                         <i class="fas fa-box" style="font-size: 11px;"></i>
+                     </button>
+                   
+                     <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Awal Paket LA"
                         onclick="cetak_kwitansi_awal('${json.id}')" style="margin:.15rem .1rem  !important">
                          <i class="fas fa-print" style="font-size: 11px;"></i>
-                     </button>
-                     <button type="button" class="btn btn-default btn-action" title="Refund Paket LA"
-                        onclick="refund_paket_la('${json.id}')" style="margin:.15rem .1rem  !important">
-                         <i class="fas fa-undo-alt" style="font-size: 11px;"></i>
                      </button>
                      <button type="button" class="btn btn-default btn-action" title="Pembayaran Paket LA"
                         onclick="pembayaran_paket_la('${json.id}')" style="margin:.15rem .1rem  !important">
                          <i class="far fa-money-bill-alt" style="font-size: 11px;"></i>
                      </button>
+                     <button type="button" class="btn btn-default btn-action" title="Refund Paket LA"
+                        onclick="refund_paket_la('${json.id}')" style="margin:.15rem .1rem  !important">
+                         <i class="fas fa-undo-alt" style="font-size: 11px;"></i>
+                     </button>
+                      <button type="button" class="btn btn-default btn-action" title="K & T Paket LA"
+                        onclick="k_t_paket_la('${json.id}')" style="margin:.15rem .1rem  !important">
+                         <i class="fas fa-list-alt" style="font-size: 11px;"></i>
+                     </button>
                      <button type="button" class="btn btn-default btn-action" title="Edit Paket LA"
                         onclick="edit_paket_la('${json.id}')" style="margin:.15rem .1rem  !important">
                          <i class="fas fa-pencil-alt" style="font-size: 11px;"></i>
-                     </button>
-                     <button type="button" class="btn btn-default btn-action" title="K & T Paket LA"
-                        onclick="k_t_paket_la('${json.id}')" style="margin:.15rem .1rem  !important">
-                         <i class="fas fa-list-alt" style="font-size: 11px;"></i>
                      </button>
                      <button type="button" class="btn btn-default btn-action" title="Delete Paket LA"
                         onclick="delete_paket_la('${json.id}')" style="margin:.15rem .1rem  !important">
@@ -155,6 +225,373 @@ function ListDaftarTransPaketLA(JSONData){
          html += `</td>
                </tr>`;
    return html;
+}
+
+function add_item_detail_paket_la(id){
+   $.confirm({
+      columnClass: 'col-4',
+      title: 'Pilih Tipe Item Paket LA',
+      theme: 'material',
+      content: form_select_item_paket_la(),
+      closeIcon: false,
+      buttons: {
+         cancel:function () {
+             return true;
+         },
+         simpan: {
+            text: 'Lanjutkan',
+            btnClass: 'btn-blue',
+            action: function () {
+               var tipe = $('#tipe').val();
+               if( tipe == 0 ) {
+                  frown_alert('Untuk melanjutkan anda harus memilih salah satu tipe item');
+                  return false;
+               }else{
+                  if( tipe == 'hotel' || tipe == 'handling') {
+                     hotel_handling(id, tipe);
+                  }else{
+                     add_detail_paket_la(id, tipe);
+                  }
+               }
+            }
+         }
+      }
+   });
+}
+
+function form_add_detail_paket_la(id, type) {
+   var html = `<form id="form_utama" action="${baseUrl }Trans_paket_la/add_update_new_item" class="formName">
+                  <div class="row px-0 py-3 mx-0">
+                     <input type="hidden" name="id" value="${id}">
+                     <input type="hidden" name="type" value="${type}">
+                     <div class="col-12 py-2" style="background-color: #e3e3e3;">
+                        <div class="row">
+                           <div class="col-6">
+                              <center>
+                                 <label class="mb-0">DESKRIPSI</label>
+                              </center>
+                           </div>
+                           <div class="col-2">
+                              <center>
+                                 <label class="mb-0">PAX</label>
+                              </center>
+                           </div>
+                           <div class="col-2">
+                              <center>
+                                 <label class="mb-0">PRICE</label>
+                              </center>
+                           </div>
+                        </div>  
+                     </div>
+                     <div class="col-12" id="area-row">
+                        ${form_add_row()}
+                     </div>
+                     <div class="col-12 text-right py-1" style="background-color: #e3e3e3;">
+                        <button type="button" class="btn btn-default" title="Delete Paket LA" onclick="add_row_tambah_row_paket_la()" style="margin:.15rem .1rem  !important">
+                            <i class="fas fa-plus" style="font-size: 11px;"></i> Tambah Row Baru
+                        </button>
+                     </div>
+                  </div>
+               </form>
+               <script>
+                  $(document).on( "keyup", ".currency", function(e){
+                      var e = window.event || e;
+                      var keyUnicode = e.charCode || e.keyCode;
+                          if (e !== undefined) {
+                              switch (keyUnicode) {
+                                  case 16: break;
+                                  case 27: this.value = ''; break;
+                                  case 35: break;
+                                  case 36: break;
+                                  case 37: break;
+                                  case 38: break;
+                                  case 39: break;
+                                  case 40: break;
+                                  case 78: break;
+                                  case 110: break;
+                                  case 190: break;
+                                  default: $(this).formatCurrency({ colorize: true, negativeFormat: '-%s%n', roundToDecimalPlace: -1, eventOnDecimalsEntered: true });
+                              }
+                          }
+                  } );
+               </script>`;
+   return html;
+}
+
+function add_row_tambah_row_paket_la() {
+   $('#area-row').append(form_add_row());
+}
+
+function form_add_row() {
+   return `<div class="row py-3" style="background-color: #efefef;">
+               <div class="col-6">
+                  <div class="form-group mb-0">
+                     <textarea class="form-control form-control-sm" name="deskripsi[]" id="deskripsi" placeholder="Deskripsi" rows="3" style="resize: none;"></textarea>
+                  </div>
+               </div>
+               <div class="col-2">
+                  <div class="form-group">
+                     <input type="number" class="form-control form-control-sm" name="pax[]" value="" placeholder="Pax">
+                  </div>
+               </div>
+               <div class="col-3">
+                  <div class="form-group">
+                     <input type="text" class="form-control form-control-sm currency" name="price[]" value="" placeholder="Price">
+                  </div>
+               </div>
+               <div class="col-1 text-center">
+                  <button type="button" class="btn btn-danger w-100" title="Delete Paket LA" onclick="delete_row_paket_la(this)" style="height: 32px;margin: 0px !important;">
+                      <i class="fas fa-times" style="font-size: 11px;"></i>
+                  </button>
+               </div>
+            </div>`;
+}
+
+function delete_row_paket_la(e) {
+   $(e).parent().parent().remove();
+}
+
+function add_detail_paket_la(id, type) {
+   $.confirm({
+      columnClass: 'col-9',
+      title: 'Tambah Item Paket LA',
+      theme: 'material',
+      content: form_add_detail_paket_la(id, type),
+      closeIcon: false,
+      buttons: {
+         cancel:function () {
+             return true;
+         },
+         simpan: {
+            text: 'Lanjutkan',
+            btnClass: 'btn-blue',
+            action: function () {
+               ajax_submit_t1("#form_utama", function(e) {
+                  e['error'] == true ? frown_alert(e['error_msg']) : smile_alert(e['error_msg']);
+                  if ( e['error'] == true ) {
+                     return false;
+                  } else {
+                     get_trans_paket_la(20);
+                  }
+               });
+            }
+         }
+      }
+   });
+}
+
+function count_date_between_two_date(num) {
+   let start_date = $('#check_in_' + num).val();
+   let end_date = $('#check_out_' + num).val();
+   // filter
+   if( start_date != '' && end_date != ''){
+      let date1 = new Date(start_date);
+      let date2 = new Date(end_date);
+      // The number of milliseconds in one day
+      const ONE_DAY = 1000 * 60 * 60 * 24;
+      // Calculate the difference in milliseconds
+      const differenceMs = Math.abs(date1 - date2);
+      // day
+      var day = Math.round(differenceMs / ONE_DAY);
+      // day
+      $('#day_' +num ).val(day);
+   }
+}
+
+function hotel_handling(id, type) {
+   $.confirm({
+      columnClass: 'col-12',
+      title: 'Tambah Item Paket LA',
+      theme: 'material',
+      content: form_add_hotel_detail_paket_la(id, type),
+      closeIcon: false,
+      buttons: {
+         cancel:function () {
+             return true;
+         },
+         simpan: {
+            text: 'Lanjutkan',
+            btnClass: 'btn-blue',
+            action: function () {
+               ajax_submit_t1("#form_utama", function(e) {
+                  e['error'] == true ? frown_alert(e['error_msg']) : smile_alert(e['error_msg']);
+                  if ( e['error'] == true ) {
+                     return false;
+                  } else {
+                     get_trans_paket_la(20);
+                  }
+               });
+            }
+         }
+      }
+   });
+}
+function form_add_hotel_detail_paket_la(id, type){
+   var html = `<form id="form_utama" action="${baseUrl }Trans_paket_la/add_update_new_item" class="formName">
+                  <div class="row px-0 py-3 mx-0">
+                     <input type="hidden" name="id" value="${id}">
+                     <input type="hidden" name="type" value="${type}">
+                     <div class="col-12 py-2" style="background-color: #e3e3e3;">
+                        <div class="row">
+                           <div class="col-3">
+                              <center>
+                                 <label class="mb-0">DESKRIPSI</label>
+                              </center>
+                           </div>
+                           <div class="col-2">
+                              <center>
+                                 <label class="mb-0">CHECK IN</label>
+                              </center>
+                           </div>
+                           <div class="col-2">
+                              <center>
+                                 <label class="mb-0">CHECK OUT</label>
+                              </center>
+                           </div>
+                           <div class="col-1">
+                              <center>
+                                 <label class="mb-0">DAY</label>
+                              </center>
+                           </div>
+                           <div class="col-1">
+                              <center>
+                                 <label class="mb-0">PAX</label>
+                              </center>
+                           </div>
+                           <div class="col-2">
+                              <center>
+                                 <label class="mb-0">PRICE</label>
+                              </center>
+                           </div>
+                        </div>  
+                     </div>
+                     <div class="col-12" id="area-row-hotel">
+                       
+                        ${form_add_row_hotel()}
+                     </div>
+                     <div class="col-12 text-right py-1" style="background-color: #e3e3e3;">
+                        <button type="button" class="btn btn-default" title="Delete Paket LA" onclick="add_row_tambah_row_hotel_paket_la()" style="margin:.15rem .1rem  !important">
+                            <i class="fas fa-plus" style="font-size: 11px;"></i> Tambah Row Baru
+                        </button>
+                     </div>
+                  </div>
+               </form>
+               <script>
+                  $(document).on( "keyup", ".currency", function(e){
+                      var e = window.event || e;
+                      var keyUnicode = e.charCode || e.keyCode;
+                          if (e !== undefined) {
+                              switch (keyUnicode) {
+                                  case 16: break;
+                                  case 27: this.value = ''; break;
+                                  case 35: break;
+                                  case 36: break;
+                                  case 37: break;
+                                  case 38: break;
+                                  case 39: break;
+                                  case 40: break;
+                                  case 78: break;
+                                  case 110: break;
+                                  case 190: break;
+                                  default: $(this).formatCurrency({ colorize: true, negativeFormat: '-%s%n', roundToDecimalPlace: -1, eventOnDecimalsEntered: true });
+                              }
+                          }
+                  } );
+               </script>`;
+   return html;
+}
+
+function form_add_row_hotel(){
+   let num = parseInt($('#nums').val());
+   let ns = num  + 1;
+   $('#nums').val(ns);
+   return `<div class="row py-3" style="background-color: #efefef;">
+               <div class="col-3">
+                  <div class="form-group mb-0">
+                     <textarea class="form-control form-control-sm" name="deskripsi[]" id="deskripsi" placeholder="Deskripsi" rows="3" style="resize: none;"></textarea>
+                  </div>
+               </div>
+               <div class="col-2">
+                  <div class="form-group">
+                     <input type="date" class="form-control form-control-sm" id="check_in_${num}" name="check_in[]" value="" onChange="count_date_between_two_date(${num})" placeholder="Check In">
+                  </div>
+               </div>
+               <div class="col-2">
+                  <div class="form-group">
+                     <input type="date" class="form-control form-control-sm" id="check_out_${num}" name="check_out[]" value="" onChange="count_date_between_two_date(${num})" placeholder="Check Out">
+                  </div>
+               </div>
+               <div class="col-1">
+                  <div class="form-group">
+                     <input type="number" class="form-control form-control-sm" id="day_${num}" name="day[]" value="" disabled="" placeholder="Day">
+                  </div>
+               </div>
+               <div class="col-1">
+                  <div class="form-group">
+                     <input type="number" class="form-control form-control-sm" name="pax[]" value="" placeholder="Pax">
+                  </div>
+               </div>
+               <div class="col-2">
+                  <div class="form-group">
+                     <input type="text" class="form-control form-control-sm currency" name="price[]" value="" placeholder="Price">
+                  </div>
+               </div>
+               <div class="col-1 text-center">
+                  <button type="button" class="btn btn-danger w-100" title="Delete Paket LA" onclick="delete_row_paket_la(this)" style="height: 32px;margin: 0px !important;">
+                      <i class="fas fa-times" style="font-size: 11px;"></i>
+                  </button>
+               </div>
+            </div>`;
+
+
+
+}
+
+
+function add_row_tambah_row_hotel_paket_la() {
+   $('#area-row-hotel').append(form_add_row_hotel());
+}
+
+function form_select_item_paket_la() {
+    var html = `<form id="form_utama" class="formName">
+                  <div class="row px-0 py-3 mx-0">
+                     <div class="col-12">
+                        <div class="row">
+                           <div class="col-12">
+                              <div class="form-group">
+                                 <label>Pilih Tipe Item</label>
+                                 <select id="tipe" name="tipe" class="form-control form-control-sm" title="Pilih Tipe Item">
+                                    <option value="0">Pilih Item Paket LA</option>
+                                    <option value="tiket_pesawat">Tiket Pesawat</option>
+                                    <option value="hotel">Hotel</option>
+                                    <option value="bus">Bus</option>
+                                    <option value="mobil">Mobil</option>
+                                    <option value="handling" >Handling</option>
+                                    <option value="visa">Visa</option>
+                                    <option value="mutowif_tour_guide">Mutowif / Tour Guide</option>
+                                 </select>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </form>`;
+   return html;            
+
+}
+
+function delete_detail_item_paket_la(id){
+    ajax_x(
+      baseUrl + "Trans_paket_la/delete_detail_item_paket_la", function(e) {
+         e['error'] == true ? frown_alert(e['error_msg']) : smile_alert(e['error_msg']);
+         if ( e['error'] == true ) {
+            return false;
+         } else {
+            get_trans_paket_la(20);
+         }
+      },[{id:id}]
+   );
+
 }
 
 function cetak_kwitansi_awal(id){
@@ -285,10 +722,10 @@ function edit_paket_la(id){
       baseUrl + "Trans_paket_la/info_edit_paket_la", function(e) {
          if( e['error'] == false ){
             $.confirm({
-               columnClass: 'col-10',
+               columnClass: 'col-5',
                title: 'Edit Transaksi Paket LA',
                theme: 'material',
-               content: formaddupdate_trans_paket_la('', JSON.stringify(e['tipe_paket_la']), JSON.stringify(e['fasilitas']), JSON.stringify(e['value'])),
+               content: formaddupdate_trans_paket_la('', JSON.stringify(e['kostumer']), JSON.stringify(e['value'])),
                closeIcon: false,
                buttons: {
                   cancel:function () {
@@ -303,7 +740,7 @@ function edit_paket_la(id){
                            if ( e['error'] == true ) {
                               return false;
                            } else {
-                              window.open(baseUrl + "Kwitansi/", "_blank");
+                              // window.open(baseUrl + "Kwitansi/", "_blank");
                               get_trans_paket_la(20);
                            }
                         });
@@ -324,10 +761,10 @@ function add_trans_paket_la(){
       baseUrl + "Trans_paket_la/get_info_trans_paket_la", function(e) {
          if( e['error'] == false ){
             $.confirm({
-               columnClass: 'col-10',
+               columnClass: 'col-5',
                title: 'Tambah Transaksi Paket LA',
                theme: 'material',
-               content: formaddupdate_trans_paket_la(e['nomor_register'], JSON.stringify(e['paket_type']), JSON.stringify(e['fasilitas'])),
+               content: formaddupdate_trans_paket_la(e['nomor_register'], JSON.stringify(e['kostumer'])),
                closeIcon: false,
                buttons: {
                   cancel:function () {
@@ -342,7 +779,7 @@ function add_trans_paket_la(){
                            if ( e['error'] == true ) {
                               return false;
                            } else {
-                              window.open(baseUrl + "Kwitansi/", "_blank");
+                              // window.open(baseUrl + "Kwitansi/", "_blank");
                               get_trans_paket_la(20);
                            }
                         });
@@ -358,19 +795,14 @@ function add_trans_paket_la(){
    );
 }
 
-function formaddupdate_trans_paket_la(nomor_register, JSONPaketType, JSONFasilitas, JSONValue){
-   var paket_type_json = JSON.parse(JSONPaketType);
+function formaddupdate_trans_paket_la(nomor_register, JSONKostumer, JSONValue){
+   var kostumer = JSON.parse(JSONKostumer);
    var paket_la_id = '';
-   var nama_klien = '';
-   var nomor_hp_klien = '';
    var diskon = '';
    var jamaah = '';
-   var paket_type_selected = '';
+   var kostumer_selected = '';
    var tanggal_keberangkatan = '';
    var tanggal_kepulangan = '';
-   var alamat_klien = '';
-   var discription = '';
-   var fasilitas_selected = '';
    var no_register = '';
    var total_price = '';
    var no_register = `<input type="hidden" name="no_register" value='${nomor_register}' >`;
@@ -379,137 +811,55 @@ function formaddupdate_trans_paket_la(nomor_register, JSONPaketType, JSONFasilit
       var value = JSON.parse(JSONValue);
       paket_la_id = `<input type="hidden" name="paket_la_id" value="${value.id}">`;
       no_register = `<input type="hidden" name="no_register" value='${value.register_number}' >`;
+      kostumer_selected = value.costumer_id;
       nomor_register = value.register_number;
-      nama_klien = value.client_name;
-      nomor_hp_klien = value.client_hp_number;
-      diskon = value.discount;
+            diskon = value.discount;
       jamaah = value.jamaah;
-      paket_type_selected = value.tipe_paket_la;
       tanggal_keberangkatan = value.departure_date;
       tanggal_kepulangan = value.arrival_date;
-      discription = value.description;
-      alamat_klien = value.client_address;
-      discription = value.description;
-      total_price = 'Rp ' + numberFormat(value.total_price);
-      for( x in value.facilities ) {
-         fasilitas_selected += row_fasilitas(JSONFasilitas, value.facilities[x]['id'], value.facilities[x]['pax'], 'Rp '+numberFormat(value.facilities[x]['harga']) );
-      }
    }
    var html = `<form action="${baseUrl }Trans_paket_la/proses_addupdate_trans_paket_la" id="form_utama" class="formName ">
                   <div class="row px-0 mx-0">
                      <div class="col-12">
                         ${paket_la_id}
                         ${no_register}
-                        <input type="hidden" id="jsonfasilitas" value='${JSONFasilitas}' >
-                        <input type="hidden" id="jsonpakettype" value='${JSONPaketType}' >
                         <label class="float-right">Nomor Register : <b style="color:red;">#${nomor_register}</b></label>
                      </div>
-                     <div class="col-7">
+                     <div class="col-12">
                         <div class="row">
-                           <div class="col-7">
+                           <div class="col-12">
                               <div class="form-group">
-                                 <label>Nama Klien</label>
-                                 <input type="text" name="nama_klien" value="${nama_klien}" class="form-control form-control-sm" placeholder="Nama Klien" />
-                              </div>
-                           </div>
-                           <div class="col-5">
-                              <div class="form-group">
-                                 <label>Nomor HP Klien</label>
-                                 <input type="text" name="nomor_hp" value="${nomor_hp_klien}" class="form-control form-control-sm" placeholder="Nomor HP Klien" />
-                              </div>
-                           </div>
-                           <div class="col-6">
-                              <div class="form-group">
-                                 <label>Jenis Paket</label>
-                                 <select class="form-control form-control-sm" name="jenis_paket" id="jenis_paket" onChange="getListFasilitasTipePaketLA()">
-                                    <option value="0">Pilih jenis paket</option>`;
-                        for( x in paket_type_json ) {
-                           html += `<option value="${x}" ${x == paket_type_selected ? 'selected' : '' }>${paket_type_json[x]['name']}</option>`;
+                                 <label>Kostumer Paket LA</label>
+                                 <select class="form-control form-control-sm" name="kostumer_paket_la" id="kostumer_paket_la" >
+                                    <option value="0">Pilih kostumer paket la</option>`;
+                        for( x in kostumer ) {
+                           html += `<option value="${x}" ${x == kostumer_selected ? 'selected' : '' }>${kostumer[x]['name']} : ${kostumer[x]['mobile_number']}</option>`;
                         }
                         html += `</select>
                               </div>
                            </div>
-                           <div class="col-4">
+                           <div class="col-6">
                               <div class="form-group">
                                  <label>Diskon</label>
-                                 <input type="text" onKeyup="sumTotalFasilitas()" name="diskon" value="${diskon}" class="form-control form-control-sm currency" placeholder="Diskon" />
+                                 <input type="text"  name="diskon" value="${diskon}" class="form-control form-control-sm currency" placeholder="Diskon" />
                               </div>
                            </div>
-                           <div class="col-2">
+                           <div class="col-6">
                               <div class="form-group">
                                  <label>J. Jamaah</label>
-                                 <input type="number" onKeyup="sumTotalFasilitas()" name="jamaah" value="${jamaah}" class="form-control form-control-sm" placeholder="J. Jamaah" />
+                                 <input type="number" name="jamaah" value="${jamaah}" class="form-control form-control-sm" placeholder="Jumlah Jamaah" />
                               </div>
                            </div>
-                           <div class="col-4">
+                           <div class="col-6">
                               <div class="form-group">
                                  <label>Tanggal Keberangkatan</label>
                                  <input type="date" name="tanggal_keberangkatan" value="${tanggal_keberangkatan}" class="form-control form-control-sm" placeholder="Tanggal Keberangkatan" />
                               </div>
                            </div>
-                           <div class="col-4">
+                           <div class="col-6">
                               <div class="form-group">
                                  <label>Tanggal Kepulangan</label>
                                  <input type="date" name="tanggal_kepulangan" value="${tanggal_kepulangan}" class="form-control form-control-sm currency" placeholder="Diskon" />
-                              </div>
-                           </div>
-                           <div class="col-4">
-                              <div class="form-group">
-                                 <label>Total</label>
-                                 <input type="text" name="total" id="total" value="${total_price}" class="form-control form-control-sm" placeholder="Total" disabled />
-                              </div>
-                           </div>
-                           <div class="col-12">
-                              <label>Daftar Fasilitas</label>
-                              <div class="row">
-                                 <div class="col-12 mb-3 pb-2 pt-3 text-center" style="border-bottom: 1px solid #ced4da;font-size: 11px;color: #736f6f;">
-                                    <div class="row">
-                                       <div class="col-5">
-                                          Fasilitas
-                                       </div>
-                                       <div class="col-2">
-                                          Pax
-                                       </div>
-                                       <div class="col-4">
-                                          Harga
-                                       </div>
-                                    </div>
-                                 </div>
-                                 <div class="col-12 py-2 text-center" id="list_fasilitas">`;
-                     if(fasilitas_selected != '' ){
-                        html += fasilitas_selected;
-                     }else{
-                        html +=   `<label style="font-size: 11px;font-weight: normal;">Daftar fasilitas tidak ditemukan</label>`;
-                     }
-                     html +=    `</div>
-                                 <div class="col-12 pb-4 pt-2 text-center" id="total_harga_fasilitas" style="border-top: 1px solid #ced4da;font-size: 11px;color: #736f6f;">`;
-                     if( total_price != '' ){
-                        html += `<div class="row"><div class="col-7 text-left">Total Harga Fasilitas</div><div class="col-5 pl-3 text-left">${total_price}</div></div>`;
-                     }
-                     html +=    `</div>
-                              </div>
-                           </div>
-                           <div class="col-12">
-                              <button type="button" class="btn btn-default float-right" title="Tambah Fasilitas" onclick="tambah_fasilitas_tipe_paket_la2(this)">
-                                 <i class="fas fa-plus" style="font-size: 11px;"></i> Tambah Fasilitas
-                              </button>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-5">
-                        <div class="row">
-                           <div class="col-12">
-                              <div class="form-group">
-                                 <label>Alamat Klien</label>
-                                 <textarea class="form-control form-control-sm" name="alamat_klien" rows="5"
-                                    style="resize: none;" placeholder="Alamat Klien" required>${alamat_klien}</textarea>
-                              </div>
-                           </div>
-                           <div class="col-12">
-                              <div class="form-group">
-                                 <label>Dekripsi</label>
-                                 <textarea class="form-control form-control-sm" name="description" rows="5"
-                                    style="resize: none;" placeholder="Deskripsi" required>${discription}</textarea>
                               </div>
                            </div>
                         </div>
@@ -539,47 +889,6 @@ function formaddupdate_trans_paket_la(nomor_register, JSONPaketType, JSONFasilit
                   } );
                </script>`;
    return html;
-}
-
-function row_fasilitas(JSONFasilitas, fasilitas_id, pax, harga ){
-   var jsonfasilitas = JSON.parse(JSONFasilitas);
-   var html = `<div class="row rowFasilitas">
-                  <div class="col-5">
-                     <div class="form-group">
-                        <select class="form-control form-control-sm jenisFasilitas" name="jenis_fasilitas[]" onChange="checkDistincJenisPaket(this)" >
-                           <option value="0">Pilih jenis paket</option>`;
-               for( x in jsonfasilitas ) {
-                  html += `<option value="${x}" ${ x == fasilitas_id ? 'selected' : '' }>${jsonfasilitas[x]}</option>`;
-               }
-               html += `</select>
-                     </div>
-                  </div>
-                  <div class="col-2">
-                     <div class="form-group">
-                        <input type="number" name="pax[]" value="${pax}" class="form-control form-control-sm" placeholder="Pax" onkeyup="sumTotalFasilitas()"/>
-                     </div>
-                  </div>
-                  <div class="col-4">
-                     <div class="form-group">
-                        <input type="text" name="harga[]" value="${harga}" class="form-control form-control-sm currency" placeholder="Harga" onkeyup="sumTotalFasilitas()" />
-                     </div>
-                  </div>
-                  <div class="col-1">
-                     <button type="button" class="btn btn-default" title="Delete" onclick="delete_row_paket_la(this)">
-                        <i class="fas fa-times" style="font-size: 11px;"></i>
-                     </button>
-                  </div>
-               </div>`;
-   return html;
-}
-
-function tambah_fasilitas_tipe_paket_la2(){
-   var html = row_fasilitas($('#jsonfasilitas').val(), '','','');
-   if( $('.rowFasilitas').length > 0 ) {
-      $('#list_fasilitas').append(html);
-   }else{
-      $('#list_fasilitas').html(html);
-   }
 }
 
 // get list fasilitas tipe paket la
@@ -854,15 +1163,6 @@ function countPembayaran(){
    }
 }
 
-function delete_row_paket_la(e){
-   var lengthSaldo = $('.rowFasilitas').length;
-   if( lengthSaldo > 1 ){
-      $(e).parent().parent().remove();
-      sumTotalFasilitas();
-   }else{
-      frown_alert('Anda wajib menyisakan minimal 1 row fasilitas');
-   }
-}
 
 function checkDistincJenisPaket(e){
    var list_jenis_fasilitas = new Array();

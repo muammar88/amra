@@ -23,6 +23,24 @@ class Random_code_ops
 		// $this->company_id = $this->CI->session->userdata($this->CI->config->item('apps_name'))['company_id'];
 	}
 
+	function generate_invoice_item_paket_la(){
+		$feedBack = false;
+		$rand = '';
+		do {
+			$rand = $this->random_alpha_numeric(10);
+			$q = $this->CI->db->select('id')
+							  ->from('paket_la_fasilitas_transaction')
+							  ->where('invoice', $rand)
+							  ->where('company_id', $this->CI->session->userdata($this->CI->config->item('apps_name'))['company_id'])
+							  ->get();
+			if ( $q->num_rows() == 0 ) {
+				$feedBack = true;
+			}
+		} while ($feedBack == false);
+		return $rand;
+
+	}
+
 	function generated_kode_biaya(){
 		$feedBack = false;
 		$rand = '';

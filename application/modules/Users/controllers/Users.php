@@ -59,7 +59,7 @@ class Users extends CI_Controller
 				'Users/airlines',
 				'Users/daftar_fasilitas',
 				'Users/daftar_tipe_paket',
-				'Users/fasilitas_paket_la',
+				// 'Users/fasilitas_paket_la',
 				'Users/tipe_paket_la',
 				'Users/supplier',
 				'Users/daftar_kota',
@@ -121,7 +121,8 @@ class Users extends CI_Controller
 				'Users/info_saldo_member',
 				'Users/riwayat_transaksi_peminjaman',
 				'Users/riwayat_mutasi_saldo',
-				'Users/riwayat_tambah_saldo'
+				'Users/riwayat_tambah_saldo', 
+				'Users/kostumer_paket_la'
 			),
 			'modul_access' => $this->session->userdata($this->config->item('apps_name'))['modul_access'],
 			'modul_tab' => $modul_submodul_tab['modul_tab'],

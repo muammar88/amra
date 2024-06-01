@@ -25,6 +25,39 @@ class Model_trans_paket_la_cud extends CI_Model
       $this->write_log = 1;
    }
 
+   function add_new_item($id, $data_fasilitas, $data_item, $total){
+      # Starting Transaction
+      $this->db->trans_start();
+      // insert jurnal 
+      $this->db->insert('paket_la_fasilitas_transaction', $data_fasilitas);
+      # get paket la transaction id
+      $paket_la_fasilitas_transction_id = $this->db->insert_id();
+      // insert item detail fasilitas paket transaction la
+      foreach ($data_item as $key => $value) {
+         $data_item[$key]['paket_la_fasilitas_transaction_id'] = $paket_la_fasilitas_transction_id;
+         $this->db->insert('paket_la_detail_fasilitas_transaction', $data_item[$key]);
+      }
+      // # update total paket la transaction
+      $this->db->where('id', $id)
+               ->where('company_id', $this->company_id)
+               ->update('paket_la_transaction_temp', array('total_price' => $total));
+      # Transaction Complete
+      $this->db->trans_complete();
+      # Filter Status
+      if ($this->db->trans_status() === FALSE) {
+         # Something Went Wsrong.
+         $this->db->trans_rollback();
+         $this->status = FALSE;
+         $this->error = 1;
+      } else {
+         # Transaction Commit
+         $this->db->trans_commit();
+         $this->status = TRUE;
+         $this->content = 'Melakukan Penambahan Item Paket LA dengan ID : ' . $paket_la_fasilitas_transction_id . '.';
+      }
+      return $this->status;
+   }
+
    // close paket la
    function close_paket_la( $data, $id ) {
       # Starting Transaction
@@ -34,7 +67,7 @@ class Model_trans_paket_la_cud extends CI_Model
       # update status paket la transaction
       $this->db->where('id', $id)
                ->where('company_id', $this->company_id)
-               ->update('paket_la_transaction', $data['paket_la_transaction']);
+               ->update('paket_la_transaction_temp', $data['paket_la_transaction']);
       # Transaction Complete
       $this->db->trans_complete();
       # Filter Status
@@ -60,7 +93,7 @@ class Model_trans_paket_la_cud extends CI_Model
       # update data paket la transaction
       $this->db->where('id', $id)
                ->where('company_id', $this->company_id)
-               ->update('paket_la_transaction', $data);
+               ->update('paket_la_transaction_temp', $data);
       # Transaction Complete
       $this->db->trans_complete();
       # Filter Status
@@ -83,7 +116,7 @@ class Model_trans_paket_la_cud extends CI_Model
       # Starting Transaction
       $this->db->trans_start();
       # insert paket la transaction data
-      $this->db->insert('paket_la_transaction', $data);
+      $this->db->insert('paket_la_transaction_temp', $data);
       # get paket la transaction id
       $paket_la_transction_id = $this->db->insert_id();
       # Transaction Complete
@@ -286,7 +319,7 @@ class Model_trans_paket_la_cud extends CI_Model
    }
 
    # delete paket la
-   function delete_paket_la($id)
+   function delete_paket_la($id, $info)
    {
       # Starting Transaction
       $this->db->trans_start();
@@ -298,10 +331,18 @@ class Model_trans_paket_la_cud extends CI_Model
       $this->db->where('paket_la_transaction_id	', $id)
          ->where('company_id', $this->company_id)
          ->delete('paket_la_transaction_history');
+      # delete detail fasilitas
+      $this->db->where('paket_la_fasilitas_transaction_id ', $info)
+               ->where('company_id', $this->company_id)
+               ->delete('paket_la_detail_fasilitas_transaction');
+      # delete fasilitas
+      $this->db->where('id ', $info)
+            ->where('company_id', $this->company_id)
+            ->delete('paket_la_fasilitas_transaction');   
       # delete paket la
       $this->db->where('id	', $id)
          ->where('company_id', $this->company_id)
-         ->delete('paket_la_transaction');
+         ->delete('paket_la_transaction_temp');
       # Transaction Complete
       $this->db->trans_complete();
       # Filter Status
@@ -315,6 +356,46 @@ class Model_trans_paket_la_cud extends CI_Model
          $this->db->trans_commit();
          $this->status = TRUE;
          $this->content = 'Melakukan penghapusan data  paket la dengan id ' . $id . '.';
+      }
+      return $this->status;
+   }
+
+   function delete_detail_item_paket_la($id, $num, $info){
+      # Starting Transaction
+      $this->db->trans_start();
+      // delete detail fasilitas
+      $this->db->where('id ', $id)
+               ->where('company_id', $this->company_id)
+               ->delete('paket_la_detail_fasilitas_transaction');
+      # update data total price paket la transactions
+      $this->db->where('id', $info['paket_la_transaction_id'])
+               ->where('company_id', $this->company_id)
+               ->update('paket_la_transaction_temp', array('total_price' => $info['total_register']));
+      // filter
+      if( $num ==  0 ) {
+         // delete fasilitas to
+         $this->db->where('id ', $info['paket_la_fasilitas_transaction_id'])
+               ->where('company_id', $this->company_id)
+               ->delete('paket_la_fasilitas_transaction');
+      }else{
+         # update data total price paket la transactions
+         $this->db->where('id', $info['paket_la_fasilitas_transaction_id'])
+                  ->where('company_id', $this->company_id)
+                  ->update('paket_la_fasilitas_transaction', array('total_price' => $info['total_invoice']));
+      }
+      # Transaction Complete
+      $this->db->trans_complete();
+      # Filter Status
+      if ($this->db->trans_status() === FALSE) {
+         # Something Went Wsrong.
+         $this->db->trans_rollback();
+         $this->status = FALSE;
+         $this->error = 1;
+      } else {
+         # Transaction Commit
+         $this->db->trans_commit();
+         $this->status = TRUE;
+         $this->content = 'Melakukan penghapusan data detail item paket la dengan id item ' . $id . '.';
       }
       return $this->status;
    }

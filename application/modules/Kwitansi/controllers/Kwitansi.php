@@ -133,8 +133,11 @@ class Kwitansi extends CI_Controller
        $sesi = $this->session->userdata('cetak_invoice');
        $this->tempVar = $this->model_kwitansi->getKwitansiPertamaPaketLA( $sesi['id'] );
        $html  = $this->Header();
-       $html .= $this->TitleLeftT2("KWITANSI PEMBAYARAN PAKET LA ".$this->tempVar['register_number']."<br><span class='float-left ml-2'>Keberangkatan : ".$this->tempVar['departure_date']."</span><br><span class='float-left ml-2'> Kepulangan: ".$this->tempVar['arrival_date']."</span>", '' );
+       $html .= $this->TitleLeftT2("KWITANSI PEMBAYARAN PAKET LA ", $this->tempVar['register_number'],  $this->tempVar['input_date'] );
        $html .= $this->_contentTransaksiPembayaranPaketLAAwal();
+
+
+// .$this->tempVar['register_number']."<br><span class='float-left ml-2'>Keberangkatan : ".$this->tempVar['departure_date']."</span><br><span class='float-left ml-2'> Kepulangan: ".$this->tempVar['arrival_date']."</span>"s
 
        $this->Templating($html);
    }
@@ -647,8 +650,8 @@ class Kwitansi extends CI_Controller
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getInfoKwitansiPembayaranPaketLA($sesi['invoice']);
       $html  = $this->Header();
-      $html .= $this->TitleLeft('KWITANSI PEMBAYARAN PAKET LA', $sesi['invoice']);
-      $html .= $this->OrderTransaksiPembayaranPaketLA();
+      $html .= $this->TitleMiddle('KWITANSI PEMBAYARAN PAKET LA');
+      $html .= $this->OrderTransaksiPembayaranPaketLA($sesi['invoice']);
       $html .= $this->_contentTransaksiPembayaranPaketLA();
       $this->Templating($html);
    }
@@ -2238,14 +2241,20 @@ class Kwitansi extends CI_Controller
    {
       $html = '<div class="row mt-4">
                   <div class="col-12 px-0">
-                     <span class="justify-content-center container-fluid title-order" style="font-weight: normal;">
+                     <span class="justify-content-center container-fluid title-order" style="font-weight: normal;font-size:12px!important;">
                         DETAIL INFO TRANSAKSI PEMBAYARAN PAKET LA :
                      </span>
                   </div>
                   <div class="col-12">
                      <style>
-                        .table td {
-                           border: none !important;
+                        .table > tbody > tr > td {
+                           font-size: 12px !important;
+                        }
+                        .table > tfoot > tr > td {
+                           font-size: 12px !important;
+                        }
+                        .table > thead > tr > th {
+                           font-size: 12px !important;
                         }
                         .values::before {
                           content: ": ";
@@ -2261,55 +2270,57 @@ class Kwitansi extends CI_Controller
                            display:inline-block;
                         }
                      </style>
-                     <table class="table table-hover ">
+                     <table class="table table-hover " >
                         <thead>
                            <tr>
                               <th scope="col" style="width:5%;font-weight: normal;">NO</th>
-                              <th scope="col" style="width:50%;font-weight: normal;">KETERANGAN</th>
-                              <th scope="col" style="width:5%;font-weight: normal;">QT</th>
-                              <th scope="col" style="width:20%;font-weight: normal;">AMOUNT</th>
-                              <th scope="col" style="width:20%;font-weight: normal;">TOTAL AMOUNT</th>
+                              <th scope="col" style="width:60%;font-weight: normal;">KETERANGAN</th>
+                              <th scope="col" style="width:15%;font-weight: normal;">TOTAL AMOUNT</th>
                            </tr>
                         <thead>
                         <tbody>';
-      $no = 1;
-      $total = 0;
-      foreach ($this->tempVar['facilities'] as $key => $value) {
-         $html .= '<tr>
-                                 <td>' . $no . '</td>
-                                 <td>' . $value['name'] . '</td>
-                                 <td>' . $value['pax'] . '</td>
-                                 <td>Rp ' . number_format($value['harga']) . '</td>
-                                 <td class="text-right">
-                                    Rp. ' . number_format($value['pax'] * $value['harga']) . '
-                                 </td>
-                              </tr>';
-         $total = $total + ($value['pax'] * $value['harga']);
-         $no++;
-      }
-      $real_total = $total * $this->tempVar['jamaah'];
+            $no = 1;
+            $total = 0;
+            $types = array('hotel' => "HOTEL", 
+                         'handling' => 'HANDLING', 
+                         'tiket_pesawat' => 'TIKET PESAWAT', 
+                         'visa' => 'VISA', 
+                         'mobil' => 'MOBIL',
+                         'bus' => 'BUS');
+            foreach ($this->tempVar['facilities'] as $key => $value) {
+               $html .= '<tr>
+                           <td >' . $no . '</td>
+                           <td>' . $types[$value['type']] . '</td>
+                           <td class="text-right">
+                              Rp. ' . number_format($value['total']) . '
+                           </td>
+                        </tr>';
+               $total = $total + $value['total'];
+               $no++;
+            }
+            $real_total = $total * $this->tempVar['jamaah'];
 
-      $html .=   '</tbody>
+            $html .=   '</tbody>
                         <tfoot>
                            <tr>
-                              <td colspan="4" class="text-right">JUMLAH JAMAAH</td>
-                              <td>' . number_format($this->tempVar['jamaah']) . ' Orang</td>
+                              <td colspan="2" class="text-right border-0">JUMLAH JAMAAH</td>
+                              <td class="border-0" style="text-align:right;">' . number_format($this->tempVar['jamaah']) . ' Orang</td>
                            </tr>
                            <tr>
-                              <td colspan="4" class="text-right">DISKON</td>
-                              <td>Rp ' . number_format($this->tempVar['discount']) . '</td>
+                              <td colspan="2" class="text-right border-0">DISKON</td>
+                              <td class="border-0" style="text-align:right;">Rp ' . number_format($this->tempVar['discount']) . '</td>
                            </tr>
                               <tr>
-                              <td colspan="4" class="text-right">TOTAL</td>
-                              <td>Rp ' . number_format($real_total - $this->tempVar['discount']) . '</td>
+                              <td colspan="2" class="text-right border-0">TOTAL</td>
+                              <td class="border-0" style="text-align:right;">Rp ' . number_format($real_total - $this->tempVar['discount']) . '</td>
                            </tr>
                            <tr>
-                              <td colspan="4" class="text-right">SUDAH DIBAYAR</td>
-                              <td>Rp 0</td>
+                              <td colspan="2" class="text-right border-0">SUDAH DIBAYAR</td>
+                              <td class="border-0" style="text-align:right;">Rp 0</td>
                            </tr>
                            <tr>
-                              <td colspan="4" class="text-right">SISA</td>
-                              <td>Rp ' . number_format($real_total - $this->tempVar['discount']) . '</td>
+                              <td colspan="2" class="text-right border-0">SISA</td>
+                              <td class="border-0" style="text-align:right;">Rp ' . number_format($real_total - $this->tempVar['discount']) . '</td>
                            </tr>
                         </tfoot>
                      </table>
@@ -2321,7 +2332,7 @@ class Kwitansi extends CI_Controller
                </div>';
       return $html;
    }
-
+ 
 
    function _contentTransaksiPembayaranPaketLA()
    {
@@ -2333,8 +2344,14 @@ class Kwitansi extends CI_Controller
                   </div>
                   <div class="col-12">
                      <style>
-                        .table td {
-                           border: none !important;
+                        .table > tbody > tr > td {
+                           font-size: 12px !important;
+                        }
+                        .table > tfoot > tr > td {
+                           font-size: 12px !important;
+                        }
+                        .table > thead > tr > th {
+                           font-size: 12px !important;
                         }
                         .values::before {
                           content: ": ";
@@ -2355,25 +2372,29 @@ class Kwitansi extends CI_Controller
                            <tr>
                               <th scope="col" style="width:5%;font-weight: normal;">NO</th>
                               <th scope="col" style="width:50%;font-weight: normal;">KETERANGAN</th>
-                              <th scope="col" style="width:5%;font-weight: normal;">QT</th>
-                              <th scope="col" style="width:20%;font-weight: normal;">AMOUNT</th>
                               <th scope="col" style="width:20%;font-weight: normal;">TOTAL AMOUNT</th>
                            </tr>
                         <thead>
                         <tbody>';
       $no = 1;
       $total = 0;
+
+
+        $types = array('hotel' => "HOTEL", 
+                         'handling' => 'HANDLING', 
+                         'tiket_pesawat' => 'TIKET PESAWAT', 
+                         'visa' => 'VISA', 
+                         'mobil' => 'MOBIL',
+                         'bus' => 'BUS');
       foreach ($this->tempVar['facilities'] as $key => $value) {
          $html .= '<tr>
                                  <td>' . $no . '</td>
-                                 <td>' . $value['name'] . '</td>
-                                 <td>' . $value['pax'] . '</td>
-                                 <td>Rp ' . number_format($value['harga']) . '</td>
+                                 <td>' . $types[$value['type']] . '</td>
                                  <td class="text-right">
-                                    Rp. ' . number_format($value['pax'] * $value['harga']) . '
+                                    Rp. ' . number_format($value['total']) . '
                                  </td>
                               </tr>';
-         $total = $total + ($value['pax'] * $value['harga']);
+         $total = $total + $value['total'];
          $no++;
       }
       $real_total = $total * $this->tempVar['jamaah'];
@@ -2381,28 +2402,28 @@ class Kwitansi extends CI_Controller
       $html .=   '</tbody>
                         <tfoot>
                            <tr>
-                              <td colspan="4" class="text-right">JUMLAH JAMAAH</td>
+                              <td colspan="2" class="text-right">JUMLAH JAMAAH</td>
                               <td>' . number_format($this->tempVar['jamaah']) . ' Orang</td>
                            </tr>
                            <tr>
-                              <td colspan="4" class="text-right">DISKON</td>
+                              <td colspan="2" class="text-right">DISKON</td>
                               <td>Rp ' . number_format($this->tempVar['discount']) . '</td>
                            </tr>
                               <tr>
-                              <td colspan="4" class="text-right">TOTAL</td>
+                              <td colspan="2" class="text-right">TOTAL</td>
                               <td>Rp ' . number_format($real_total - $this->tempVar['discount']) . '</td>
                            </tr>
                            </tr>
                               <tr>
-                              <td colspan="4" class="text-right">PEMBAYARAN</td>
+                              <td colspan="2" class="text-right">PEMBAYARAN</td>
                               <td>Rp ' . number_format($this->tempVar['paid']) . '</td>
                            </tr>
                            <tr>
-                              <td colspan="4" class="text-right">SUDAH DIBAYAR</td>
+                              <td colspan="2" class="text-right">SUDAH DIBAYAR</td>
                               <td>Rp ' . number_format($this->tempVar['sudah_dibayar']) . '</td>
                            </tr>
                            <tr>
-                              <td colspan="4" class="text-right">SISA</td>
+                              <td colspan="2" class="text-right">SISA</td>
                               <td>Rp ' . number_format(($real_total - $this->tempVar['discount']) - $this->tempVar['sudah_dibayar']) . '</td>
                            </tr>
                         </tfoot>
@@ -3911,17 +3932,31 @@ class Kwitansi extends CI_Controller
       return $html;
    }
 
-    function TitleLeftT2($title, $title2 = '')
+    function TitleLeftT2($title, $register_number, $order_date)
    {
       $html =    '<div class="row">
-                     <div class="col-6 text-left">
+                     <div class="col-12 text-center mb-3">
                         <span class="justify-content-center container-fluid" style="font-size: 17px;font-weight: bold;">
                            ' . $title . '
                         </span>
                      </div>
-                     <div class="col-6 text-right">
-                         ' . $title2 . '
+                     <div class="col-12">
+                        <table class="table text-left mb-0" style="font-size: 12px;">
+                           <tbody>
+                              <tr>
+                                 <td class="text-left border-0 px-0" style="width:15%;">NOMOR REGISTER</td>
+                                 <td class="border-0 text-left" style="width:1%;">:</td>
+                                 <td class="border-0 text-left px-0">'.$register_number.'</td>
+                              </tr>
+                              <tr>
+                                 <td class="text-left border-0 px-0">ORDER DATE</td>
+                                 <td class="border-0 text-left">:</td>
+                                 <td class="border-0 text-left px-0">'.$order_date.'</td>
+                              </tr>
+                           </tbody>
+                        </table>
                      </div>
+                     
                   </div>';
       return $html;
    }
@@ -4890,62 +4925,50 @@ class Kwitansi extends CI_Controller
    }
 
 
-   function OrderTransaksiPembayaranPaketLA()
+   function OrderTransaksiPembayaranPaketLA($invoice)
    {
-      return  '<div class="row mt-3">
-                  <div class="col-4">
-                     <div class="row">
-                        <div class="col-12">
-                           <span class="justify-content-center container-fluid title-order">
-                              DITERIMA OLEH :
-                           </span>
-                        </div>
-                        <div class="col-12">
-                           <p class="justify-content-center container-fluid info-order">
-                              ' . $this->tempVar['receiver'] . '
-                           </p>
-                        </div>
-                     </div>
+      return  '<div class="row mt-5">
+                  <div class="col-8">
+                     <table class="table text-left mb-0" style="font-size: 12px;">
+                        <tbody>
+                           <tr>
+                              <td class="text-left border-0 px-0 py-1" style="width:30%;">DITERIMA OLEH</td>
+                              <td class="border-0 text-left py-1" style="width:1%;">:</td>
+                              <td class="border-0 text-left px-0 py-1">'.$this->tempVar['receiver'].'</td>
+                           </tr>
+                           <tr>
+                              <td class="text-left border-0 px-0 py-1">DITERIMA DARI</td>
+                              <td class="border-0 text-left py-1">:</td>
+                              <td class="border-0 text-left px-0 py-1">' . $this->tempVar['payer'] . '</td>
+                           </tr>
+                           <tr>
+                              <td class="text-left border-0 px-0 py-1">TANGGAL KEBERANGKATAN</td>
+                              <td class="border-0 text-left py-1">:</td>
+                              <td class="border-0 text-left px-0 py-1">' . $this->tempVar['departure_date']  . '</td>
+                           </tr>
+                           <tr>
+                              <td class="text-left border-0 px-0 py-1">TANGGAL KEPULANGAN</td>
+                              <td class="border-0 text-left py-1">:</td>
+                              <td class="border-0 text-left px-0 py-1">' . $this->tempVar['arrival_date'] . '</td>
+                           </tr>
+                        </tbody>
+                     </table>
                   </div>
                   <div class="col-4">
-                     <div class="row">
-                        <div class="col-12">
-                           <span class="justify-content-center container-fluid title-order">
-                              DITERIMA DARI :
-                           </span>
-                        </div>
-                        <div class="col-12">
-                           <p class="my-0 justify-content-center container-fluid info-order">
-                              ' . $this->tempVar['payer'] . '<br>
-                              (' . $this->tempVar['payer_identity'] . ') <br>
-                              ' . $this->tempVar['payer_address'] . '
-                           </p>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="col-4">
-                     <div class="row">
-                        <div class="col-12">
-                           <span class="justify-content-center container-fluid title-order">
-                              TANGGAL KEBERANGKATAN :
-                           </span>
-                        </div>
-                        <div class="col-12 ">
-                           <span class="justify-content-center container-fluid title-order float-right text-right" style="font-weight:normal;">
-                              ' . $this->tempVar['departure_date'] . '
-                           </span>
-                        </div>
-                        <div class="col-12">
-                           <span class="justify-content-center container-fluid title-order">
-                              TANGGAL KEPULANGAN :
-                           </span>
-                        </div>
-                        <div class="col-12 ">
-                           <span class="justify-content-center container-fluid title-order float-right text-right" style="font-weight:normal;">
-                              ' . $this->tempVar['arrival_date'] . '
-                           </span>
-                        </div>
-                     </div>
+                     <table class="table text-left mb-0" style="font-size: 12px;">
+                        <tbody>
+                           <tr>
+                              <td class="text-left border-0 px-0 py-1" style="width:25%;">INVOICE</td>
+                              <td class="border-0 text-left py-1" style="width:1%;">:</td>
+                              <td class="border-0 text-left px-0 py-1">'.$invoice.'</td>
+                           </tr>
+                           <tr>
+                              <td class="text-left border-0 px-0 py-1">ORDER DATE</td>
+                              <td class="border-0 text-left py-1">:</td>
+                              <td class="border-0 text-left px-0 py-1">' . $this->tempVar['input_date'] . '</td>
+                           </tr>
+                        </tbody>
+                     </table>
                   </div>
                </div>';
    }

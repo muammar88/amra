@@ -182,17 +182,7 @@ class Trans_paket_la extends CI_Controller
 			$error_msg = 'Nomor register gagal di generated.';
 		}
 		# get paket type la
-		$paket_type = $this->model_trans_paket_la->paket_type_la();
-		if (count($paket_type) == 0) {
-			$error = 1;
-			$error_msg = 'Tipe paket la tidak ditemukan.';
-		}
-		# list fasilitas paket la
-		$fasilitas_paket_la = $this->model_trans_paket_la->fasilitas_paket_la();
-		if (count($fasilitas_paket_la) == 0) {
-			$error = 1;
-			$error_msg = 'Fasilitas paket la tidak ditemukan.';
-		}
+		$kostumer = $this->model_trans_paket_la->kostumer_type_la();
 		# filter
 		if ($error == 1) {
 			$return = array(
@@ -205,8 +195,7 @@ class Trans_paket_la extends CI_Controller
 				'error'	=> false,
 				'error_msg' => 'Data info tambah paket la berhasil ditemukan.',
 				'nomor_register' => $nomor_register,
-				'paket_type' => $paket_type,
-				'fasilitas' => $fasilitas_paket_la,
+				'kostumer' => $kostumer,
 				$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
 			);
 		}
@@ -273,6 +262,15 @@ class Trans_paket_la extends CI_Controller
 		}
 	}
 
+	function _ck_costumer_id($id){
+		if( $this->model_trans_paket_la->check_kostumer_id($id) ) {
+			return TRUE;
+		}else{
+			$this->form_validation->set_message('_ck_costumer_id', 'Kostumer id tidak ditemukan.');
+			return FALSE;
+		}
+	}
+
 	# proses addupdate trans paket la
 	function proses_addupdate_trans_paket_la()
 	{
@@ -283,67 +281,26 @@ class Trans_paket_la extends CI_Controller
 		if ( ! $this->input->post('paket_la_id') ) {
 			$this->form_validation->set_rules('no_register', '<b>Nomor Register Paket LA<b>', 'trim|required|xss_clean|min_length[1]|callback__ck_no_register_exist');
 		}
-		$this->form_validation->set_rules('nama_klien', '<b>Nama Klien<b>', 'trim|required|xss_clean|min_length[1]');
-		$this->form_validation->set_rules('nomor_hp', '<b>Nomor HP Klien<b>', 'trim|required|xss_clean|min_length[1]');
-		$this->form_validation->set_rules('jenis_paket', '<b>Jenis Paket<b>', 'trim|required|xss_clean|numeric|min_length[1]|callback__ck_jenis_paket');
+		$this->form_validation->set_rules('kostumer_paket_la', '<b>Kostumer ID<b>', 'trim|required|xss_clean|min_length[1]|callback__ck_costumer_id');
 		$this->form_validation->set_rules('diskon', '<b>Diskon<b>', 'trim|xss_clean|min_length[1]');
 		$this->form_validation->set_rules('jamaah', '<b>Jumlah Jamaah<b>', 'trim|required|xss_clean|numeric|min_length[1]');
 		$this->form_validation->set_rules('tanggal_keberangkatan', '<b>Tanggal Keberangakatan<b>', 'trim|required|xss_clean|min_length[1]');
 		$this->form_validation->set_rules('tanggal_kepulangan', '<b>Tanggal Kepulangan<b>', 'trim|required|xss_clean|min_length[1]');
-		$this->form_validation->set_rules('alamat_klien', '<b>Alamat Klien<b>', 'trim|required|xss_clean|min_length[1]');
-		$this->form_validation->set_rules('description', '<b>Deskripsi<b>', 'trim|required|xss_clean|min_length[1]');
-		# jenis_fasilitas
-		foreach ( $this->input->post('jenis_fasilitas') as $key => $value ) {
-			$this->form_validation->set_rules("jenis_fasilitas[" . $key . "]", "Jenis Fasilitas", 'trim|required|numeric|xss_clean|min_length[1]|callback__ck_jenis_fasilitas_id');
-		}
-		# pax
-		foreach ( $this->input->post('pax') as $key => $value ) {
-			$this->form_validation->set_rules("pax[" . $key . "]", "Pax Fasilitas", 'trim|required|numeric|xss_clean|min_length[1]');
-		}
-		# harga
-		foreach ( $this->input->post('harga') as $key => $value ) {
-			$this->form_validation->set_rules("harga[" . $key . "]", "Harga Fasilitas", 'trim|required|xss_clean|min_length[1]|callback__ck_harga_not_null');
-		}
 		/*
 			Validation process
 		*/
 		if ($this->form_validation->run()) {
-			# get fasilitas
-			$fasilitas = $this->model_trans_paket_la->get_name_fasilitas();
-			# get post
-			$jenis_fasilitas = $this->input->post('jenis_fasilitas');
+			// jumlah jamaah
 			$jumlah_jamaah = $this->input->post('jamaah');
-			$pax = $this->input->post('pax');
-			$harga = $this->input->post('harga');
 			$diskon = $this->text_ops->hide_currency($this->input->post('diskon'));
-			# calculate
-			$daftar_fasilitas = array();
-			if ($this->input->post('jenis_paket') != 0) {
-				$daftar_fasilitas['tipe_paket_la_id'] = $this->input->post('jenis_paket');
-			}
-			$list_fasilitas = array();
-			$total = 0;
-			foreach ($jenis_fasilitas as $key => $value) {
-				$list_fasilitas[] = array(
-					'id' 	  => $value,
-					'name'  => $fasilitas[$value],
-					'pax'   => $pax[$key],
-					'harga' => trim($this->text_ops->hide_currency($harga[$key]))
-				);
-				$total = $total + ($pax[$key] * $this->text_ops->hide_currency($harga[$key]));
-			}
-			$daftar_fasilitas['list_fasilitas'] = $list_fasilitas;
-			$total_price = ($total * $jumlah_jamaah) - $diskon;
+			$tanggal_keberangkatan = $this->input->post('tanggal_keberangkatan');
+			$tanggal_kepulangan = $this->input->post('tanggal_kepulangan');
+			$kostumer_id = $this->input->post('kostumer_paket_la');
 			# get data
 			$data = array();
 			$data['company_id'] = $this->company_id;
-			$data['client_name'] = $this->input->post('nama_klien');
-			$data['client_hp_number'] = $this->input->post('nomor_hp');
-			$data['client_address'] = $this->input->post('alamat_klien');
-			$data['description'] = $this->input->post('description');
-			$data['facilities'] = serialize($daftar_fasilitas);
+			$data['costumer_id'] = $kostumer_id;
 			$data['discount'] = $this->text_ops->hide_currency($this->input->post('diskon'));
-			$data['total_price'] = $total_price;
 			$data['departure_date'] = $this->input->post('tanggal_keberangkatan');
 			$data['arrival_date'] = $this->input->post('tanggal_kepulangan');
 			$data['jamaah'] = $this->input->post('jamaah');
@@ -353,11 +310,6 @@ class Trans_paket_la extends CI_Controller
 				if ( ! $this->model_trans_paket_la_cud->update_paket_la( $this->input->post('paket_la_id'), $data ) ) {
 					$error = 1;
 					$error_msg = 'Proses update paket la gagal dilakukan';
-				}else{
-					$this->session->set_userdata(array('cetak_invoice' => array(
-						'type' => 'cetak_kwitansi_pertama_paket_la',
-						'id' => $this->input->post('paket_la_id')
-					)));
 				}
 			} else {
 				$data['input_date'] = date('Y-m-d');
@@ -365,12 +317,6 @@ class Trans_paket_la extends CI_Controller
 				if (!$this->model_trans_paket_la_cud->insert_paket_la($data)) {
 					$error = 1;
 					$error_msg = 'Proses insert paket la gagal dilakukan';
-				}else{
-					$paket_la_id = $this->model_trans_paket_la->get_paket_la_id_by_register_number($this->input->post('no_register'));
-					$this->session->set_userdata(array('cetak_invoice' => array(
-						'type' => 'cetak_kwitansi_pertama_paket_la',
-						'id' => $paket_la_id
-					)));
 				}
 			}
 			# filter feedBack
@@ -419,8 +365,7 @@ class Trans_paket_la extends CI_Controller
 					'error'	=> false,
 					'error_msg' => 'Data transaksi paket la berhasil ditemukan.',
 					'value' => $data['value'],
-					'tipe_paket_la' => $data['list_tipe_paket_la'],
-					'fasilitas' => $data['list_fasilitas'],
+					'kostumer' => $data['kostumer'],
 					$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
 				);
 			} else {
@@ -871,8 +816,12 @@ class Trans_paket_la extends CI_Controller
 			Validation process
 		*/
 		if ($this->form_validation->run()) {
+			// get id
+			$id = $this->input->post('id');
+			// get info
+			$info = $this->model_trans_paket_la->get_info_paket_la($id);
 			# filter feedBack
-			if ($this->model_trans_paket_la_cud->delete_paket_la($this->input->post('id'))) {
+			if ($this->model_trans_paket_la_cud->delete_paket_la($this->input->post('id'), $info)) {
 				$return = array(
 					'error'	=> false,
 					'error_msg' => 'Data paket la berhasil dihapus.',
@@ -1023,6 +972,199 @@ class Trans_paket_la extends CI_Controller
 				$return = array(
 					'error'	=> true,
 					'error_msg' => 'Info cetak kwitansi paket la gagal dibentuk.',
+					$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+				);
+			}
+		} else {
+			if (validation_errors()) {
+				// define return error
+				$return = array(
+					'error'         => true,
+					'error_msg'    => validation_errors(),
+					$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+				);
+			}
+		}
+		echo json_encode($return);
+	}
+
+	function _ck_id_detail_item_paket_la( $id ){
+		if( $this->model_trans_paket_la->check_id_detail_item_paket_la($id) > 0 ) {
+			return TRUE;
+		}else{
+			$this->form_validation->set_message('_ck_id_detail_item_paket_la', 'ID Detail Item tidak terdaftar dipangkalan data.');
+			return FALSE;
+		}
+	}
+
+	function delete_detail_item_paket_la(){
+		$return = array();
+		$error = 0;
+		$error_msg = '';
+		$this->form_validation->set_rules('id', '<b>Id Detail Item Paket LA<b>', 'trim|required|xss_clean|numeric|min_length[1]|callback__ck_id_detail_item_paket_la');
+		/*
+			Validation process
+		*/
+		if ($this->form_validation->run()) {
+			// id
+			$id = $this->input->post('id');
+			// info
+			$info = $this->model_trans_paket_la->get_info_id_transaksi_paket_la_by_detail_item_id( $id );
+			// num 
+			$num_not_id = $this->model_trans_paket_la->check_id_detail_item_paket_la_not_id($info['paket_la_fasilitas_transaction_id'], $id);
+
+			// delete
+			$delete = $this->model_trans_paket_la_cud->delete_detail_item_paket_la($id, $num_not_id, $info);
+			// jika delete process berhasil
+			if( $delete ) {
+				$return = array(
+					'error'	=> false,
+					'error_msg' => 'Proses Delete Item Detail Paket LA Berhasil Dilakukan',
+					$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+				);
+			}else{
+				$return = array(
+					'error'	=> false,
+					'error_msg' => 'Proses Delete Item Detail Paket LA Gagal Dilakukan',
+					$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+				);
+			}
+		} else {
+			if (validation_errors()) {
+				// define return error
+				$return = array(
+					'error'         => true,
+					'error_msg'    => validation_errors(),
+					$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+				);
+			}
+		}
+		echo json_encode($return);
+	}
+
+	function _ck_id_paket_la_transaction($id){
+		if( $this->model_trans_paket_la->check_id_paket_la($id) ) {
+			return TRUE;
+		}else{
+			$this->form_validation->set_message('_ck_id_paket_la_transaction', 'ID Paket LA Transaksi tidak terdaftar dipangkalan data.');
+			return FALSE;
+		}
+	}
+
+
+	function _ck_day(){
+
+	}
+
+	function add_update_new_item(){
+		$return = array();
+		$error = 0;
+		$error_msg = '';
+		$this->form_validation->set_rules('id', '<b>Id Paket La Transaction<b>', 'trim|required|xss_clean|numeric|min_length[1]|callback__ck_id_paket_la_transaction');
+		$this->form_validation->set_rules('type', '<b>Tipe Item Detail Paket La<b>', 'trim|required|xss_clean|min_length[1]|in_list[tiket_pesawat,hotel,bus,mobil,handling,tiket,mutowif_tour_guide,visa]');
+		if ($this->input->post('deskripsi')) {
+			foreach ($this->input->post('deskripsi') as $key => $value) {
+				$this->form_validation->set_rules("deskripsi[" . $key . "]", "Deskripsi Item", 'trim|required|xss_clean|min_length[1]');
+			}
+		}
+		if ($this->input->post('pax')) {
+			foreach ($this->input->post('pax') as $key => $value) {
+				$this->form_validation->set_rules("pax[" . $key . "]", "Pax Item", 'trim|required|xss_clean|min_length[1]');
+			}
+		}
+		if ($this->input->post('price')) {
+			foreach ($this->input->post('price') as $key => $value) {
+				$this->form_validation->set_rules("price[" . $key . "]", "Harga", 'trim|required|xss_clean|min_length[1]|callback__ck_harga_not_null');
+			}
+		}
+		if( $this->input->post('type') == 'hotel' || $this->input->post('type') == 'handling' ) {
+			if ($this->input->post('')) {
+				foreach ($this->input->post('check_in') as $key => $value) {
+					$this->form_validation->set_rules("check_in[" . $key . "]", "Date Check In", 'trim|required|xss_clean|min_length[1]');
+				}
+			}
+			if ($this->input->post('check_out')) {
+				foreach ($this->input->post('check_out') as $key => $value) {
+					$this->form_validation->set_rules("check_out[" . $key . "]", "Date Check Out", 'trim|required|xss_clean|min_length[1]');
+				}
+			}
+		}
+		/*
+			Validation process
+		*/
+		if ($this->form_validation->run()) {
+			// post		
+			$id = $this->input->post('id');
+			$type = $this->input->post('type');
+			// generate invoice 
+			$invoice = $this->random_code_ops->generate_invoice_item_paket_la();
+			// get total
+			$total = $this->model_trans_paket_la->get_total_price($id);
+			# array post
+			$deskripsi = $this->input->post('deskripsi');
+			$pax = $this->input->post('pax');
+			$price = $this->input->post('price');
+			$check_in = array();
+			$check_out = array();
+			$day = array();
+			if( $type == 'hotel' || $type == 'handling') {
+				$check_in = $this->input->post('check_in');
+				$check_out = $this->input->post('check_out');
+				$day = $this->input->post('day');
+			}
+			// receive data item
+			$data_item = array();
+			$total_price = 0;
+			foreach ($deskripsi as $key => $value) {
+				$temp_data = array();
+				$temp_data['company_id'] = $this->company_id;
+				$temp_data['description'] = $value;
+				if( $type == 'hotel' || $type == 'handling') {
+
+					$temp_data['check_in'] = $check_in[$key];
+					
+					$temp_data['check_out'] = $check_out[$key];
+				
+					$count_day = $this->date_ops->count_between_two_date($check_in[$key], $check_out[$key]);
+
+					$temp_data['day'] = $count_day;
+
+                	$tot = $count_day * $pax[$key] * $this->text_ops->hide_currency($price[$key]);
+                	
+					// total price
+					$total_price = $total_price + $tot;
+
+				}else{
+					// total price
+					$total_price = $total_price + ( $pax[$key] * $this->text_ops->hide_currency($price[$key]) );
+				}
+				$temp_data['pax'] = $pax[$key];
+				$temp_data['price'] = $this->text_ops->hide_currency($price[$key]);
+				$temp_data['input_date'] = date('Y-m-d');;
+				
+				// receive data
+				$data_item[] = $temp_data;
+			}
+			// receive data fasilitas
+			$data_fasilitas = array();
+			$data_fasilitas['company_id'] = $this->company_id;
+			$data_fasilitas['paket_la_transaction_id'] = $id;
+			$data_fasilitas['invoice'] = $invoice;
+			$data_fasilitas['type'] = $type;
+			$data_fasilitas['total_price'] = $total_price;
+			// total paket transaction la
+			$total_paket_transaction_la = $total + $total_price;
+			// input process
+			if( ! $this->model_trans_paket_la_cud->add_new_item($id, $data_fasilitas, $data_item, $total_paket_transaction_la) ) {
+				$return = array(
+					'error'	=> true,
+					'error_msg' => 'Proses penambahan item Paket LA Gagal Dilakukan.',
+					$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+				);
+			}else{
+				$return = array(
+					'error'	=> false,
+					'error_msg' => 'Proses penambahan item Paket LA Berhasil Dilakukan.',
 					$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
 				);
 			}

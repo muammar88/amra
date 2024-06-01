@@ -95,6 +95,13 @@ class Date_ops
 		return $list;
 	}
 
+	public function count_between_two_date($start_date, $end_date) {
+		$date1 	= date_create($start_date);
+		$date2 	= date_create($end_date);
+		$diff 	= date_diff( $date1, $date2);
+		return $diff->format("%a");
+	}
+
 
 	/**
 	 * Convert date from format (Y-m-d H:i:s) to (d monthName Year)

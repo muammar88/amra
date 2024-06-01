@@ -160,18 +160,13 @@ class Model_deposit_paket_cud extends CI_Model
    function delete_deposit_paket($pool_id, $nomor_transaction){
       # Starting Transaction
       $this->db->trans_start();
-
       $fee_keagenan_id = 0;
-
-      // 
+      # delete in jurnal
       foreach ($nomor_transaction as $key => $value) {
-         # delete in jurnal
          $this->db->where('source', 'deposittabungan:notransaction:'.$value)
-            ->where('company_id', $this->company_id)
-            ->delete('jurnal');  
+                  ->where('company_id', $this->company_id)
+                  ->delete('jurnal');
       }
-
-
       // delete pool deposit transaction
       $this->db->select('pdt.deposit_transaction_id, p.fee_keagenan_id, sumber_dana, no_tansaksi_sumber_dana')
          ->from('pool_deposit_transaction AS pdt')

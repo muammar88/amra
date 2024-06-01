@@ -68,86 +68,58 @@ class Model_kwitansi extends CI_Model
       }
 
       return array('list' => $list, 'total' => $total );
+   }
 
+   // get list detail
+   function getListDetailFasilitas($id) {
+      $this->db->select('check_in, check_out, day, pax, price')
+               ->from('paket_la_detail_fasilitas_transaction')
+               ->where('company_id', $this->company_id)
+               ->where('paket_la_fasilitas_transaction_id', $id);
+      $q = $this->db->get();
+      $total = 0;
+      if( $q->num_rows() > 0 ) {
+         foreach ($q->result() as $rows) {
+            $total = $total + ( $rows->day * $rows->pax * $rows->price );
+         }
+      }
+      return $total;
+   }
 
-
-
-
-      // $this->db->select('dt.id, p.fullname, p.identity_number, dt.nomor_transaction, 
-      //                   dt.debet, dt.kredit, dt.transaction_requirement, dt.info, 
-      //                   dt.paket_transaction_id, pkt.paket_name, dt.approver, pt.no_register, dt.input_date')
-      //          ->from('deposit_transaction AS dt')
-      //          ->join('personal AS p', 'dt.personal_id=p.personal_id', 'inner')
-      //          ->join('paket_transaction AS pt', 'dt.paket_transaction_id=pt.id', 'left')
-      //          ->join('paket AS pkt', 'pt.paket_id=pkt.id', 'left')
-      //          ->where('dt.company_id', $this->company_id);
-      // if ( array_key_exists( "tipe_transaksi" , $sesi ) ){
-      //    if( $sesi['tipe_transaksi'] == 'tabungan_umrah' ) {
-      //       $this->db->where( 'dt.transaction_requirement', 'paket_deposit' );
-      //    }elseif ( $sesi['tipe_transaksi'] == 'deposit_saldo' ) {
-      //       $this->db->where('dt.transaction_requirement', 'deposit');
-      //    }
-      // }
-      // if ( array_key_exists( "start_date",$sesi ) AND $sesi['start_date'] != ''  ) {
-      //    $this->db->where( 'dt.input_date >=' , $sesi['start_date'] );
-      //    if (array_key_exists( "end_date" , $sesi ) AND $sesi['end_date'] != '' ) {
-      //       $this->db->where( 'dt.input_date <=', $sesi['end_date']. ' 23:59:59'  );
-      //    }else{
-      //       $this->db->where( 'dt.input_date <= NOW()' );
-      //    }
-      // }
-      // if (array_key_exists("member",$sesi)){
-      //    if( $sesi['member'] > 0 ){
-      //       $this->db->where('dt.personal_id', $sesi['member']);
-      //    }
-      // }
-      // if ($this->session->userdata($this->config->item('apps_name'))['level_akun'] != 'administrator') {
-      //    $this->db->where('dt.approver', $this->session->userdata($this->config->item('apps_name'))['fullname']);
-      // }
-      // $this->db->order_by('dt.input_date', 'desc');
-      // $q    = $this->db->get();
-      // $list = array();
-      // $kredit = 0;
-      // $debet = 0;
-      // if ($q->num_rows() > 0) {
-      //    foreach ($q->result() as $rows) {
-      //       $list[] = array('id' => $rows->id,
-      //                       'nomor_transaction' => $rows->nomor_transaction,
-      //                       'fullname' => $rows->fullname,
-      //                       'identity_number' => $rows->identity_number, 
-      //                       'kredit' => $rows->kredit,
-      //                       'debet' => $rows->debet,
-      //                       'tipe_transaksi' => $rows->transaction_requirement, 
-      //                       'paket_name' => $rows->paket_name,
-      //                       'no_register' => $rows->no_register,
-      //                       'penerima' => $rows->approver,
-      //                       'info' => $rows->info,
-      //                       'input_date' => $rows->input_date
-      //                    );
-      //       $kredit = $kredit + $rows->kredit;
-      //       $debet = $debet + $rows->debet;
-      //    }
-      // }
-      // return array('list' => $list, 'total' => ($debet - $kredit) );
-
+   function getListFasilitas( $id ){
+      $this->db->select('pf.id, pf.type, pf.total_price')
+               ->from('paket_la_fasilitas_transaction AS pf')
+               ->where('pf.paket_la_transaction_id', $id)
+               ->where('pf.company_id', $this->company_id);
+      $q = $this->db->get();
+      $list = array();
+      if( $q->num_rows() > 0 ) {
+         foreach ($q->result() as $rows) {
+            $total = $this->getListDetailFasilitas($id);
+            $list[] = array('type' => $rows->type, 
+                            'total' => $total);
+         }
+      }         
+      return $list;
    }
 
    // get kwitansi pertama paket la
    function getKwitansiPertamaPaketLA( $id ) {
-      $this->db->select('plt.register_number, plt.facilities, plt.discount, plt.total_price,
-                         plt.departure_date, plt.arrival_date, plt.jamaah')
-         ->from('paket_la_transaction AS plt')
+      $this->db->select('plt.id, plt.register_number, plt.discount, plt.total_price,
+                         plt.departure_date, plt.arrival_date, plt.jamaah, plt.input_date')
+         ->from('paket_la_transaction_temp AS plt')
          ->where('plt.id', $id)
          ->where('plt.company_id', $this->company_id);
       $q = $this->db->get();
       if( $q->num_rows() > 0 ) {
          foreach ( $q->result() as $rows ) {
             $list['register_number'] = $rows->register_number;
-            $list['facilities'] = unserialize($rows->facilities)['list_fasilitas'];
+            $list['facilities'] = $this->getListFasilitas($rows->id);
             $list['discount'] = $rows->discount;
             $list['total_price'] = $rows->total_price;
             $list['departure_date'] = $this->date_ops->change_date_t3($rows->departure_date);
             $list['arrival_date'] = $this->date_ops->change_date_t3($rows->arrival_date);
+            $list['input_date'] = $this->date_ops->change_date($rows->input_date);
             $list['jamaah'] = $rows->jamaah;
          }
       }
@@ -1658,19 +1630,32 @@ class Model_kwitansi extends CI_Model
       return $list;
    }
 
-   // (SELECT SUM(paid) FROM paket_la_transaction_history
-   //   WHERE company_id="' . $this->company_id . '" AND status="payment") AS sudahBayar,
-   // (SELECT SUM(paid) FROM paket_la_transaction_history
-   //   WHERE company_id="' . $this->company_id . '" AND status="refund") AS refund'
 
+   //   function getListFasilitas( $id ){
+   //    $this->db->select('pf.id, pf.type, pf.total_price')
+   //             ->from('paket_la_fasilitas_transaction AS pf')
+   //             ->where('pf.paket_la_transaction_id', $id)
+   //             ->where('pf.company_id', $this->company_id);
+   //    $q = $this->db->get();
+   //    $list = array();
+   //    if( $q->num_rows() > 0 ) {
+   //       foreach ($q->result() as $rows) {
+   //          $total = $this->getListDetailFasilitas($id);
+   //          $list[] = array('type' => $rows->type, 
+   //                          'total' => $total);
+   //       }
+   //    }         
+   //    return $list;
+   // }
 
    function getInfoKwitansiPembayaranPaketLA($invoice)
    {
-      $this->db->select('plt.register_number, plt.facilities, plt.discount, plt.total_price,
+      // plt.facilities,
+      $this->db->select('plt.register_number,  plt.discount, plt.total_price,
                          plt.departure_date, plt.arrival_date, plt.jamaah,
-                         plth.paid, plth.receiver, plth.deposit_name, plth.deposit_hp_number, plth.deposit_address, plth.paket_la_transaction_id')
+                         plth.paid, plth.receiver, plth.deposit_name, plth.deposit_hp_number, plth.deposit_address, plth.paket_la_transaction_id, plth.input_date')
          ->from('paket_la_transaction_history AS plth')
-         ->join('paket_la_transaction AS plt', 'plth.paket_la_transaction_id=plt.id', 'inner')
+         ->join('paket_la_transaction_temp AS plt', 'plth.paket_la_transaction_id=plt.id', 'inner')
          ->where('plth.invoice', $invoice)
          ->where('plth.company_id', $this->company_id);
       $q = $this->db->get();
@@ -1678,12 +1663,13 @@ class Model_kwitansi extends CI_Model
       if ($q->num_rows() > 0) {
          foreach ($q->result() as $rows) {
 
-            $sudah_bayar = $this->model_kwitansi->get_sudah_bayar_paket_la( $rows->paket_la_transaction_id, $invoice );
+            $sudah_bayar = $this->get_sudah_bayar_paket_la( $rows->paket_la_transaction_id, $invoice );
 
-            // print($sudah_bayar);
+
+            $facilities = $this->getListFasilitas($rows->paket_la_transaction_id);
 
             $list['register_number'] = $rows->register_number;
-            $list['facilities'] = unserialize($rows->facilities)['list_fasilitas'];
+            $list['facilities'] = $facilities;
             $list['discount'] = $rows->discount;
             $list['total_price'] = $rows->total_price;
             $list['departure_date'] = $this->date_ops->change_date_t3($rows->departure_date);
@@ -1695,6 +1681,7 @@ class Model_kwitansi extends CI_Model
             $list['payer_identity'] = $rows->deposit_hp_number;
             $list['payer_address'] = $rows->deposit_address;
             $list['sudah_dibayar'] = $sudah_bayar;
+            $list['input_date'] = $this->date_ops->change_date_t3($rows->input_date);
             // $list['sudah_dibayar'] = $rows->sudahBayar - $rows->refund;
          }
       }
@@ -1707,13 +1694,11 @@ class Model_kwitansi extends CI_Model
                ->from('paket_la_transaction_history')
                ->where('company_id', $this->company_id)
                ->where('paket_la_transaction_id', $paket_la_transaction_id)
-               ->order_by('input_date', 'asc');
+               ->order_by('id', 'asc');
       $q = $this->db->get();
       $total = 0;
       if( $q->num_rows() > 0 ) {
          foreach ( $q->result() as $rows ) {
-            // print( $rows->invoice ."<br>");
-            // print( $rows->paid ."<br>");
             // code...
             if( $rows->status == 'payment' ) {
                $total = $total + $rows->paid;
