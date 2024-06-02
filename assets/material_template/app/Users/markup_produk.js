@@ -72,8 +72,8 @@ function ListDaftarMarkupPPOB(JSONData){
                   <td>${json.product_name}</td>
                   <td>${json.product_code}</td>
                   <td>${json.tipe}</td>
-                  <td>Rp ${numberFormat(json.harga_aplikasi)}</td>
-                  <td>Rp ${numberFormat(json.markup_perusahaan)}</td>
+                  <td>${kurs} ${numberFormat(json.harga_aplikasi)}</td>
+                  <td>${kurs} ${numberFormat(json.markup_perusahaan)}</td>
                   <td>
                      <button type="button" class="btn btn-default btn-action" title="Edit Markup PPOB"
                         onclick="edit_markup_ppob('${json.product_code}', '${json.tipe}')" style="margin:.15rem .1rem  !important">
@@ -135,7 +135,7 @@ function formaddupdate_markup_ppob(product_code, tipe, value){
                                  <input type="hidden" name="product_code" value="${product_code}">
                                  <input type="hidden" name="tipe" value="${tipe}">
                                  <label>Markup Perusahaan</label>
-                                 <input type="text" name="markup_perusahaan" value="Rp ${numberFormat(value)}" class="form-control form-control-sm currency" placeholder="Markup Perusahaan" />
+                                 <input type="text" name="markup_perusahaan" value="${kurs} ${numberFormat(value)}" class="form-control form-control-sm currency" placeholder="Markup Perusahaan" />
                               </div>
                            </div>
                         </div>
@@ -227,7 +227,7 @@ function formaddupdate_markup_perusahaan(markup){
                            <div class="col-12">
                               <div class="form-group">
                                  <label>Markup Default Perusahaan</label>
-                                 <input type="text" name="markup_perusahaan" value="Rp ${numberFormat(markup)}" class="form-control form-control-sm currency" placeholder="Markup Perusahaan" />
+                                 <input type="text" name="markup_perusahaan" value="${kurs} ${numberFormat(markup)}" class="form-control form-control-sm currency" placeholder="Markup Perusahaan" />
                               </div>
                            </div>
                         </div>

@@ -1161,7 +1161,7 @@ class Trans_tiket extends CI_Controller
 					}
 				} else {
 					$error = 1;
-					$error_msg = 'Total refund ditambah total fee adalah Rp ' . ($total_refund + $total_fee) . ' tidak boleh lebih dari total pembayaran yaitu : ' . $total_pembayaran;
+					$error_msg = 'Total refund ditambah total fee adalah '. $this->session->userdata($this->config->item('apps_name'))['kurs'] . ' ' . ($total_refund + $total_fee) . ' tidak boleh lebih dari total pembayaran yaitu : ' . $total_pembayaran;
 				}
 			} else {
 				$error = 1;

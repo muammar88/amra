@@ -17,26 +17,26 @@ function modal_Pages(){
                            <tr>
                               <th style="width:25%;">Modal Awal</th>
                               <th style="width:50%;" colspan="2"></th>
-                              <th style="width:25%;" id="modal_awal">Rp 0</th>
+                              <th style="width:25%;" id="modal_awal">${kurs} 0</th>
                            </tr>
                         </thead>
                         <tbody id="bodyTable_jurnal">
                            <tr>
                               <td style="width:25%;" ></td>
                               <td style="width:25%;" >Pembahan Modal</td>
-                              <td style="width:25%;" id="penambahan_modal">Rp 0</td>
+                              <td style="width:25%;" id="penambahan_modal">${kurs} 0</td>
                               <td style="width:25%;" ></td>
                            </tr>
                            <tr>
                               <td></td>
                               <td>Ikhtisar Laba Rugi</td>
-                              <td id="ikhtisar_laba_rugi">Rp 0</td>
+                              <td id="ikhtisar_laba_rugi">${kurs} 0</td>
                               <td></td>
                            </tr>
                            <tr>
                               <td></td>
                               <td>Pengurangan Modal</td>
-                              <td id="pengurangan_modal">Rp 0</td>
+                              <td id="pengurangan_modal">${kurs} 0</td>
                               <td></td>
                            </tr>
                         </tbody>
@@ -44,7 +44,7 @@ function modal_Pages(){
                            <tr>
                               <td><b>Modal Akhir</b></td>
                               <td colspan="2"></td>
-                              <td id="modal_akhir"><b>Rp 0</b></td>
+                              <td id="modal_akhir"><b>${kurs} 0</b></td>
                            </tr>
                         </tfoot>
                      </table>
@@ -81,17 +81,17 @@ function get_modal(){
             var pengurangan_modal = e['list']['pengurangan_modal'];
             var modal_akhir = e['list']['modal_akhir'];
 
-            $('#modal_awal').html('Rp ' + numberFormat(modal_awal.toString()));
-            $('#penambahan_modal').html('Rp ' + numberFormat(penambahan_modal.toString()));
-            $('#ikhtisar_laba_rugi').html('Rp ' + numberFormat(ikhtisar_laba_rugi.toString()));
-            $('#pengurangan_modal').html('Rp ' + numberFormat(pengurangan_modal.toString()));
-            $('#modal_akhir').html('Rp ' + numberFormat(modal_akhir.toString()));
+            $('#modal_awal').html(`${kurs}` + numberFormat(modal_awal.toString()));
+            $('#penambahan_modal').html(`${kurs}` + numberFormat(penambahan_modal.toString()));
+            $('#ikhtisar_laba_rugi').html(`${kurs}` + numberFormat(ikhtisar_laba_rugi.toString()));
+            $('#pengurangan_modal').html(`${kurs}` + numberFormat(pengurangan_modal.toString()));
+            $('#modal_akhir').html(`${kurs}` + numberFormat(modal_akhir.toString()));
          }else{
-            $('#modal_awal').html('Rp 0');
-            $('#penambahan_modal').html('Rp 0');
-            $('#ikhtisar_laba_rugi').html('Rp 0');
-            $('#pengurangan_modal').html('Rp 0');
-            $('#modal_akhir').html('Rp 0');
+            $('#modal_awal').html(`${kurs}0`);
+            $('#penambahan_modal').html(`${kurs}0`);
+            $('#ikhtisar_laba_rugi').html(`${kurs}0`);
+            $('#pengurangan_modal').html(`${kurs}0`);
+            $('#modal_akhir').html(`${kurs}0`);
          }
       },[{periode: $('#periode').val()}]
    );

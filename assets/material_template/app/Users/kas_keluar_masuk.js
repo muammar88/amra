@@ -375,7 +375,7 @@ function formaddupdate_kas_keluar_masuk(JSONData, JSONValue){
                            html += `</select>
                                  </div>
                                  <div class="col-3">
-                                    <input type="text" name="saldo[]" value="Rp ${numberFormat(values.akun_terlibat[y]['saldo'])}" class="form-control form-control-sm currency saldo" placeholder="Saldo">
+                                    <input type="text" name="saldo[]" value="${kurs} ${numberFormat(values.akun_terlibat[y]['saldo'])}" class="form-control form-control-sm currency saldo" placeholder="Saldo">
                                  </div>
                                  <div class="col-1 text-right pl-0">
                                     <button class="btn btn-default btn-action" title="Delete" onclick="delete_this_kas(this)">

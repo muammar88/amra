@@ -66,10 +66,10 @@ function ListDaftarTransPPOB( JSONData ){
    var html =  `<tr>
                   <td>#<b>${json.transaction_code}</b><br>(${status})</td>
                   <td>${json.product_code}</td>
-                  <td>Rp. ${numberFormat(json.application_price)}</td>
+                  <td>${ kurs + ' ' + numberFormat(json.application_price)}</td>
                   <td>${json.fullname}<br>${json.identity_number}</td>
-                  <td>Rp. ${numberFormat(json.company_markup)}</td>
-                  <td>Rp. ${numberFormat(json.company_price)}</td>
+                  <td>${kurs + ' ' + numberFormat(json.company_markup)}</td>
+                  <td>${kurs + ' ' + numberFormat(json.company_price)}</td>
                   <td>${json.created_at}</td>
                </tr>`;
    return html;

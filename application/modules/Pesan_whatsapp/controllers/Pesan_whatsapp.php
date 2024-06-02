@@ -461,7 +461,7 @@ class Pesan_whatsapp extends CI_Controller
 
                               $pesan_send = preg_replace( $pattern_1, $rows->fullname , $pesan );
                               $pesan_send = preg_replace( $pattern_2, $rows->identity_number, $pesan_send );
-                              $pesan_send = preg_replace( $pattern_3, 'Rp '.number_format($total_tabungan), $pesan_send );
+                              $pesan_send = preg_replace( $pattern_3, $this->session->userdata($this->config->item('apps_name'))['kurs'].number_format($total_tabungan), $pesan_send );
 
                               $list_nomor_tujuan_pesan[] = array('nomor_tujuan' => $rows->nomor_whatsapp, 'pesan' => $pesan_send); 
 
@@ -492,10 +492,10 @@ class Pesan_whatsapp extends CI_Controller
 
                               $pesan_send = preg_replace( $pattern_1, $rows->fullname , $pesan );
                               $pesan_send = preg_replace( $pattern_2, $rows->identity_number, $pesan_send );
-                              $pesan_send = preg_replace( $pattern_3, 'Rp '.number_format($rows->biaya), $pesan_send );
+                              $pesan_send = preg_replace( $pattern_3, $this->session->userdata($this->config->item('apps_name'))['kurs'].number_format($rows->biaya), $pesan_send );
                               $pesan_send = preg_replace( $pattern_4, $rows->tenor, $pesan_send );
-                              $pesan_send = preg_replace( $pattern_5, 'Rp '.number_format($sudah_bayar) , $pesan_send );
-                              $pesan_send = preg_replace( $pattern_6, 'Rp '.number_format($rows->biaya - $sudah_bayar), $pesan_send );
+                              $pesan_send = preg_replace( $pattern_5, $this->session->userdata($this->config->item('apps_name'))['kurs'].number_format($sudah_bayar) , $pesan_send );
+                              $pesan_send = preg_replace( $pattern_6, $this->session->userdata($this->config->item('apps_name'))['kurs'].number_format($rows->biaya - $sudah_bayar), $pesan_send );
 
                               $list_nomor_tujuan_pesan[] = array('nomor_tujuan' => $rows->nomor_whatsapp, 'pesan' => $pesan_send); 
                            }

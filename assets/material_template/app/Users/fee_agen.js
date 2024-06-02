@@ -90,12 +90,12 @@ function ListFeeAgen(JSONData){
                            <tr>
                               <td class="text-left" >FEE BELUM DIBAYAR</td>
                               <td class="px-0">:</td>
-                              <td class="text-left" >Rp ${numberFormat(json.unpaid_fee)}</td>
+                              <td class="text-left" >${kurs + ' ' + numberFormat(json.unpaid_fee)}</td>
                            </tr>
                            <tr>
                               <td class="text-left" >FEE YANG SUDAH DIBAYAR</td>
                               <td class="px-0">:</td>
-                              <td class="text-left" >Rp ${numberFormat(json.paid_fee)}</td>
+                              <td class="text-left" >${kurs + ' ' + numberFormat(json.paid_fee)}</td>
                            </tr>
                            <tr>
                               <td class="text-left" >JUMLAH TRANSAKSI</td>
@@ -315,7 +315,7 @@ function ListRiwayatKomisiAgen(JSONData){
                            <tr>
                               <td class="text-left" >NAMA JAMAAH</td>
                               <td class="px-0">:</td>
-                              <td class="text-left" >Rp ${numberFormat(json.fee)}</td>
+                              <td class="text-left" >${ kurs + ' ' + numberFormat(json.fee)}</td>
                            </tr>
                         </tbody>
                      </table>`;
@@ -332,7 +332,7 @@ function ListRiwayatKomisiAgen(JSONData){
                               <tr>
                                  <td class="text-left" >KOMISI</td>
                                  <td class="px-1">:</td>
-                                 <td class="text-left" style="color:#dc3545!important;background-color: #c9ccd7;"><b>Rp ${numberFormat(json.fee)}</b></td>
+                                 <td class="text-left" style="color:#dc3545!important;background-color: #c9ccd7;"><b>${ kurs + ' ' + numberFormat(json.fee)}</b></td>
                               </tr>
                               <tr>
                                  <td class="text-left" >INFO</td>
@@ -386,7 +386,7 @@ function HitungTotalBayar(){
          total_bayar = total_bayar + hide_currency($(this).val());
       });
    }
-   $('#total_bayar').html('Rp ' + numberFormat(total_bayar));
+   $('#total_bayar').html(kurs + ' ' + numberFormat(total_bayar));
 }
 
 function formPembayaranFeeKomisiAgen(agen_id, JSONData){
@@ -424,8 +424,8 @@ function formPembayaranFeeKomisiAgen(agen_id, JSONData){
                                  <td class="align-middle">${json.info_pembayaran[x].transaction_number}</td>
                                  <td class="align-middle">${json.info_pembayaran[x].paket_name}</td>
                                  <td class="align-middle">${json.info_pembayaran[x].jamaah}</td>
-                                 <td class="align-middle">Rp ${numberFormat(json.info_pembayaran[x].fee)}</td>
-                                 <td class="align-middle">Rp ${numberFormat(json.info_pembayaran[x].sudah_bayar)}</td>
+                                 <td class="align-middle">${kurs + ' ' + numberFormat(json.info_pembayaran[x].fee)}</td>
+                                 <td class="align-middle">${ kurs + ' ' +numberFormat(json.info_pembayaran[x].sudah_bayar)}</td>
                                  <td class="align-middle">
                                     <input type="text" onkeyup="HitungTotalBayar()" name="bayar[${json.info_pembayaran[x].id}]" class="bayar form-control currency form-control-sm" placeholder="Bayar">
                                  </td>
@@ -436,9 +436,9 @@ function formPembayaranFeeKomisiAgen(agen_id, JSONData){
                   }
                   html +=    `<tr>
                                  <td class="text-right align-middle py-3" colspan="4"><b>TOTAL</b></td>
-                                 <td class="align-middle">Rp ${numberFormat(total_fee)}</td>
-                                 <td class="align-middle">Rp ${numberFormat(total_sudah_bayar)}</td>
-                                 <td class="align-middle" id="total_bayar">Rp 0</td>
+                                 <td class="align-middle">${ kurs + ' ' + numberFormat(total_fee)}</td>
+                                 <td class="align-middle">${kurs + ' ' + numberFormat(total_sudah_bayar)}</td>
+                                 <td class="align-middle" id="total_bayar">${kurs} 0</td>
                               </tr>
                            </tbody>
                         </table>
@@ -587,8 +587,8 @@ function ListRiwayatPembayaranFeeAgen(JSONData){
          for( x in json.detail ) {
             detail +=   `<tr>
                            <td>${json.detail[x].transaction_number}</td>
-                           <td>Rp ${numberFormat(json.detail[x].fee)}</td>
-                           <td>Rp ${numberFormat(json.detail[x].biaya)}</td>
+                           <td>${kurs + ' ' + numberFormat(json.detail[x].fee)}</td>
+                           <td>${kurs + ' ' +numberFormat(json.detail[x].biaya)}</td>
                            <td>${json.detail[x].applicant_name}<br>( ${json.detail[x].applicant_identity} )</td>
                            <td>${json.detail[x].receiver}</td>
                          </tr>`;
@@ -599,7 +599,7 @@ function ListRiwayatPembayaranFeeAgen(JSONData){
 
    return  `<tr>
                <td>${json.no}</td>
-               <td>${json.invoice}<br> Total : <b>Rp ${numberFormat(total)}</b></td>
+               <td>${json.invoice}<br> Total : <b>${kurs + ' ' +numberFormat(total)}</b></td>
                <td>
                   <label class="float-left">Detail Transaksi</label>
                   ${detail}

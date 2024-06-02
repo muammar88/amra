@@ -79,17 +79,17 @@ function ListDaftarRekapitulasi(JSONData){
                            <tr>
                               <td class="text-right p-0" style="border:none;">-</td>
                               <td class="text-left py-0" style="border:none;">HARGA KOSTUMER</td>
-                              <td class="text-left py-0" style="border:none;">Rp ${numberFormat(detail_transaksi_tiket[y]['harga_kostumer'])} (Pax : ${detail_transaksi_tiket[y]['pax']}X)</td>
+                              <td class="text-left py-0" style="border:none;">${kurs} ${numberFormat(detail_transaksi_tiket[y]['harga_kostumer'])} (Pax : ${detail_transaksi_tiket[y]['pax']}X)</td>
                            </tr>
                            <tr>
                               <td class="text-right p-0 pb-1" style="border:none;">-</td>
                               <td class="text-left py-0 pb-1" >TOTAL HARGA</td>
-                              <td class="text-left py-0 pb-1" >Rp ${numberFormat(detail_transaksi_tiket[y]['harga_kostumer'] * detail_transaksi_tiket[y]['pax'])}</td>
+                              <td class="text-left py-0 pb-1" >${kurs} ${numberFormat(detail_transaksi_tiket[y]['harga_kostumer'] * detail_transaksi_tiket[y]['pax'])}</td>
                            </tr>`;
             }
             detail +=  `<tr style="border: 1px solid #adadad;">
                            <td class="text-left py-1" colspan="2" style="font-weight:bold;border: none;background-color: #f7f7f7;">TOTAL</td>
-                           <td class="text-left py-1" colspan="1" style="font-weight:bold;border:none;background-color: #e6e6e6;">Rp ${numberFormat(json.detail[x]['total_transaksi'])}</td>
+                           <td class="text-left py-1" colspan="1" style="font-weight:bold;border:none;background-color: #e6e6e6;">${kurs} ${numberFormat(json.detail[x]['total_transaksi'])}</td>
                         </tr>`;
          }
             detail +=  `
@@ -99,7 +99,7 @@ function ListDaftarRekapitulasi(JSONData){
    var html = `<tr>
                   <td>${json.recapitulation_number}</td>
                   <td>${detail}</td>
-                  <td>Rp ${numberFormat(json.total)}</td>
+                  <td>${kurs} ${numberFormat(json.total)}</td>
                   <td>${json.tanggal_transaksi}</td>
                   <td>
                      <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Rekapitulasi"
@@ -228,12 +228,12 @@ function ListDaftarTiket(JSONData) {
                      <tr>
                         <td class="text-right p-0" style="border:none;">-</td>
                         <td class="text-left py-0" style="border:none;">HARGA KOSTUMER</td>
-                        <td class="text-left py-0" style="border:none;">Rp ${numberFormat(json.detail[x]['costumer_price'])}</td>
+                        <td class="text-left py-0" style="border:none;">${kurs} ${numberFormat(json.detail[x]['costumer_price'])}</td>
                      </tr>`;
       }
          detail +=  `<tr style="border: 1px solid #adadad;">
                         <td class="text-left py-1" colspan="2" style="font-weight:bold;border: none;background-color: #f7f7f7;">TOTAL</td>
-                        <td class="text-left py-1" colspan="1" style="font-weight:bold;border:none;background-color: #e6e6e6;">Rp ${numberFormat(json.total_transaksi)}</td>
+                        <td class="text-left py-1" colspan="1" style="font-weight:bold;border:none;background-color: #e6e6e6;">${kurs} ${numberFormat(json.total_transaksi)}</td>
                      </tr>
                      <tbody>
                   </table>`;
@@ -264,7 +264,7 @@ function formaddupdate_rekapitulasi(invoice, JSONValue){
       for( x in value.detail ) {
          detail_rekap +=  `<tr>
                               <td>${value.detail[x]['nomor_register']}</td>
-                              <td>Rp ${numberFormat(value.detail[x]['total'])}</td>
+                              <td>${kurs} ${numberFormat(value.detail[x]['total'])}</td>
                               <td>
                                  <button class="btn btn-default btn-action" title="Delete" onclick="delete_this(this)">
                                     <i class="fas fa-times" style="font-size: 11px;"></i>
@@ -381,7 +381,7 @@ function add_list_rekap(id){
                            <input type="hidden" name="tiket_transaction_id[]" value="${id}">
                            ${list_tiket_hidden[x]['no_register']}
                         </td>
-                        <td>Rp ${numberFormat(list_tiket_hidden[x]['total_transaksi'])}</td>
+                        <td>${kurs} ${numberFormat(list_tiket_hidden[x]['total_transaksi'])}</td>
                         <td>
                            <button type="button" class="btn btn-default btn-action" title="Hapus dari daftar rekap" onclick="hapus_dari_rekap_this(this,${id})" style="margin:.15rem .1rem  !important">
                                <i class="fas fa-times" style="font-size: 11px;"></i>

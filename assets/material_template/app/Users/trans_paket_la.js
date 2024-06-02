@@ -82,7 +82,7 @@ function ListDaftarTransPaketLA(JSONData){
                            <tr>
                              <td class="text-left border border-right-0 " style="width:10%;background-color: #e7e7e7;">TOTAL</td>
                               <td class="border border-left-0 border-right-0 border-top-1 px-2" style="width:1%;">:</td>
-                              <td class="border text-left border-left-0 border-top-1 px-0" colspan="4" style="width:39%;">Rp ${numberFormat(json.fasilitas[x].total_price)}</td>
+                              <td class="border text-left border-left-0 border-top-1 px-0" colspan="4" style="width:39%;">${kurs} ${numberFormat(json.fasilitas[x].total_price)}</td>
                            <tr>
                         </tbody>
                      </table>`;
@@ -118,7 +118,7 @@ function ListDaftarTransPaketLA(JSONData){
                                     <td class="align-middle">${json.fasilitas[x].detail[c].check_out}</td>
                                     <td class="align-middle">${json.fasilitas[x].detail[c].day}</td>
                                     <td class="align-middle">${json.fasilitas[x].detail[c].pax}</td>
-                                    <td class="align-middle">Rp ${numberFormat(json.fasilitas[x].detail[c].price)}</td>
+                                    <td class="align-middle">${kurs} ${numberFormat(json.fasilitas[x].detail[c].price)}</td>
                                     <td class="align-middle">
                                        <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Detail Item Paket LA"
                                           onclick="cetak_kwitansi_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
@@ -142,7 +142,7 @@ function ListDaftarTransPaketLA(JSONData){
                   fasilitas += `<tr>
                                     <td class="align-middle">${json.fasilitas[x].detail[c].description}</td>
                                     <td class="align-middle">${json.fasilitas[x].detail[c].pax}</td>
-                                    <td class="align-middle">Rp ${numberFormat(json.fasilitas[x].detail[c].price)}</td>
+                                    <td class="align-middle">${kurs} ${numberFormat(json.fasilitas[x].detail[c].price)}</td>
                                     <td class="align-middle">
                                        <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Detail Item Paket LA"
                                           onclick="cetak_kwitansi_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
@@ -181,10 +181,10 @@ function ListDaftarTransPaketLA(JSONData){
                   </td>
                   <td>
                      <ul class="pl-2 list">
-                        <li>Total Harga : Rp ${numberFormat(json.total_price)}</li>
-                        <li>Diskon : Rp ${numberFormat(json.discount)}</li>
-                        <li>Sudah Dibayar : Rp ${numberFormat(json.sudah_dibayar)}</li>
-                        <li>Sisa : Rp ${numberFormat(json.sisa)}</li>
+                        <li>Total Harga : ${kurs} ${numberFormat(json.total_price)}</li>
+                        <li>Diskon : ${kurs} ${numberFormat(json.discount)}</li>
+                        <li>Sudah Dibayar : ${kurs} ${numberFormat(json.sudah_dibayar)}</li>
+                        <li>Sisa : ${kurs} ${numberFormat(json.sisa)}</li>
                      </ul>
                   </td>
                   <td>`;
@@ -659,7 +659,7 @@ function form_refund_trans_paket_la(id, invoice, wasPaid){
                            <div class="col-6">
                               <div class="form-group">
                                  <label>Sudah Dibayar</label>
-                                 <input type="text" id="sudah_dibayar" value="Rp ${numberFormat(wasPaid)}" class="form-control form-control-sm" placeholder="Sudah Dibayar" disabled/>
+                                 <input type="text" id="sudah_dibayar" value="${kurs} ${numberFormat(wasPaid)}" class="form-control form-control-sm" placeholder="Sudah Dibayar" disabled/>
                               </div>
                            </div>
                            <div class="col-6">
@@ -900,7 +900,7 @@ function getListFasilitasTipePaketLA(){
       var jsonpakettype = JSON.parse($('#jsonpakettype').val());
       var fasilitas = jsonpakettype[jenis_paket]['list_fasilitas'];
       for( x in fasilitas ) {
-         html += row_fasilitas($('#jsonfasilitas').val(), fasilitas[x][0], fasilitas[x][1], 'Rp ' + numberFormat(fasilitas[x][3]));
+         html += row_fasilitas($('#jsonfasilitas').val(), fasilitas[x][0], fasilitas[x][1], kurs + ' ' + numberFormat(fasilitas[x][3]));
       }
    } else {
       html += '<label style="font-size: 11px;font-weight: normal;">Daftar fasilitas tidak ditemukan</label>';
@@ -926,8 +926,8 @@ function sumTotalFasilitas(){
    for( x in pax ){
       total = total + (pax[x] * harga[x]);
    }
-   $('#total').val( 'Rp ' + numberFormat((total * jumlah_jamaah) - diskon) );
-   $('#total_harga_fasilitas').html(`<div class="row"><div class="col-7 text-left">Total Harga Fasilitas</div><div class="col-5 pl-3 text-left">Rp ${numberFormat(total)}</div></div>`);
+   $('#total').val( kurs + ' ' + numberFormat((total * jumlah_jamaah) - diskon) );
+   $('#total_harga_fasilitas').html(`<div class="row"><div class="col-7 text-left">Total Harga Fasilitas</div><div class="col-5 pl-3 text-left">${kurs} ${numberFormat(total)}</div></div>`);
 }
 
 function pembayaran_paket_la(id){
@@ -1006,7 +1006,7 @@ function formpembayaran_trans_paket_la(id, JSONData){
                   for( x in json.riwayat ) {
                      html += `<tr>
                                  <td>${json.riwayat[x]['invoice']}</td>
-                                 <td>Rp ${numberFormat(json.riwayat[x]['paid'])}</td>
+                                 <td>${kurs} ${numberFormat(json.riwayat[x]['paid'])}</td>
                                  <td>${json.riwayat[x]['status']}</td>
                                  <td>${json.riwayat[x]['tanggal_transaksi']}</td>
                                  <td>${json.riwayat[x]['receiver']}</td>
@@ -1031,7 +1031,7 @@ function formpembayaran_trans_paket_la(id, JSONData){
                            <div class="col-3">
                               <div class="form-group">
                                  <label>Total Harga</label>
-                                 <input type="text" id="total_harga" value="Rp ${numberFormat(json.total_harga)}" class="form-control form-control-sm" placeholder="Total Harga" disabled/>
+                                 <input type="text" id="total_harga" value="${kurs} ${numberFormat(json.total_harga)}" class="form-control form-control-sm" placeholder="Total Harga" disabled/>
                               </div>
                            </div>
                            <div class="col-3">
@@ -1043,13 +1043,13 @@ function formpembayaran_trans_paket_la(id, JSONData){
                            <div class="col-3">
                               <div class="form-group">
                                  <label>Sudah Dibayar</label>
-                                 <input type="text" id="sudah_dibayar" value="Rp ${numberFormat(json.total_bayar)}" class="form-control form-control-sm" placeholder="Sudah Dibayar" disabled/>
+                                 <input type="text" id="sudah_dibayar" value="${kurs} ${numberFormat(json.total_bayar)}" class="form-control form-control-sm" placeholder="Sudah Dibayar" disabled/>
                               </div>
                            </div>
                            <div class="col-3">
                               <div class="form-group">
                                  <label>Sisa</label>
-                                 <input type="text" id="sisa" value="Rp ${numberFormat(json.sisa)}" class="form-control form-control-sm" placeholder="Sisa" disabled/>
+                                 <input type="text" id="sisa" value="${kurs} ${numberFormat(json.sisa)}" class="form-control form-control-sm" placeholder="Sisa" disabled/>
                               </div>
                            </div>
                            <div class="col-4">
@@ -1154,11 +1154,11 @@ function countPembayaran(){
    var pembayaran = hide_currency($('#bayar').val());
    if( total_harga >= (pembayaran + sudah_dibayar) ) {
       var sisa = total_harga - (sudah_dibayar + pembayaran);
-      $('#sisa').val('Rp ' + numberFormat(sisa));
+      $('#sisa').val(kurs + ' ' + numberFormat(sisa));
    }else{
       var minPembayaran = pembayaran.toString().length - 1;
       var realPembayaran = pembayaran.toString().substring(0, parseInt(minPembayaran));
-      $('#bayar').val('Rp ' + numberFormat(realPembayaran) );
+      $('#bayar').val(kurs + ' ' + numberFormat(realPembayaran) );
       frown_alert('Pembayaran tidak boleh lebih dari total harga');
    }
 }
@@ -1182,22 +1182,22 @@ function form_k_t_paket_la(JSONData){
    var json = JSON.parse(JSONData);
    var html = `<div class="content" id="contents">
                      <div class="col-12 col-lg-12 my-3 px-0">
-                        <table class="table table-hover tablebuka" style="border: 1px solid #dee1e6 !important;">
+                        <table class="table table-hover tablebuka text-left" style="border: 1px solid #dee1e6 !important;">
                            <tbody>
                               <tr>
-                                 <td style="width:45%;" class="text-left">KEGIATAN ANGGARAN CLIENT ${json.client_name.toUpperCase()}</td>
-                                 <td style="width:1%;">:</td>
-                                 <td style="width:54%;" class="text-left total_anggaran" id="total_anggaran">Rp ${numberFormat(json.total_price)}</td>
+                                 <td class="text-left">KEGIATAN ANGGARAN CLIENT ${json.client_name.toUpperCase()}</td>
+                                 <td >:</td>
+                                 <td class="text-right total_anggaran" id="total_anggaran">${kurs} ${numberFormat(json.total_price)}</td>
                               </tr>
                               <tr>
                                  <td class="text-left">AKTUALISASI BELANJA CLIENT ${json.client_name.toUpperCase()}</td>
                                  <td>:</td>
-                                 <td class="text-left undefined" id="aktualisasi_anggaran">Rp ${numberFormat(json.total_aktualisasi)}</td>
+                                 <td class="text-right " id="aktualisasi_anggaran">${kurs} ${numberFormat(json.total_aktualisasi)}</td>
                               </tr>
                               <tr>
                                  <td class="text-left">KEUNTUNGAN PROGRAM CLIENT ${json.client_name.toUpperCase()}</td>
                                  <td>:</td>
-                                 <td class="text-left undefined" id="keuntungan">Rp ${numberFormat(json.keuntungan)}</td>
+                                 <td class="text-right" id="keuntungan">${kurs} ${numberFormat(json.keuntungan)}</td>
                               </tr>
                            </tbody>
                          </table>
@@ -1220,7 +1220,7 @@ function form_k_t_paket_la(JSONData){
                                  <td class="text-left">Potensi Pendapatan Paket LA Client ${json.client_name}</td>
                                  <td></td>
                                  <td></td>
-                                 <td class="text-right">Rp ${numberFormat(json.total_price)}</td>
+                                 <td class="text-right">${kurs} ${numberFormat(json.total_price)}</td>
                                  <td></td>
                               </tr>
                            </tbody>
@@ -1234,7 +1234,7 @@ function form_k_t_paket_la(JSONData){
                                  <td style="width:38%;" class="text-left">Rincian Pendapatan Paket LA Client ${json.client_name}</td>
                                  <td style="width:5%;"></td>
                                  <td style="width:19%;"></td>
-                                 <td style="width:19%;" class="text-right">Rp ${numberFormat(json.total_price)}</td>
+                                 <td style="width:19%;" class="text-right">${kurs} ${numberFormat(json.total_price)}</td>
                                  <td style="width:14%;"></td>
                               </tr>
                               <tr>
@@ -1242,7 +1242,7 @@ function form_k_t_paket_la(JSONData){
                                  <td class="text-left">Sudah Dibayar</td>
                                  <td ></td>
                                  <td ></td>
-                                 <td class="text-right">Rp ${numberFormat(json.sudah_bayar)}</td>
+                                 <td class="text-right">${kurs} ${numberFormat(json.sudah_bayar)}</td>
                                  <td ></td>
                               </tr>
                               <tr>
@@ -1250,7 +1250,7 @@ function form_k_t_paket_la(JSONData){
                                  <td class="text-left">Diskon</td>
                                  <td ></td>
                                  <td ></td>
-                                 <td class="text-right">Rp ${numberFormat(json.discount)}</td>
+                                 <td class="text-right">${kurs}${numberFormat(json.discount)}</td>
                                  <td ></td>
                               </tr>
                               <tr>
@@ -1258,13 +1258,13 @@ function form_k_t_paket_la(JSONData){
                                  <td class="text-left">Piutang</td>
                                  <td ></td>
                                  <td ></td>
-                                 <td class="text-right">Rp ${numberFormat( ( json.total_price -json.discount ) - json.sudah_bayar )}</td>
+                                 <td class="text-right">${kurs} ${numberFormat( ( json.total_price -json.discount ) - json.sudah_bayar )}</td>
                                  <td ></td>
                               </tr>
                               <tr style="background-color: #f1f5fd;font-weight:bold;">
                                  <td style="vertical-align: middle;">B</td>
                                  <td colspan="3" style="vertical-align: middle;" class="text-left">Aktualisasi Kegiatan Anggaran Paket LA Client ${json.client_name}</td>
-                                 <td style="vertical-align: middle;" class="text-right">Rp ${numberFormat(json.total_aktualisasi)}</td>
+                                 <td style="vertical-align: middle;" class="text-right">${kurs} ${numberFormat(json.total_aktualisasi)}</td>
                                  <td style="vertical-align: middle;">
                                     <button class="btn btn-default btn-action" title="Tambah uraian aktualisasi anggaran" onclick="add_aktualisasi('${json.id}')">
                                         <i class="fas fa-plus" style="font-size: 11px;"></i>
@@ -1278,7 +1278,7 @@ function form_k_t_paket_la(JSONData){
                                  <td class="text-left" id="u${i}">${json.aktualisasi[x]['name']}</td>
                                  <td ></td>
                                  <td ></td>
-                                 <td class="text-right" id="h${i}">Rp ${numberFormat( json.aktualisasi[x]['harga'] )}</td>
+                                 <td class="text-right" id="h${i}">${kurs} ${numberFormat( json.aktualisasi[x]['harga'] )}</td>
                                  <td class="px-0" id="btn${i}">
                                     <button class="btn btn-default btn-action mx-1" title="Edit Kas Transaksi" onclick="edit_kas_transaksi_paket_la( ${i}, '${json.aktualisasi[x]['id']}', '${json.aktualisasi[x]['ket']}', '${json.aktualisasi[x]['action']}', '${json.id}')">
                                         <i class="fas fa-pencil-alt" style="font-size: 11px;"></i>

@@ -91,7 +91,7 @@ function ListDaftarVisa(JSONData){
                               </tr>
                               <tr>
                                  <td class="text-left py-0" style="border:none;">Harga per Paket</td>
-                                 <td class="text-left py-0 px-0" style="border:none;">: Rp ${numberFormat(json.detail[x]['price'])}</td>
+                                 <td class="text-left py-0 px-0" style="border:none;">: ${kurs} ${numberFormat(json.detail[x]['price'])}</td>
                               </tr>
                            </tbody>
 
@@ -104,7 +104,7 @@ function ListDaftarVisa(JSONData){
                   <td>${json.invoice}</td>
                   <td>${json.payer} / <br> ${json.payer_identity}</td>
                   <td>${detail}</td>
-                  <td>Rp ${numberFormat(json.total)}</td>
+                  <td>${kurs} ${numberFormat(json.total)}</td>
                   <td>${json.tanggal_transaksi}</td>
                   <td>
                      <button type="button" class="btn btn-default btn-action" title="Cetak Transaksi Visa"

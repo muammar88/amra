@@ -1255,7 +1255,7 @@ class PPOB extends CI_Controller
 			$feedBack['transaction_code'] = $value['transaction_code'];
 			$feedBack['product_code'] =  $value['product_code'];
 			$feedBack['nomor_tujuan'] =  $value['nomor_tujuan'];
-			$feedBack['price'] = 'Rp '.number_format($value['company_price']);
+			$feedBack['price'] = $this->session->userdata($this->config->item('apps_name'))['kurs'].number_format($value['company_price']);
 			# server
 			if( $value['server'] == 'iak' ) {
 				# check status IAK

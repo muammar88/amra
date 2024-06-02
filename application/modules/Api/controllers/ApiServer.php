@@ -11,6 +11,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class ApiServer extends CI_Controller
 {
+
+	 private $kurs;
+
+
 	/**
 	 * Construct
 	 */
@@ -20,6 +24,8 @@ class ApiServer extends CI_Controller
 		# Load user model
 		$this->load->model('Model_api', 'model_api');
 		$this->load->model('ModelRead/Model_general', 'model_general');
+		# kurs
+        $this->kurs = $this->session->userdata($this->config->item('apps_name'))['kurs'];
 		# set date timezone
 		ini_set('date.timezone', 'Asia/Jakarta');
 	}
@@ -118,7 +124,7 @@ class ApiServer extends CI_Controller
 							if ($c_nominal >= $total_fee) {
 								return TRUE;
 							} else {
-								$this->form_validation->set_message('_ck_nominal', 'Nominal Deposit Tabungan Umrah Pertama tidak boleh lebih kecil dari Rp ' . number_format($total_fee) . ',-.');
+								$this->form_validation->set_message('_ck_nominal', 'Nominal Deposit Tabungan Umrah Pertama tidak boleh lebih kecil dari  ' . ' ' . $this->kurs . number_format($total_fee) . ',-.');
 								return FALSE;
 							}
 						} else {
@@ -480,7 +486,7 @@ class ApiServer extends CI_Controller
 			# get info akun
 			$info_akun = $this->model_api->get_info_akun();
 			# saldo
-			$saldo = 'Rp ' . number_format($this->model_api->saldo_akun());
+			$saldo =  $this->kurs . ' ' . number_format($this->model_api->saldo_akun());
 
 			# filter feedBack
 			if ($error == 0) {

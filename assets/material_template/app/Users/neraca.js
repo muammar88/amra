@@ -114,28 +114,28 @@ function get_neraca(){
             var html_asset = '';
             var total_asset = 0;
             for( x in asset ){
-               html_asset += `<tr><td style="width:10%">${asset[x]['nomor_akun']}</td><td class="text-left" style="width:50%">${asset[x]['nama_akun_secondary']}</td><td class="text-left" style="width:40%">Rp ${numberFormat(asset[x]['saldo'].toString())}</td></tr>`;
+               html_asset += `<tr><td style="width:10%">${asset[x]['nomor_akun']}</td><td class="text-left" style="width:50%">${asset[x]['nama_akun_secondary']}</td><td class="text-left" style="width:40%">${kurs} ${numberFormat(asset[x]['saldo'].toString())}</td></tr>`;
                total_asset = total_asset + asset[x]['saldo'];
             }
             $('#bodyTable_asset').html(html_asset);
-            $('#subtotal_asset').html('<b>Rp '+ numberFormat(total_asset) + '</b>');
-            $('#total_aktiva').html('<b>Rp '+ numberFormat(total_asset) + '</b>');
+            $('#subtotal_asset').html('<b>' + kurs + ' ' + numberFormat(total_asset) + '</b>');
+            $('#total_aktiva').html('<b>'  + kurs + ' ' + numberFormat(total_asset) + '</b>');
 
             // kewajiban
             var html_kewajiban = '';
             var total_kewajiban = 0;
             for( x in kewajiban ){
-               html_kewajiban += `<tr><td style="width:10%">${kewajiban[x]['nomor_akun']}</td><td class="text-left" style="width:50%">${kewajiban[x]['nama_akun_secondary']}</td><td class="text-left" style="width:40%">Rp ${numberFormat(kewajiban[x]['saldo'].toString())}</td></tr>`;
+               html_kewajiban += `<tr><td style="width:10%">${kewajiban[x]['nomor_akun']}</td><td class="text-left" style="width:50%">${kewajiban[x]['nama_akun_secondary']}</td><td class="text-left" style="width:40%">${kurs} ${numberFormat(kewajiban[x]['saldo'].toString())}</td></tr>`;
                total_kewajiban = total_kewajiban + kewajiban[x]['saldo'];
             }
             $('#bodyTable_kewajiban').html(html_kewajiban);
-            $('#subtotal_kewajiban').html('<b>Rp '+ numberFormat(total_kewajiban) + '</b>');
+            $('#subtotal_kewajiban').html('<b>'+ kurs + ' ' numberFormat(total_kewajiban) + '</b>');
 
 
             var html_ekuitas = '';
             var total_ekuitas = 0;
             for( x in ekuitas ){
-               html_ekuitas += `<tr><td style="width:10%">${ekuitas[x]['nomor_akun']}</td><td class="text-left" style="width:50%">${ekuitas[x]['nama_akun_secondary']}</td><td class="text-left" style="width:40%">Rp ${numberFormat(ekuitas[x]['saldo'].toString())}</td></tr>`;
+               html_ekuitas += `<tr><td style="width:10%">${ekuitas[x]['nomor_akun']}</td><td class="text-left" style="width:50%">${ekuitas[x]['nama_akun_secondary']}</td><td class="text-left" style="width:40%">${kurs} ${numberFormat(ekuitas[x]['saldo'].toString())}</td></tr>`;
                total_ekuitas = total_ekuitas + ekuitas[x]['saldo'];
             }
 
@@ -143,17 +143,17 @@ function get_neraca(){
             console.log(total_asset)
 
             $('#bodyTable_ekuitas').html(html_ekuitas);
-            $('#subtotal_ekuitas').html('<b>Rp '+ numberFormat(total_ekuitas) + '</b>');
-            $('#total_passiva').html('<b>Rp '+ numberFormat(total_kewajiban + total_ekuitas) + '</b>');
+            $('#subtotal_ekuitas').html('<b>'+  + kurs + ' ' + numberFormat(total_ekuitas) + '</b>');
+            $('#total_passiva').html('<b>'  + kurs + ' '+ numberFormat(total_kewajiban + total_ekuitas) + '</b>');
          }else{
             $('#bodyTable_asset').html(`<tr><td colspan="3">Data asset tidak ditemukan</td></tr>`);
-            $('#subtotal_asset').html('<b>Rp 0</b>');
-            $('#total_aktiva').html('<b>Rp 0</b>');
+            $('#subtotal_asset').html(`<b>${kurs} 0</b>`);
+            $('#total_aktiva').html(`<b>${kurs} 0</b>`);
             $('#bodyTable_kewajiban').html(`<tr><td colspan="3">Data kewajiban tidak ditemukan</td></tr>`);
-            $('#subtotal_kewajiban').html('<b>Rp 0</b>');
+            $('#subtotal_kewajiban').html(`<b>${kurs} 0</b>`);
             $('#bodyTable_ekuitas').html(`<tr><td colspan="3">Data ekuitas tidak ditemukan</td></tr>`);
-            $('#subtotal_ekuitas').html('<b>Rp 0</b>');
-            $('#total_passiva').html('<b>Rp 0</b>');
+            $('#subtotal_ekuitas').html(`<b>${kurs} 0</b>`);
+            $('#total_passiva').html(`<b>${kurs} 0</b>`);
          }
       },[{periode: $('#periode').val()}]
    );

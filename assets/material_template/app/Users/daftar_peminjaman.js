@@ -93,12 +93,12 @@ function ListDaftarPeminjaman(JSONData){
                               <tr>
                                  <td class="text-left" style="width:40%;">JUMLAH PEMINJAMAN</td>
                                  <td class="px-0" style="width:1%;">:</td>
-                                 <td class="text-left" style="width:59%;">Rp ${numberFormat(json.biaya)}</td>
+                                 <td class="text-left" style="width:59%;">${kurs} ${numberFormat(json.biaya)}</td>
                               </tr>
                               <tr>
                                  <td class="text-left">JUMLAH DP</td>
                                  <td class="px-0">:</td>
-                                 <td class="text-left">Rp ${numberFormat(json.dp)}</td>
+                                 <td class="text-left">${kurs} ${numberFormat(json.dp)}</td>
                               </tr>
                               <tr>
                                  <td class="text-left">TENOR</td>
@@ -108,7 +108,7 @@ function ListDaftarPeminjaman(JSONData){
                               <tr>
                                  <td class="text-left">BAYAR PER BULAN</td>
                                  <td class="px-0">:</td>
-                                 <td class="text-left">Rp ${numberFormat(json.perbulan)}</td>
+                                 <td class="text-left">${kurs} ${numberFormat(json.perbulan)}</td>
                               </tr>
                               <tr>
                                  <td class="text-left">MULAI PEMBAYARAN</td>
@@ -153,7 +153,7 @@ function ListDaftarPeminjaman(JSONData){
                 for( x in json.detail_pembayaran){
                   html += `<tr>
                               <td><b>#${json.detail_pembayaran[x].invoice}</b></td>
-                              <td>Rp ${numberFormat(json.detail_pembayaran[x].bayar)}</td>
+                              <td>${kurs} ${numberFormat(json.detail_pembayaran[x].bayar)}</td>
                               <td>${json.detail_pembayaran[x].status}</td>
                               <td> 
                                  <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Pembayaran Peminjaman"
@@ -280,7 +280,7 @@ function formaddupdate_pembayaran_peminjaman(JSONData){
                   <div class="col-12">
                      <div class="form-group">
                         <label>Sisa Hutang</label>
-                        <input class="form-control form-control-sm" type="text" readonly value="Rp ${numberFormat(json.sisa_utang)}" style="font-size: 12px;">
+                        <input class="form-control form-control-sm" type="text" readonly value="${kurs} ${numberFormat(json.sisa_utang)}" style="font-size: 12px;">
                      </div>
                   </div>
                   <div class="col-12">
@@ -382,7 +382,7 @@ function edit_skema_cicilan(id){
                                  }
                               });
                            }else{
-                              frown_alert('Total Amount Harus Sama Dengan Total Utang Yaitu : <b>Rp ' + numberFormat(total_utang) + '</b>' );
+                              frown_alert('Total Amount Harus Sama Dengan Total Utang Yaitu : <b>' + kurs + ' ' + numberFormat(total_utang) + '</b>' );
                               return false;
                            }
                         },
@@ -405,10 +405,10 @@ function formaddupdate_skema_peminjaman(JSONData){
                   <div class="col-6">
                      <input type="hidden" name="peminjaman_id" value="${json.peminjaman_id}" >
                      <input type="hidden" id="total_utang_base" value="${json.total_utang}" >
-                     <label>Total Pinjaman : Rp <span id="total_utang">${numberFormat(json.total_utang)}</span></label>
+                     <label>Total Pinjaman : ${kurs} <span id="total_utang">${numberFormat(json.total_utang)}</span></label>
                   </div>
                   <div class="col-6 text-right">
-                     <label>DP : Rp ${numberFormat(json.dp)}</label>
+                     <label>DP : ${kurs}${numberFormat(json.dp)}</label>
                   </div>
                   <div class="col-12">
                      <div class="row">
@@ -426,7 +426,7 @@ function formaddupdate_skema_peminjaman(JSONData){
                     html += `<tr>
                                  <td>${json.skema[x].term}</td>
                                  <td>
-                                    <input type="text" name="amount[${json.skema[x].id}]" value="Rp ${numberFormat(json.skema[x].amount)}" class="form-control form-control-sm currency amount" placeholder="Amount" onKeyup="countAmount()" />
+                                    <input type="text" name="amount[${json.skema[x].id}]" value="${kurs} ${numberFormat(json.skema[x].amount)}" class="form-control form-control-sm currency amount" placeholder="Amount" onKeyup="countAmount()" />
                                  </td>
                                  <td>
                                     <input type="date" name="due_date[${json.skema[x].id}]" value="${json.skema[x].due_date}" class="form-control form-control-sm" placeholder="Due Date" />

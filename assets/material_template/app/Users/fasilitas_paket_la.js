@@ -61,7 +61,7 @@ function ListDaftarFasilitasLA(JSONData){
    var html =  `<tr>
                   <td>${json.nama_fasilitas}</td>
                   <td>${json.header}</td>
-                  <td>Rp ${numberFormat(json.price)}</td>
+                  <td>${kurs} ${numberFormat(json.price)}</td>
                   <td>${json.last_update}</td>
                   <td>
                      <button type="button" class="btn btn-default btn-action" title="Edit Fasilitas LA"
@@ -134,7 +134,7 @@ function formaddupdate_fasilitas_la(header, JSONValue){
       id_fasilitas_la = `<input type="hidden" name="id" value="${value.id}">`;
       header_selected = value.header_id;
       nama_fasilitas_la = value.nama_fasilitas_la;
-      harga_fasilitas_la = 'Rp '+ numberFormat(value.price);
+      harga_fasilitas_la = kurs + ' ' + numberFormat(value.price);
    }
    var html = `<form action="${baseUrl }Fasilitas_la/proses_addupdate_fasilitas_la" id="form_utama" class="formName ">
                   <div class="row px-0 mx-0">

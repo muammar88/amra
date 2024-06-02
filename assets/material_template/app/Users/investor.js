@@ -61,7 +61,7 @@ function ListDaftarInvestor(JSONData){
    var html = `<tr>
                   <td>${json.nama}<br>(${json.nomor_identitas})</td>
                   <td>${json.no_hp}<br>${json.alamat}</td>
-                  <td>Rp ${numberFormat(json.investasi)}</td>
+                  <td>${kurs} ${numberFormat(json.investasi)}</td>
                   <td>
                      <button type="button" class="btn btn-default btn-action" title="Edit Investor"
                         onclick="edit_investor('${json.id}')" style="margin:.15rem .1rem  !important">
@@ -185,7 +185,7 @@ function formaddupdate_investor(JSONValue){
    var nomor_identitas = '';
    var no_hp = '';
    var alamat = '';
-   var investasi = 'Rp 0';
+   var investasi = kurs + ' 0';
    var saham = 0;
    if (JSONValue != undefined) {
       var value = JSON.parse(JSONValue);
@@ -194,7 +194,7 @@ function formaddupdate_investor(JSONValue){
       nomor_identitas = value.nomor_identitas;
       no_hp = value.no_hp;
       alamat = value.alamat;
-      investasi = 'Rp ' + numberFormat(value.investasi);
+      investasi = kurs + ' ' + numberFormat(value.investasi);
       saham = value.saham;
    }
    var html = `<form action="${baseUrl }Investor/proses_addupdate_investor" id="form_utama" class="formName ">

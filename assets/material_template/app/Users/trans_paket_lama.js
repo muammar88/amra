@@ -69,13 +69,13 @@ function edit_detail_aktualisasi_anggaran(aktualisasi_detail_id){
 function formAddUpdateAktualisasiAnggaranDetail(aktualisasi_id, JSONValue){
    var uraian = '';
    var unit = '';
-   var harga = 'Rp 0';
+   var harga =  kurs + ' 0';
    var id_area = '';
    if( JSONValue != undefined ){
       id_area = `<input type="hidden" name="aktualisasi_detail_id" value="${JSONValue.id}">`;
       uraian = JSONValue.uraian;
       unit = JSONValue.unit;
-      harga = 'Rp ' + numberFormat(JSONValue.biaya);
+      harga = kurs + ' ' + numberFormat(JSONValue.biaya);
    }
    var form = `<form action="${baseUrl }Trans_paket/add_update_aktualisasi_anggaran_detail" id="form_utama" class="formName ">
                   <input type="hidden" name="aktualisasi_id" value="${aktualisasi_id}">
@@ -404,9 +404,9 @@ function k_t(paket_id){
                   <div class="col-12 col-lg- my-3 px-0">
                      <table class="table table-hover tablebuka" style="border: 1px solid #dee1e6 !important;">
                         <tbody>
-                           ${titleListK_T('RINCIAN KEGIATAN ANGGARAN PAKET', 'Rp 0', 'total_anggaran', 'total_anggaran')}
-                           ${titleListK_T('RINCIAN AKTUALISASI BELANJA PAKET', 'Rp 0', 'aktualisasi_anggaran')}
-                           ${titleListK_T('RINCIAN KEUNTUNGAN PROGRAM PAKET', 'Rp 0', 'keuntungan')}
+                           ${titleListK_T('RINCIAN KEGIATAN ANGGARAN PAKET', kurs + ' 0', 'total_anggaran', 'total_anggaran')}
+                           ${titleListK_T('RINCIAN AKTUALISASI BELANJA PAKET', kurs + ' 0', 'aktualisasi_anggaran')}
+                           ${titleListK_T('RINCIAN KEUNTUNGAN PROGRAM PAKET', kurs + ' 0', 'keuntungan')}
                         </tbody>
                       </table>
                   </div>
@@ -457,12 +457,12 @@ function get_data_k_t(paket_id){
             </button>`);
          }
 
-         $('.total_anggaran').html('Rp ' + numberFormat(e['data']['total_paket_price']));
+         $('.total_anggaran').html(kurs + ' ' + numberFormat(e['data']['total_paket_price']));
 
          var potensi_pendapatan =  `<tr>
                                        <td></td>
                                        <td colspan="5" class="text-left"><b>POTENSI PENDAPATAN PAKET</b></td>
-                                       <td class="text-right" ><b>Rp ${numberFormat(e['data']['total_paket_price'])}</b></td>
+                                       <td class="text-right" ><b>${kurs} ${numberFormat(e['data']['total_paket_price'])}</b></td>
                                        <td></td>
                                     </tr>`;
          var i = 1;
@@ -471,10 +471,10 @@ function get_data_k_t(paket_id){
                                     <td>${i}</td>
                                     <td class="text-left">${e['data']['total_harga_per_tipe_paket'][x]['paket_type_name']}</td>
                                     <td >${e['data']['total_harga_per_tipe_paket'][x]['jumlah_jamaah']}</td>
-                                    <td class="text-right">Rp ${numberFormat(e['data']['total_harga_per_tipe_paket'][x]['harga_paket'])}</td>
-                                    <td class="text-right">Rp ${numberFormat(e['data']['total_harga_per_tipe_paket'][x]['total_mahram_fee'])}</td>
-                                    <td class="text-right">Rp ${numberFormat(e['data']['total_harga_per_tipe_paket'][x]['total_diskon'])}</td>
-                                    <td class="text-right">Rp ${numberFormat(e['data']['total_harga_per_tipe_paket'][x]['total_harga_paket_type'])}</td>
+                                    <td class="text-right">${kurs} ${numberFormat(e['data']['total_harga_per_tipe_paket'][x]['harga_paket'])}</td>
+                                    <td class="text-right">${kurs} ${numberFormat(e['data']['total_harga_per_tipe_paket'][x]['total_mahram_fee'])}</td>
+                                    <td class="text-right">${kurs} ${numberFormat(e['data']['total_harga_per_tipe_paket'][x]['total_diskon'])}</td>
+                                    <td class="text-right">${kurs} ${numberFormat(e['data']['total_harga_per_tipe_paket'][x]['total_harga_paket_type'])}</td>
                                     <td></td>
                                  </tr>`;
             i++;
@@ -482,32 +482,32 @@ function get_data_k_t(paket_id){
          $('#potensi_pendapatan').html(potensi_pendapatan);
 
          var aktualisasi = ``;
-            aktualisasi += headAktualisasi('<b>A.</b>', '<b>KEBERANGKATAN</b>', `<b>Rp ${numberFormat(e['data']['total_paket_price'])}</b>`);
-            aktualisasi += Aktualisasi('1', 'Pembayaran Jamaah', `Rp ${numberFormat(e['data']['total_sudah_dibayar'])}`);
-            aktualisasi += Aktualisasi('2', 'Diskon', `Rp ${numberFormat(e['data']['total_diskon'])}`);
-            aktualisasi += Aktualisasi('3', 'Piutang Jamaah', `Rp ${numberFormat(e['data']['total_piutang'])}`);
+            aktualisasi += headAktualisasi('<b>A.</b>', '<b>KEBERANGKATAN</b>', `<b>${kurs}${numberFormat(e['data']['total_paket_price'])}</b>`);
+            aktualisasi += Aktualisasi('1', 'Pembayaran Jamaah', `${kurs} ${numberFormat(e['data']['total_sudah_dibayar'])}`);
+            aktualisasi += Aktualisasi('2', 'Diskon', `${kurs} ${numberFormat(e['data']['total_diskon'])}`);
+            aktualisasi += Aktualisasi('3', 'Piutang Jamaah', `${kurs} ${numberFormat(e['data']['total_piutang'])}`);
             aktualisasi += headAktualisasiBtn(paket_id, '<b>B.</b>', '<b>AKTUALISASI KEGIATAN ANGGARAN</b>', `<b>Rp${numberFormat(e['data']['total_aktualisasi'])}</b>`, e['status_paket']);
-            aktualisasi += Aktualisasi('1', 'Fee Agen', `Rp ${numberFormat(e['data']['total_fee_agen'])}`);
+            aktualisasi += Aktualisasi('1', 'Fee Agen', `${kurs}${numberFormat(e['data']['total_fee_agen'])}`);
             for( x in e['data']['aktualisasi']){
                aktualisasi += AktualisasiBtn( e['data']['aktualisasi'][x]['id'],
                                               e['data']['aktualisasi'][x]['number'],
                                               e['data']['aktualisasi'][x]['uraian'],
                                               e['data']['aktualisasi'][x]['total'] != '' ?
-                                              `Rp ${numberFormat(e['data']['aktualisasi'][x]['total'])}` : '', e['status_paket'] );
+                                              `${kurs} ${numberFormat(e['data']['aktualisasi'][x]['total'])}` : '', e['status_paket'] );
                if( e['data']['aktualisasi'][x]['detail_aktualisasi'] != undefined ){
                   var detail_aktualisasi = e['data']['aktualisasi'][x]['detail_aktualisasi'];
                   for ( y in detail_aktualisasi ){
                      aktualisasi += detailAktualisasiBtn(detail_aktualisasi[y]['id'],
                                                          detail_aktualisasi[y]['uraian'],
                                                          detail_aktualisasi[y]['unit'] ,
-                                                         `Rp ${numberFormat(detail_aktualisasi[y]['biaya'])}`,
+                                                         `${kurs} ${numberFormat(detail_aktualisasi[y]['biaya'])}`,
                                                          e['status_paket']);
                   }
                }
             }
          $('#bodyTable_daftar_aktualisasi').html(aktualisasi);
-         $('#aktualisasi_anggaran').html('Rp ' + numberFormat(e['data']['total_aktualisasi']));
-         $('#keuntungan').html('Rp ' + numberFormat(e['data']['keuntungan']));
+         $('#aktualisasi_anggaran').html(kurs + ' ' + numberFormat(e['data']['total_aktualisasi']));
+         $('#keuntungan').html( kurs + ' ' + numberFormat(e['data']['keuntungan']));
       },[{paket_id:paket_id}]
    );
 }
@@ -596,7 +596,7 @@ function ListDaftarAgenPaket(JSONData){
             form += `</ul>
                   </td>
                   <td>
-                     Rp ${numberFormat(json['total_fee_agen_perpaket'])}
+                     ${kurs} ${numberFormat(json['total_fee_agen_perpaket'])}
                   </td>
                </tr>`;
    return form;
@@ -1572,11 +1572,11 @@ function ListAllTransPaketAgen(JSONData){
                            </tr>
                            <tr>
                               <td class="text-left py-0 pt-1" style="width:50%;border:none;">FEE BELUM DIBAYAR</td>
-                              <td class="text-left py-0 pt-1" style="width:50%;border:none;font-weight:bold;">Rp ${numberFormat(json.unpaid_fee)}</td>
+                              <td class="text-left py-0 pt-1" style="width:50%;border:none;font-weight:bold;">${kurs} ${numberFormat(json.unpaid_fee)}</td>
                            </tr>
                            <tr>
                               <td class="text-left py-0 pt-1" style="width:50%;border:none;">FEE YANG SUDAH DIBAYAR</td>
-                              <td class="text-left py-0 pt-1" style="width:50%;border:none;font-weight:bold;">Rp ${numberFormat(json.paid_fee)}</td>
+                              <td class="text-left py-0 pt-1" style="width:50%;border:none;font-weight:bold;">${kurs} ${numberFormat(json.paid_fee)}</td>
                            </tr>
                            <tr>
                               <td class="text-left py-0 pt-1" style="width:50%;border:none;">JUMLAH TRANSAKSI</td>
@@ -1628,7 +1628,7 @@ function formPembayaranFeeAgen(JSONData){
                            <div class="col-12">
                               <div class="form-group mb-2">
                                  <label>Fee Keagenan yang Belum Dibayar</label>
-                                 <input type="text" id="fee_unpaid" value="Rp ${numberFormat(json.unpaid)}" class="form-control form-control-sm" placeholder="Fee agen yang belum dibayar" readonly/>
+                                 <input type="text" id="fee_unpaid" value="${kurs} ${numberFormat(json.unpaid)}" class="form-control form-control-sm" placeholder="Fee agen yang belum dibayar" readonly/>
                               </div>
                            </div>
                            <div class="col-12">
@@ -2925,7 +2925,7 @@ function get_fee(paket_id){
                                  <input type="hidden" name="agen_id[${e['data'][x]['id']}]" value="${e['data'][x]['id']}">
                                  <input type="hidden" name="level[${e['data'][x]['id']}]" value="${x}">
                                  <input type="text" required="" name="fee_agen[${e['data'][x]['id']}]" placeholder="Fee Agen"
-                                    class="form-control form-control-sm currency" value="Rp ${numberFormat(e['data'][x]['fee'])}">
+                                    class="form-control form-control-sm currency" value="${kurs} ${numberFormat(e['data'][x]['fee'])}">
                               </div>
                            </div>`;
                }
@@ -2969,13 +2969,13 @@ function start_transaction_paket( paket_id ){
                                     ${simpleSelectForm('Jenis Paket', 'jenis_paket', JSON.stringify(e['data']['paket_type']), ' onChange="get_price_transaksi_paket()"', '', 'py-1')}
                                  </div>
                                  <div class="col-12 col-lg-2">
-                                    ${inputTextForm('Harga Paket Per Pax', 'harga_perpax', 'Rp. 0,-', 'readonly', '')}
+                                    ${inputTextForm('Harga Paket Per Pax', 'harga_perpax', kurs + ' 0,-', 'readonly', '')}
                                  </div>
                                  <div class="col-12 col-lg-2">
                                     ${simpleSelectForm('Metode Pembayaran', 'metode_pembayaran', JSON.stringify(e['data']['metode_pembayaran']), ' onChange="metodePembayaran()" ', '', 'py-1')}
                                  </div>
                                  <div class="col-12 col-lg-2">
-                                    ${inputTextForm('Total Seluruh Paket', 'totalPaket', 'Rp. 0', 'readonly', '')}
+                                    ${inputTextForm('Total Seluruh Paket', 'totalPaket', kurs + ' 0', 'readonly', '')}
                                  </div>
 
                                  <div class="col-12 col-lg-3 px-2 " >
@@ -2989,9 +2989,9 @@ function start_transaction_paket( paket_id ){
                                           ${simpleSelectForm('Leader Tim', 'leader_tim', JSON.stringify(e['data']['jamaah']), ' onChange="filterLeaderTeam()"  ', '', 'py-1')}
                                        </div>
                                        <div class="col-12 col-lg-3">
-                                          ${inputTextForm('Biaya Mahram', 'biayaMahramView', 'Rp. 0', 'readonly', '')}
+                                          ${inputTextForm('Biaya Mahram', 'biayaMahramView', kurs + ' 0', 'readonly', '')}
                                        </div>
-                                       ${hiddenForm('biayaMahram', 'Rp. 0' )}
+                                       ${hiddenForm('biayaMahram', kurs + ' 0' )}
                                        <div class="col-12 col-lg-3">
                                           ${currencyForm('Diskon', 'diskon', '', 'onKeyup="get_price_transaksi_paket()"')}
                                        </div>
@@ -3471,14 +3471,14 @@ function formRefundTransaksiPaket(paket_id, paket_transaction_id, state){
                            <div class="col-3">
                               <div class="form-group">
                                  <label>Total Pembayaran Paket</label>
-                                 <input type="text" class="username form-control form-control-sm" value="Rp. ${numberFormat(e['totalPembayaran'])}" readonly />
+                                 <input type="text" class="username form-control form-control-sm" value="${kurs + ' ' + numberFormat(e['totalPembayaran'])}" readonly />
                                  <input type="hidden" name="total_pembayaran_paket" id="total_pembayaran_paket" value="${e['totalPembayaran']}" />
                               </div>
                            </div>
                            <div class="col-3">
                               <div class="form-group">
                                  <label>Yang Tidak di Refund</label>
-                                 <input type="text" id="tidakrefund" placeholder="Yang Tidak di Refund" class="currency username form-control form-control-sm" value="Rp. ${numberFormat(e['totalPembayaran'])}" readonly  />
+                                 <input type="text" id="tidakrefund" placeholder="Yang Tidak di Refund" class="currency username form-control form-control-sm" value="${kurs + ' ' + numberFormat(e['totalPembayaran'])}" readonly  />
                               </div>
                            </div>
                            <div class="col-3">
@@ -3581,7 +3581,7 @@ function getNotRefund(){
    var refund = hide_currency($('#refund').val());
    var tidakRefund = total_pembayaran - refund;
    if( total_pembayaran >= refund ){
-      $('#tidakrefund').val('Rp. ' + numberFormat(tidakRefund));
+      $('#tidakrefund').val(kurs + ' ' + numberFormat(tidakRefund));
    }
 }
 
@@ -4376,32 +4376,32 @@ function formPindahPaket(paket_id, paket_transaction_id, jamaah_id, JSONData){
                      <div class="col-4" >
                         <div class="form-group">
                            <label>Harga Paket Tujuan</label>
-                           <input type="text" name="harga_paket_tujuan" id="harga_paket_tujuan" value="Rp. 0" class="form-control form-control-sm" readonly />
+                           <input type="text" name="harga_paket_tujuan" id="harga_paket_tujuan" value="${kurs} 0" class="form-control form-control-sm" readonly />
                         </div>
                      </div>
                      <div class="col-4" >
                         <div class="form-group">
                            <label>Biaya Yang Dipindahkan</label>
-                           <input type="text" name="biaya_yang_dipindah" id="biaya_yang_dipindah" value="Rp. 0" onKeyup="getHargaPaketByTipePaket('${paket_id}','${paket_transaction_id}', '${jamaah_id}')" class="currency form-control form-control-sm" />
+                           <input type="text" name="biaya_yang_dipindah" id="biaya_yang_dipindah" value="${kurs} 0" onKeyup="getHargaPaketByTipePaket('${paket_id}','${paket_transaction_id}', '${jamaah_id}')" class="currency form-control form-control-sm" />
                         </div>
                      </div>
                      <div class="col-4" >
                         <div class="form-group">
                            <label>Sisa Pembayaran</label>
-                           <input type="text" name="sisa_pembayaran" id="sisa_pembayaran" placeholder="Sisa Pembayaran" value="Rp. 0" class="form-control form-control-sm" readonly/>
+                           <input type="text" name="sisa_pembayaran" id="sisa_pembayaran" placeholder="Sisa Pembayaran" value="${kurs} 0" class="form-control form-control-sm" readonly/>
                         </div>
                      </div>
                      <div class="col-4" >
                         <div class="form-group">
                            <label>Pembayaran Berlebih</label>
-                           <input type="text" name="pembayaran_berlebih" id="pembayaran_berlebih" placeholder="Pembayaran Berlebih" value="Rp. 0" class="form-control form-control-sm" readonly />
+                           <input type="text" name="pembayaran_berlebih" id="pembayaran_berlebih" placeholder="Pembayaran Berlebih" value="${kurs} 0" class="form-control form-control-sm" readonly />
                            <input type="hidden" name="pembayaran_berlebih_val" id="pembayaran_berlebih_val" />
                         </div>
                      </div>
                      <div class="col-4" >
                         <div class="form-group">
                            <label>Biaya Yang Direfund</label>
-                           <input type="text" name="refund" id="refund" placeholder="Biaya Yang Direfund" value="Rp. 0" class="form-control form-control-sm currency" onKeyup="getHargaPaketByTipePaket('${paket_id}','${paket_transaction_id}', '${jamaah_id}')"  />
+                           <input type="text" name="refund" id="refund" placeholder="Biaya Yang Direfund" value="${kurs} 0" class="form-control form-control-sm currency" onKeyup="getHargaPaketByTipePaket('${paket_id}','${paket_transaction_id}', '${jamaah_id}')"  />
                         </div>
                      </div>
                   </div>
@@ -4493,7 +4493,7 @@ function getTipeHargaPaket( paket_id_now ){
             baseUrl + "Trans_paket/getTipePaket", function(e) {
                html = '<option value="0">Pilih Tipe Paket Tujuan</option>';
                for( x in e['data'] ) {
-                  html += `<option value="${e['data'][x]['id']}">${e['data'][x]['paket_type_name']} -- ${': Rp. ' + numberFormat( e['data'][x]['price'] )}</option>`;
+                  html += `<option value="${e['data'][x]['id']}">${e['data'][x]['paket_type_name']} -- ${': ' + kurs + ' ' + numberFormat( e['data'][x]['price'] )}</option>`;
                }
                $('#tipe_paket_no_reg_tujuan').html(html);
             },[{paket_id_now: paket_id_now, paket_id: paket_tujuan}]
@@ -4505,7 +4505,7 @@ function getTipeHargaPaket( paket_id_now ){
 
              html = '<option value="0">Pilih No Registrasi Paket Tujuan</option>';
              for( x in e['data'] ) {
-                html += `<option value="${e['data'][x]['no_register']}">${e['data'][x]['no_register']} -- ${': Rp. ' + numberFormat( e['data'][x]['price'] )}</option>`;
+                html += `<option value="${e['data'][x]['no_register']}">${e['data'][x]['no_register']} -- ${': ' + kurs + ' ' + numberFormat( e['data'][x]['price'] )}</option>`;
              }
              $('#tipe_paket_no_reg_tujuan').html(html);
 
@@ -4560,10 +4560,10 @@ function getHargaPaketByTipePaket( paket_id_now, paket_transaction_id_now, jamaa
       ajax_x_t2(
          baseUrl + "Trans_paket/getPriceByTipePaketNoReg", function(e) {
             if(e['error'] == false){
-               $('#harga_paket_tujuan').val('Rp. ' + numberFormat( e['data']['harga_paket_tujuan'] ));
-               $('#sisa_pembayaran').val( 'Rp. ' + numberFormat( e['data']['sisa_pembayaran'] ) );
-               $('#pembayaran_berlebih').val( 'Rp. ' + numberFormat( e['data']['pembayaran_berlebih'] ) );
-               $('#pembayaran_berlebih_val').val( 'Rp. ' + numberFormat( e['data']['pembayaran_berlebih'] ) );
+               $('#harga_paket_tujuan').val(kurs + ' ' + numberFormat( e['data']['harga_paket_tujuan'] ));
+               $('#sisa_pembayaran').val( kurs + ' ' + numberFormat( e['data']['sisa_pembayaran'] ) );
+               $('#pembayaran_berlebih').val( kurs + ' ' + numberFormat( e['data']['pembayaran_berlebih'] ) );
+               $('#pembayaran_berlebih_val').val( kurs + ' ' + numberFormat( e['data']['pembayaran_berlebih'] ) );
             }else{
                frown_alert(e['error_msg']);
             }
@@ -4965,7 +4965,7 @@ function sumTotalAmount(){
            totalAmount = totalAmount + hide_currency($(this).val());
        });
    }
-   $('#totalAmountView').html(': Rp. ' + numberFormat(totalAmount));
+   $('#totalAmountView').html(': ' + kurs + ' ' + numberFormat(totalAmount));
    $('#totalAmount').val(totalAmount);
 }
 
@@ -5047,7 +5047,7 @@ let cardItemPaket = ( JSONdata ) => {
    data = JSON.parse(JSONdata);
    var price = '<ul class="pl-0 list" style="list-style-type: none;">';
    for ( x in data['price'] ) {
-      price += '<li>Rp. ' + data['price'][x] + '</li>';
+      price += '<li>' + kurs + ' ' + data['price'][x] + '</li>';
    }
    price += '</ul>';
    return  `<div class="item item-slider">

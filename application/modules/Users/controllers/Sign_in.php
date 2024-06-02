@@ -142,8 +142,6 @@ class Sign_in extends CI_Controller
 			}
 			$level_akun = $this->input->post('level_akun'); 
 			$userNameArray = array();
-
-			
 			if ($level_akun == 'administrator') {
 				$email = $this->input->post('email');
 				$userNameArray['email'] = $this->input->post('email');
@@ -152,8 +150,6 @@ class Sign_in extends CI_Controller
 					// echo "ya";
 					
 					$info_subscribtion_duration = $this->model_sign_in->get_info_subscribtion_duration($this->input->post('email'));
-
-					// print_r( $info_subscribtion_duration );
 
 					if( count ( $info_subscribtion_duration ) > 0 ){
 						echo "1";
@@ -206,11 +202,6 @@ class Sign_in extends CI_Controller
 						$error = 1;
 						$error_msg .= $feedBack['error_msg'];
 					} else {
-						//print_r($userNameArray);
-						//print_r($userNameArray);
-						# aunthentication
-						
-
 						$this->session->set_userdata(array($this->config->item('apps_name') => $feedBack['feedBack']));
 						$feedBack = $this->model_sign_in_cud->insert_log_login($level_akun, $userNameArray, $code);	
 					}

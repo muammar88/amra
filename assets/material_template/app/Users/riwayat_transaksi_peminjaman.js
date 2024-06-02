@@ -72,7 +72,7 @@ function ListRiwayatTransaksiPeminjaman(JSONData){
      return `<tr>
                <td>#${json.register_number}/<br>#${json.invoice}</td>
                <td>${json.fullname}<br>(ID : ${json.identity_number})</td>
-               <td>Rp ${numberFormat(json.bayar)}</td>
+               <td>${kurs} ${numberFormat(json.bayar)}</td>
                <td>${json.status}</td>
                <td>${json.petugas}</td>
                <td>${json.transaction_date}</td>

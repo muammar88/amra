@@ -72,7 +72,7 @@ function ListDaftarPaket(JSONData){
 
    var harga = `<ul class="pl-3 list">`;
       for( x in json.paket_type){
-         harga += `<li>${json.paket_type[x]['paket_type_name']} : Rp ${numberFormat(json.paket_type[x]['price'])}</li>`;
+         harga += `<li>${json.paket_type[x]['paket_type_name']} : ${kurs} ${numberFormat(json.paket_type[x]['price'])}</li>`;
       }
 
    var html = `<tr>
@@ -161,7 +161,7 @@ function formaddupdate_paket(JSONData, JSONValue){
       tanggal_keberangkatan = value.departure_date;
       tanggal_kepulangan = value.return_date;
       berangkat_dari = value.departure_from;
-      biaya_mahram = 'Rp ' + numberFormat(value.mahram_fee);
+      biaya_mahram =  kurs + ' ' + numberFormat(value.mahram_fee);
       quota_jamaah = value.jamaah_quota;
       kota_value = value.city_visited;
       airlines_value = value.airlines;
@@ -416,7 +416,7 @@ function formListTipePaket(label, JSONdata, valueData){
                         <input type="text" name="paket_type_price[${data[x]['id']}]"
                               placeholder="Biaya Paket ${data[x]['name']}"
                               class="form-control form-control-sm currency"
-                              value="${value[data[x]['id']] != undefined ? 'Rp ' + numberFormat(value[data[x]['id']]) : 'Rp 0'}" />
+                              value="${value[data[x]['id']] != undefined ? kurs + ' ' + numberFormat(value[data[x]['id']]) : kurs + ' 0'}" />
                      </div>
                   </div>`;
       }

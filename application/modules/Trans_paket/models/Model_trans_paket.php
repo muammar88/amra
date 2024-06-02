@@ -915,14 +915,14 @@ class Model_trans_paket extends CI_Model
                'tgl_berlaku_visa' => ($row->tgl_berlaku_visa != '0000-00-00' ? $row->tgl_berlaku_visa : '-'), 
                'tgl_akhir_visa' => ($row->tgl_akhir_visa != '0000-00-00' ? $row->tgl_akhir_visa : '-'),
                'paket_type_name' => $row->paket_type_name,
-               'total_paket_price' => 'Rp.' . number_format($row->total_paket_price),
-               'harga' => 'Rp.' . number_format($row->harga),
+               'total_paket_price' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->total_paket_price),
+               'harga' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->harga),
                'metode_pembayaran' => $row->payment_methode == 0 ? 'Cash' : 'Cicilan',
-               'sudah_dibayar' => 'Rp.' . number_format($sudahbayar),
-               'sisa' => 'Rp.' . number_format($sisa),
-               'fee_mahram' => 'Rp.' . number_format($row->total_mahram_fee),
+               'sudah_dibayar' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($sudahbayar),
+               'sisa' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($sisa),
+               'fee_mahram' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->total_mahram_fee),
                'departure_date' => $this->date_ops->change_date_t4($row->departure_date),
-               // 'diskon' => 'Rp.' . number_format($row->diskon),
+               // 'diskon' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->diskon),
                'jamaah' => $this->getJamaahInPaket($row->id)
             );
          }
@@ -1093,7 +1093,7 @@ class Model_trans_paket extends CI_Model
                'identity_number' => $row->identity_number,
                'paket_name' => $row->paket_name,
                'paket_type_name' => $row->paket_type_name,
-               'harga' => 'Rp.' . number_format($row->harga),
+               'harga' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->harga),
                'handover_item' => $this->listItemHandover($row->paket_transaction_id, $row->jamaah_id),
                'handover_facility'  => $this->listItemFasilitas($row->paket_transaction_id, $row->jamaah_id),
                'mahram' => $row->mahrams == NULL ? 'Tidak ada mahram' : $row->mahrams
@@ -1161,7 +1161,7 @@ class Model_trans_paket extends CI_Model
       $return = array(0 => 'Pilih Tipe Paket');
       if ($q->num_rows() > 0) {
          foreach ($q->result() as $row) {
-            $return[$row->paket_type_id] = $row->paket_type_name . ' (Rp. ' . number_format($row->price) . ')';
+            $return[$row->paket_type_id] = $row->paket_type_name . ' (' . $this->session->userdata($this->config->item('apps_name'))['kurs'] . ' ' . number_format($row->price) . ')';
          }
       }
       return $return;
@@ -1200,7 +1200,7 @@ class Model_trans_paket extends CI_Model
          foreach ($q->result() as $row) {
             $total_deposit = $this->get_total_deposit_paket($row->id);
             if( $total_deposit > 0 ){
-               $return[$row->id] = $row->fullname . ' (' . $row->identity_number . ') | Total Deposit : Rp ' . number_format($total_deposit);
+               $return[$row->id] = $row->fullname . ' (' . $row->identity_number . ') | Total Deposit : ' . $this->session->userdata($this->config->item('apps_name'))['kurs'] . ' ' . number_format($total_deposit);
             }
          }
       }
@@ -1344,7 +1344,7 @@ class Model_trans_paket extends CI_Model
          foreach ($q->result() as $rows) {
             $deposit_paket = $this->get_deposit_paket_jamaah($rows->id);
             if ($deposit_paket > 0) {
-               $list[] = array('id' => $rows->id, 'name' => $rows->fullname . ' (' . $rows->identity_number . '); Deposit : Rp.' . number_format($deposit_paket) . ' ');
+               $list[] = array('id' => $rows->id, 'name' => $rows->fullname . ' (' . $rows->identity_number . '); Deposit : ' . $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($deposit_paket) . ' ');
             }
          }
       }
@@ -1368,20 +1368,6 @@ class Model_trans_paket extends CI_Model
       }
       return array('paket_name' => $paket_name, 'kode_paket' => $kode_paket);
    }
-
-   // $this->db->select('personal_id, fullname, identity_number')
-   //    ->from('personal')
-   //    ->where('company_id', $this->company_id);
-   // $q = $this->db->get();
-   // $list = array(array('id' => 0, 'name' => 'Pilih Penyetor'));
-   // if ($q->num_rows() > 0) {
-   //    foreach ($q->result() as $row) {
-   //       $deposit = $this->getDepositInfo($row->personal_id);
-   //       if( $deposit > 0 ){
-   //          $list[] = array('id' => $row->personal_id, 'name' => $row->fullname . ' (' . $row->identity_number . '); Deposit : Rp.' . number_format($deposit) . ' ' );
-   //       }
-   //    }
-   // }
 
    function get_deposit_paket_jamaah($pool_id)
    {
@@ -1682,7 +1668,7 @@ class Model_trans_paket extends CI_Model
          foreach ($q->result() as $row) {
             $array[] = array(
                'invoice' => $row->invoice,
-               'paid' => 'Rp. ' . number_format($row->paid),
+               'paid' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->paid),
                'penerima' => $row->receiver,
                'ket' => $row->ket,
                'sumber_biaya' => $row->source,
@@ -1717,7 +1703,7 @@ class Model_trans_paket extends CI_Model
          foreach ($q->result() as $row) {
             $array[] = array(
                'invoice' => $row->invoice,
-               'paid' => 'Rp. ' . number_format($row->paid),
+               'paid' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->paid),
                'penerima' => $row->receiver,
                'ket' => $row->ket,
                'sumber_biaya' => $row->source,
@@ -1751,9 +1737,9 @@ class Model_trans_paket extends CI_Model
       // feedback
       return array(
          'list' => $array,
-         'total_harga' => 'Rp. ' . number_format($total_price),
-         'total_bayar' => 'Rp. ' . number_format($total_bayar),
-         'sisa' => 'Rp. ' . number_format($total_price - $total_bayar),
+         'total_harga' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($total_price),
+         'total_bayar' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($total_bayar),
+         'sisa' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($total_price - $total_bayar),
          'invoice' => $this->text_ops->get_invoice_transaksi_paket_cash()
       );
    }
@@ -2075,10 +2061,10 @@ class Model_trans_paket extends CI_Model
          foreach ($q->result() as $row) {
             $transaksiPembayaran = $this->getHistoryPaketTransaction($paket_transaction_id, $row->total_paket_price);
             $feedBack['paket_sekarang'] = $row->paket_name;
-            $feedBack['total_harga_paket_sekarang'] = 'Rp. ' . number_format($row->total_paket_price);
-            $feedBack['harga_per_paket_sekarang'] = 'Rp. ' . number_format($row->price_per_pax);
-            $feedBack['biaya_yang_sudah_dibayar_sekarang'] = 'Rp. ' . number_format($transaksiPembayaran['sudahBayar']);
-            $feedBack['sisa_pembayaran_sekarang'] = 'Rp. ' . number_format($transaksiPembayaran['sisaBayar']);
+            $feedBack['total_harga_paket_sekarang'] = $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->total_paket_price);
+            $feedBack['harga_per_paket_sekarang'] = $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->price_per_pax);
+            $feedBack['biaya_yang_sudah_dibayar_sekarang'] = $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($transaksiPembayaran['sudahBayar']);
+            $feedBack['sisa_pembayaran_sekarang'] = $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($transaksiPembayaran['sisaBayar']);
          }
       }
       return $feedBack;
@@ -2552,7 +2538,7 @@ class Model_trans_paket extends CI_Model
          foreach ($q->result() as $row) {
             $array[] = array(
                'invoice' => $row->invoice,
-               'paid' => 'Rp. ' . number_format($row->paid),
+               'paid' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->paid),
                'penerima' => $row->receiver,
                'ket' => $row->ket,
                'penyetor' => $row->deposit_name,
@@ -2593,16 +2579,16 @@ class Model_trans_paket extends CI_Model
                if ($sisa <= 0) {
                   $riwayat_angsuran[] = array(
                      'term' => $roww->term,
-                     'bayar' => 'Rp. ' . number_format($bayar),
-                     'sisa' => 'Rp. ' . number_format(abs($sisa)),
+                     'bayar' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($bayar),
+                     'sisa' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format(abs($sisa)),
                      'ket' => 'Pembayaran angsuran ' . $roww->term
                   );
                   break;
                } else {
                   $riwayat_angsuran[] = array(
                      'term' => $roww->term,
-                     'bayar' => 'Rp. ' . number_format($roww->amount),
-                     'sisa' => 'Rp. 0',
+                     'bayar' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($roww->amount),
+                     'sisa' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . ' 0',
                      'ket' => 'Pembayaran angsuran ' . $roww->term
                   );
                }
@@ -2613,10 +2599,10 @@ class Model_trans_paket extends CI_Model
       $sisa = $total_price - $total_bayar;
       return array(
          'list' => $array,
-         'total_harga' => 'Rp. ' . number_format($total_price),
-         'total_bayar' => 'Rp. ' . number_format($total_bayar),
+         'total_harga' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($total_price),
+         'total_bayar' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($total_bayar),
          'riwayat_angsuran' => $riwayat_angsuran,
-         'sisa' => 'Rp. ' . number_format($sisa),
+         'sisa' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($sisa),
          'invoice' => $this->text_ops->get_invoice_transaksi_paket_cicilan()
       );
    }
@@ -2650,7 +2636,7 @@ class Model_trans_paket extends CI_Model
          foreach ($q->result() as $row) {
             $list[$row->term] = array(
                'term' => $row->term,
-               'amount' => 'Rp. ' . number_format($row->amount),
+               'amount' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->amount),
                'duedate' => $row->duedate
             );
             $total_amount = $total_amount + $row->amount;
@@ -3831,14 +3817,14 @@ class Model_trans_paket extends CI_Model
                'tgl_berlaku_visa' => ($row->tgl_berlaku_visa != '0000-00-00' ? $row->tgl_berlaku_visa : '-'), 
                'tgl_akhir_visa' => ($row->tgl_akhir_visa != '0000-00-00' ? $row->tgl_akhir_visa : '-'),
                'paket_type_name' => $row->paket_type_name,
-               'total_paket_price' => 'Rp.' . number_format($row->total_paket_price),
-               'harga' => 'Rp.' . number_format($row->harga),
+               'total_paket_price' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->total_paket_price),
+               'harga' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->harga),
                'metode_pembayaran' => $row->payment_methode == 0 ? 'Cash' : 'Cicilan',
-               'sudah_dibayar' => 'Rp.' . number_format($sudahbayar),
-               'sisa' => 'Rp.' . number_format($sisa),
-               'fee_mahram' => 'Rp.' . number_format($row->total_mahram_fee),
+               'sudah_dibayar' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($sudahbayar),
+               'sisa' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($sisa),
+               'fee_mahram' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->total_mahram_fee),
                'departure_date' => $this->date_ops->change_date_t4($row->departure_date),
-               'diskon' => 'Rp.' . number_format($row->diskon),
+               'diskon' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->diskon),
                'jamaah' => $this->getJamaahInPaket($row->id)
             );
          }

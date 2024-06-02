@@ -97,13 +97,13 @@ function get_riwayat_deposit_tabungan(perpage){
 function ListRiwayatDepositTabungan(JSONData){
    var json = JSON.parse(JSONData);
 
-   var biaya = 'Rp 0';
+   var biaya =  kurs + ' 0';
    var status_biaya = '';
    if( json.kredit != 0 ){
-      biaya = 'Rp ' + numberFormat(json.kredit);
+      biaya = kurs + ' ' + numberFormat(json.kredit);
       status_biaya = '<b>(KREDIT)</b>';
    }else{
-      biaya = 'Rp ' + numberFormat(json.debet);
+      biaya = kurs + ' ' + numberFormat(json.debet);
       status_biaya = '<b>(DEBET)</b>';
    }
 

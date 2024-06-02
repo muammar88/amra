@@ -114,11 +114,11 @@ function get_laba_rugi(){
                html_pendapatan +=  `<tr>
                                        <td class="text-left" style="width:10%;">${pendapatan[x]['nomor_akun']}</td>
                                        <td class="text-left" style="width:30%;">${pendapatan[x]['nama_akun_secondary']}</td>
-                                       <td class="text-left" style="width:60%;">Rp ${numberFormat(pendapatan[x]['saldo'])}</td>
+                                       <td class="text-left" style="width:60%;">${kurs} ${numberFormat(pendapatan[x]['saldo'])}</td>
                                     </tr>`;
                total_pendapatan = total_pendapatan + pendapatan[x]['saldo'];
             }
-            $('#subtotal_pendapatan').html('<b>Rp ' + numberFormat(total_pendapatan) + '</b>');
+            $('#subtotal_pendapatan').html('<b>' + kurs + ' ' + numberFormat(total_pendapatan) + '</b>');
             $('#bodyTable_pendapatan').html(html_pendapatan);
             // penjualan
             var html_penjualan = '';
@@ -128,13 +128,13 @@ function get_laba_rugi(){
                html_penjualan += `<tr>
                                        <td class="text-left" style="width:10%;">${penjualan[x]['nomor_akun']}</td>
                                        <td class="text-left" style="width:30%;">${penjualan[x]['nama_akun_secondary']}</td>
-                                       <td class="text-left" style="width:60%;">Rp ${numberFormat(penjualan[x]['saldo'])}</td>
+                                       <td class="text-left" style="width:60%;">${kurs} ${numberFormat(penjualan[x]['saldo'])}</td>
                                     </tr>`;
                total_penjualan = total_penjualan + penjualan[x]['saldo'];
             }
-            $('#subtotal_biaya_penjualan').html('<b>Rp ' + numberFormat(total_penjualan) + '</b>');
+            $('#subtotal_biaya_penjualan').html('<b>' + kurs + ' ' + numberFormat(total_penjualan) + '</b>');
             $('#bodyTable_biaya_penjualan').html(html_penjualan);
-            $('#laba_kotor').html('<b>Rp ' + numberFormat(total_pendapatan - total_penjualan ).toString() + '</b>');
+            $('#laba_kotor').html('<b>' + kurs + ' ' + numberFormat(total_pendapatan - total_penjualan ).toString() + '</b>');
             // pengeluaran
             var html_pengeluaran = '';
             var pengeluaran = e['list'][6];
@@ -143,24 +143,24 @@ function get_laba_rugi(){
                html_pengeluaran += `<tr>
                                        <td class="text-left" style="width:10%;">${pengeluaran[x]['nomor_akun']}</td>
                                        <td class="text-left" style="width:30%;">${pengeluaran[x]['nama_akun_secondary']}</td>
-                                       <td class="text-left" style="width:60%;">Rp ${numberFormat(pengeluaran[x]['saldo'])}</td>
+                                       <td class="text-left" style="width:60%;">${kurs} ${numberFormat(pengeluaran[x]['saldo'])}</td>
                                     </tr>`;
                total_pengeluaran = total_pengeluaran + pengeluaran[x]['saldo'];
             }
-            $('#subtotal_pengeluaran').html('<b>Rp ' + numberFormat(total_pengeluaran) + '</b>');
+            $('#subtotal_pengeluaran').html('<b>' + kurs + ' ' + numberFormat(total_pengeluaran) + '</b>');
             $('#bodyTable_pengeluaran').html(html_pengeluaran);
-            $('#laba_bersih').html('<b>Rp ' + numberFormat(total_pendapatan - total_penjualan - total_pengeluaran).toString() + '</b>');
+            $('#laba_bersih').html('<b>'  + kurs + ' ' + numberFormat(total_pendapatan - total_penjualan - total_pengeluaran).toString() + '</b>');
          }else{
-            $('#subtotal_pendapatan').html('<b>Rp 0</b>');
+            $('#subtotal_pendapatan').html(`<b>${kurs}0</b>`);
             $('#bodyTable_pendapatan').html(`<tr><td colspan="3">Data pendapatan tidak ditemukan</td></tr>`);
 
-            $('#subtotal_biaya_penjualan').html('<b>Rp 0</b>');
+            $('#subtotal_biaya_penjualan').html(`<b>${kurs}0</b>`);
             $('#bodyTable_biaya_penjualan').html(`<tr><td colspan="3">Data penjualan tidak ditemukan</td></tr>`);
-            $('#laba_kotor').html('<b>Rp 0</b>');
+            $('#laba_kotor').html(`<b>${kurs}0</b>`);
 
-            $('#subtotal_pengeluaran').html('<b>Rp 0</b>');
+            $('#subtotal_pengeluaran').html(`<b>${kurs}0</b>`);
             $('#bodyTable_pengeluaran').html(`<tr><td colspan="3">Data pengeluaran tidak ditemukan</td></tr>`);
-            $('#laba_bersih').html('<b>Rp 0</b>');
+            $('#laba_bersih').html(`<b>${kurs}0</b>`);
          }
      },[{ periode: $('#periode').val()}]
    );

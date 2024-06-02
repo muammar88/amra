@@ -106,12 +106,12 @@ function ListInfoSaldoMember(JSONData){
                            <tr>
                               <td class="text-left px-2 border border-right-0" ><b>Total Deposit</b></td>
                               <td class="px-0 border border-right-0 border-left-0" >:</td>
-                              <td class="text-left border border-left-0" ><b style="color:red">Rp ${numberFormat(json.deposit)}</b></td>
+                              <td class="text-left border border-left-0" ><b style="color:red">${kurs} ${numberFormat(json.deposit)}</b></td>
                            </tr>
                            <tr>
                               <td class="text-left px-2 border border-right-0" ><b>Total Tabungan</b></td>
                               <td class="px-0 border border-right-0 border-left-0" >:</td>
-                              <td class="text-left border border-left-0" ><b style="color:red">Rp ${numberFormat(json.tabungan)}</b></td>
+                              <td class="text-left border border-left-0" ><b style="color:red">${kurs} ${numberFormat(json.tabungan)}</b></td>
                            </tr>
                         </tbody>
                      </table>
@@ -138,10 +138,10 @@ function ListInfoSaldoMember(JSONData){
                                              <td class="text-center align-middle">${json.riwayat_deposit[x].nomor_transaksi}</td>
                                              <td class="text-center px-0 align-middle" >
                                                 <ul class="list my-0">
-                                                   <li>Biaya <b>DEBET</b>: Rp ${numberFormat(json.riwayat_deposit[x].debet)}</li>
-                                                   <li>Biaya <b>KREDIT</b>: Rp ${numberFormat(json.riwayat_deposit[x].kredit)}</li>
-                                                   <li>Deposit Sebelum : Rp ${numberFormat(json.riwayat_deposit[x].saldo_sebelum)}</li>
-                                                   <li>Deposit Sesudah : Rp ${numberFormat(json.riwayat_deposit[x].saldo_sesudah)}</li>
+                                                   <li>Biaya <b>DEBET</b>: ${kurs} ${numberFormat(json.riwayat_deposit[x].debet)}</li>
+                                                   <li>Biaya <b>KREDIT</b>: ${kurs} ${numberFormat(json.riwayat_deposit[x].kredit)}</li>
+                                                   <li>Deposit Sebelum : ${kurs} ${numberFormat(json.riwayat_deposit[x].saldo_sebelum)}</li>
+                                                   <li>Deposit Sesudah : ${kurs} ${numberFormat(json.riwayat_deposit[x].saldo_sesudah)}</li>
                                                 </ul>
 
                                              </td>

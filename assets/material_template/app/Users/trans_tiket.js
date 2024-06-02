@@ -36,8 +36,8 @@ function hitTotalRefund(e, id){
          $(e).val(thisVal.toString().substring((leng-1),-2));
          frown_alert('Total refund ditambah dengan total fee tidak boleh lebih besar dari total harga tiket');
       } else {
-         $('#direfund').val('Rp ' + numberFormat(total_refund));
-         $('#fee').val('Rp ' + numberFormat(total_fee));
+         $('#direfund').val(kurs + ' ' + numberFormat(total_refund));
+         $('#fee').val(kurs + ' ' + numberFormat(total_fee));
       }
    }
 }
@@ -80,10 +80,10 @@ function formRefundTiket(id, JSONData, invoice){
                                     </td>
                                     <td>
                                        <ul class="list pl-3">
-                                          <li>Harga Travel : Rp ${numberFormat(json.list_detail[x]['travel_price'])}</li>
-                                          <li>Harga Costumer : Rp ${numberFormat(json.list_detail[x]['costumer_price'])}</li>
-                                          <li>Total Harga Tiket : Rp ${numberFormat(json.list_detail[x]['pax'] * json.list_detail[x]['costumer_price'])}</li>
-                                          <li>Total Fee Tiket : Rp ${numberFormat(json.list_detail[x]['pax'] * (json.list_detail[x]['costumer_price'] - json.list_detail[x]['travel_price']))}</li>
+                                          <li>Harga Travel : ${kurs} ${numberFormat(json.list_detail[x]['travel_price'])}</li>
+                                          <li>Harga Costumer : ${kurs} ${numberFormat(json.list_detail[x]['costumer_price'])}</li>
+                                          <li>Total Harga Tiket : ${kurs} ${numberFormat(json.list_detail[x]['pax'] * json.list_detail[x]['costumer_price'])}</li>
+                                          <li>Total Fee Tiket : ${kurs} ${numberFormat(json.list_detail[x]['pax'] * (json.list_detail[x]['costumer_price'] - json.list_detail[x]['travel_price']))}</li>
                                        </ul>
                                     </td>
                                     <td>
@@ -117,13 +117,13 @@ function formRefundTiket(id, JSONData, invoice){
                            <div class="col-3">
                               <div class="form-group">
                                  <label>Total Direfund</label>
-                                 <input type="text" id="direfund" class="form-control form-control-sm currency" placeholder="Direfund" value="Rp 0" readonly/>
+                                 <input type="text" id="direfund" class="form-control form-control-sm currency" placeholder="Direfund" value="${kurs} 0" readonly/>
                               </div>
                            </div>
                            <div class="col-3">
                               <div class="form-group">
                                  <label>Total Fee</label>
-                                 <input type="text" id="fee" class="form-control form-control-sm currency" placeholder="Fee" value="Rp 0" readonly/>
+                                 <input type="text" id="fee" class="form-control form-control-sm currency" placeholder="Fee" value="${kurs} 0" readonly/>
                               </div>
                            </div>
                            <div class="col-6">
@@ -135,13 +135,13 @@ function formRefundTiket(id, JSONData, invoice){
                            <div class="col-3">
                               <div class="form-group">
                                  <label>Sudah dibayar</label>
-                                 <input type="text" name="dibayar" id="dibayar" class="form-control form-control-sm" placeholder="Dibayar" value="Rp ${numberFormat(json.total_pembayaran)}" readonly/>
+                                 <input type="text" name="dibayar" id="dibayar" class="form-control form-control-sm" placeholder="Dibayar" value="${kurs} ${numberFormat(json.total_pembayaran)}" readonly/>
                               </div>
                            </div>
                            <div class="col-3">
                               <div class="form-group">
                                  <label>Sisa Pembayaran</label>
-                                 <input type="text" name="sisa_pembayaran" id="sisa_pembayaran" class="form-control form-control-sm" placeholder="Sisa Pembayaran" value="Rp ${numberFormat(json.sisa)}" readonly/>
+                                 <input type="text" name="sisa_pembayaran" id="sisa_pembayaran" class="form-control form-control-sm" placeholder="Sisa Pembayaran" value="${kurs} ${numberFormat(json.sisa)}" readonly/>
                               </div>
                            </div>
                         </div>
@@ -267,7 +267,7 @@ function hitungReschedule(id){
    var sudah_dibayar = hide_currency($('#dibayar').val());
    var pax = $('#pax'+id).val();
    var subtotal = pax * harga_costumer;
-   $('#subtotal'+id).html('Rp ' + numberFormat(subtotal));
+   $('#subtotal'+id).html( kurs + ' ' + numberFormat(subtotal));
    $('#subtotalhidden'+id).val(subtotal);
    var total = 0;
    if( $('.subtotal_hidden').length > 0 ){
@@ -280,8 +280,8 @@ function hitungReschedule(id){
          }
       });
    }
-   $('#total').text('Rp ' + numberFormat(total) );
-   $('#sisa').val('Rp ' + numberFormat(total - sudah_dibayar) );
+   $('#total').text(kurs  + ' ' + numberFormat(total) );
+   $('#sisa').val( kurs + ' ' + numberFormat(total - sudah_dibayar) );
 }
 
 function formReschedule(JSONData, id){
@@ -322,13 +322,13 @@ function formReschedule(JSONData, id){
                                     <input type="date" class="form-control form-control-sm" name="departure_date[${json.riwayat_pembayaran[x]['id']}]" value="${json.riwayat_pembayaran[x]['departure_date']}"/>
                                  </td>
                                  <td>
-                                    <input type="text" class="form-control form-control-sm currency harga_travel" id="hargatravel${json.riwayat_pembayaran[x]['id']}" placeholder="Harga Travel" name="harga_travel[${json.riwayat_pembayaran[x]['id']}]" value="Rp ${numberFormat(json.riwayat_pembayaran[x]['travel_price'])}" />
+                                    <input type="text" class="form-control form-control-sm currency harga_travel" id="hargatravel${json.riwayat_pembayaran[x]['id']}" placeholder="Harga Travel" name="harga_travel[${json.riwayat_pembayaran[x]['id']}]" value="${kurs} ${numberFormat(json.riwayat_pembayaran[x]['travel_price'])}" />
                                  </td>
                                  <td>
-                                    <input type="text" class="form-control form-control-sm currency harga_costumer" id="hargacostumer${json.riwayat_pembayaran[x]['id']}" placeholder="Harga Kostumer" name="harga_costumer[${json.riwayat_pembayaran[x]['id']}]" value="Rp ${numberFormat(json.riwayat_pembayaran[x]['costumer_price'])}" onkeyup="hitungReschedule(${json.riwayat_pembayaran[x]['id']})"/>
+                                    <input type="text" class="form-control form-control-sm currency harga_costumer" id="hargacostumer${json.riwayat_pembayaran[x]['id']}" placeholder="Harga Kostumer" name="harga_costumer[${json.riwayat_pembayaran[x]['id']}]" value="${kurs} ${numberFormat(json.riwayat_pembayaran[x]['costumer_price'])}" onkeyup="hitungReschedule(${json.riwayat_pembayaran[x]['id']})"/>
                                  </td>
                                  <td>
-                                    <span id="subtotal${json.riwayat_pembayaran[x]['id']}">Rp ${numberFormat(json.riwayat_pembayaran[x]['subtotal'])}</span>
+                                    <span id="subtotal${json.riwayat_pembayaran[x]['id']}">${kurs} ${numberFormat(json.riwayat_pembayaran[x]['subtotal'])}</span>
                                     <input type="hidden" id="subtotalhidden${json.riwayat_pembayaran[x]['id']}" class="subtotal_hidden" value="${json.riwayat_pembayaran[x]['subtotal']}">
                                  </td>
                               </tr>`;
@@ -338,7 +338,7 @@ function formReschedule(JSONData, id){
                            <tfoot>
                               <tr>
                                  <td colspan="6" class="text-right"><b>TOTAL</b></td>
-                                 <td id="total">Rp ${numberFormat(total)}</td>
+                                 <td id="total">${kurs} ${numberFormat(total)}</td>
                               </tr>
                            </tfoot>
                         </table>
@@ -366,13 +366,13 @@ function formReschedule(JSONData, id){
                            <div class="col-3">
                               <div class="form-group">
                                  <label>Sudah dibayar</label>
-                                 <input type="text" id="dibayar" class="form-control form-control-sm" placeholder="Dibayar" value="Rp ${numberFormat(json.pembayaran.total_pembayaran)}" readonly/>
+                                 <input type="text" id="dibayar" class="form-control form-control-sm" placeholder="Dibayar" value="${kurs} ${numberFormat(json.pembayaran.total_pembayaran)}" readonly/>
                               </div>
                            </div>
                            <div class="col-3">
                               <div class="form-group">
                                  <label>Sisa</label>
-                                 <input type="text" class="form-control form-control-sm" value="Rp ${numberFormat(json.pembayaran.sisa)}" id="sisa" readonly />
+                                 <input type="text" class="form-control form-control-sm" value="${kurs} ${numberFormat(json.pembayaran.sisa)}" id="sisa" readonly />
                               </div>
                            </div>
                         </div>
@@ -457,7 +457,7 @@ function hitungSubAndTotal(random_num){
    var pax = $('#pax'+ random_num).val();
    var harga_travel = $('#hargatravel'+ random_num).val();
    var harga_costumer = $('#hargacostumer'+ random_num).val();
-   $('#subtotal'+random_num).text('Rp ' + numberFormat(pax * hide_currency(harga_costumer)));
+   $('#subtotal'+random_num).text(kurs + ' ' + numberFormat(pax * hide_currency(harga_costumer)));
    $('#subtotalhidden'+random_num).val(pax * hide_currency(harga_costumer));
    hitungTotal();
 }
@@ -479,14 +479,14 @@ function hitungTotal() {
    if( sisa < 0 ){
       var lengDibayar = dibayar.length;
       if( lengDibayar < 4 ){
-         dibayar = 'Rp 0';
+         dibayar = kurs + ' 0';
       }else{
          dibayar = dibayar.substring((lengDibayar-1),-2);
       }
       $('#dibayar').val(dibayar);
    }else{
-      $('#total').text('Rp ' + numberFormat(total));
-      $('#sisa').val('Rp ' + numberFormat(sisa));
+      $('#total').text(kurs + ' ' + numberFormat(total));
+      $('#sisa').val(kurs + ' ' + numberFormat(sisa));
    }
 }
 
@@ -523,14 +523,14 @@ function form_row_tiket_transaction(JSONData){
                      <input type="date" class="form-control form-control-sm" name="departure_date[]"/>
                   </td>
                   <td>
-                     <input type="text" class="form-control form-control-sm currency harga_travel" id="hargatravel${random_number}" placeholder="Harga Travel" name="harga_travel[]" value="Rp 0" />
+                     <input type="text" class="form-control form-control-sm currency harga_travel" id="hargatravel${random_number}" placeholder="Harga Travel" name="harga_travel[]" value="${kurs} 0" />
                   </td>
                   <td>
-                     <input type="text" class="form-control form-control-sm currency harga_costumer" id="hargacostumer${random_number}" placeholder="Harga Kostumer" name="harga_costumer[]" value="Rp 0" onkeyup="hitungSubAndTotal(${random_number})"/>
+                     <input type="text" class="form-control form-control-sm currency harga_costumer" id="hargacostumer${random_number}" placeholder="Harga Kostumer" name="harga_costumer[]" value="${kurs} 0" onkeyup="hitungSubAndTotal(${random_number})"/>
                   </td>
                   <td class="pt-3">
-                     <span id="subtotal${random_number}">Rp 0</span>
-                     <input type="hidden" class="subtotal" id="subtotalhidden${random_number}" value="Rp 0">
+                     <span id="subtotal${random_number}">${kurs} 0</span>
+                     <input type="hidden" class="subtotal" id="subtotalhidden${random_number}" value="${kurs} 0">
                   </td>
                </tr>
                <script>
@@ -595,7 +595,7 @@ function form_tiket_transaction(JSONData){
                                     </button>
                                  </td>
                                  <td colspan="5" class="text-right pt-3"><b>TOTAL</b></td>
-                                 <td class="pt-3"><span id="total">Rp 0</span></td>
+                                 <td class="pt-3"><span id="total">${kurs} 0</span></td>
                               </tr>
                            </tfoot>
                         </table>
@@ -623,13 +623,13 @@ function form_tiket_transaction(JSONData){
                            <div class="col-2">
                               <div class="form-group">
                                  <label>Dibayar</label>
-                                 <input type="text" name="dibayar" id="dibayar" class="form-control form-control-sm currency" placeholder="Dibayar" onkeyup="hitungTotal()" value="Rp. 0"/>
+                                 <input type="text" name="dibayar" id="dibayar" class="form-control form-control-sm currency" placeholder="Dibayar" onkeyup="hitungTotal()" value="${kurs} 0"/>
                               </div>
                            </div>
                            <div class="col-2">
                               <div class="form-group">
                                  <label>Sisa</label>
-                                 <input type="text" class="form-control form-control-sm" value="Rp. 0" id="sisa" readonly />
+                                 <input type="text" class="form-control form-control-sm" value="${kurs} 0" id="sisa" readonly />
                               </div>
                            </div>
                         </div>
@@ -786,13 +786,13 @@ function ListDaftarTransaksiTiket(JSONData){
                                     </tr>
                                     <tr>
                                        <td style="border:none" class="text-left px-0 pt-0"><b>HARGA TRAVEL</b></td>
-                                       <td style="border:none" class="text-left px-1 pt-0">: Rp ${numberFormat(json.detail_transaction[x]['travel_price'])}</td>
+                                       <td style="border:none" class="text-left px-1 pt-0">: ${kurs} ${numberFormat(json.detail_transaction[x]['travel_price'])}</td>
                                        <td style="border:none" class="text-left px-0 pt-0"><b>HARGA KOSTUMER</b></td>
-                                       <td style="border:none" class="text-left px-1 pt-0">: Rp ${numberFormat(json.detail_transaction[x]['costumer_price'])}</td>
+                                       <td style="border:none" class="text-left px-1 pt-0">: ${kurs} ${numberFormat(json.detail_transaction[x]['costumer_price'])}</td>
                                     </tr>
                                     <tr style="background-color: #ffcbcb;">
                                        <td style="border:none" class="text-right mb-1 pl-0 py-1" colspan="3"><b>SUBTOTAL</b></td>
-                                       <td class="text-left mb-1 px-1 py-1" style="background-color: #f59393;border:none">: Rp ${numberFormat(json.detail_transaction[x]['total'])}</td>
+                                       <td class="text-left mb-1 px-1 py-1" style="background-color: #f59393;border:none">: ${kurs} ${numberFormat(json.detail_transaction[x]['total'])}</td>
                                     </tr>
                                     <tr><td style="border:none" class="py-2" colspan="4"></td></tr>`;
          }
@@ -803,15 +803,15 @@ function ListDaftarTransaksiTiket(JSONData){
                               <tbody>
                                  <tr>
                                     <td style="width:50%;border:none" class="text-left px-0 py-0"><b>TOTAL TRANSAKSI TIKET</b></td>
-                                    <td style="width:50%;border:none" class="text-left px-1 py-0">: Rp ${numberFormat(json.total)} </td>
+                                    <td style="width:50%;border:none" class="text-left px-1 py-0">: ${kurs} ${numberFormat(json.total)} </td>
                                  </tr>
                                  <tr>
                                     <td style="border:none" class="text-left px-0 py-0"><b>TOTAL PEMBAYARAN</b></td>
-                                    <td style="border:none" class="text-left px-1 py-0">: Rp ${numberFormat(json.total_sudah_bayar)}</td>
+                                    <td style="border:none" class="text-left px-1 py-0">: ${kurs} ${numberFormat(json.total_sudah_bayar)}</td>
                                  </tr>
                                  <tr>
                                     <td style="border:none" class="text-left px-0 py-0"><b>SISA PEMBAYARAN</b></td>
-                                    <td style="border:none" class="text-left px-1 py-0">: Rp ${numberFormat(json.sisa)}</td>
+                                    <td style="border:none" class="text-left px-1 py-0">: ${kurs} ${numberFormat(json.sisa)}</td>
                                  </tr>
                               </tbody>
                            </table>
@@ -821,7 +821,7 @@ function ListDaftarTransaksiTiket(JSONData){
                                  <ul class="list mt-0 mb-1 pl-3">`;
          if( json.riwayat_transaksi_tiket.length > 0 ){
             for( y in json.riwayat_transaksi_tiket){
-               info_pembayaran +=  `<li style="border-bottom: 1px dashed #c3bdbd;" class="mb-1">${ json.riwayat_transaksi_tiket[y]['ket'] == 'refund' ? '<span style="color:red"><b>[REFUND]</b></span>' : '' } Tanggal Transaksi: ${json.riwayat_transaksi_tiket[y]['tanggal_transaksi']} | No Invoice: <b style="color:red">${json.riwayat_transaksi_tiket[y]['invoice']} </b> | Biaya: Rp ${numberFormat(json.riwayat_transaksi_tiket[y]['biaya'])} | Nama Petugas: ${json.riwayat_transaksi_tiket[y]['nama_petugas']} | Nama Pelanggan : ${json.riwayat_transaksi_tiket[y]['nama_pelanggan']} | Nomor Identitas : ${json.riwayat_transaksi_tiket[y]['nomor_identitas']} </li>`;
+               info_pembayaran +=  `<li style="border-bottom: 1px dashed #c3bdbd;" class="mb-1">${ json.riwayat_transaksi_tiket[y]['ket'] == 'refund' ? '<span style="color:red"><b>[REFUND]</b></span>' : '' } Tanggal Transaksi: ${json.riwayat_transaksi_tiket[y]['tanggal_transaksi']} | No Invoice: <b style="color:red">${json.riwayat_transaksi_tiket[y]['invoice']} </b> | Biaya: ${kurs} ${numberFormat(json.riwayat_transaksi_tiket[y]['biaya'])} | Nama Petugas: ${json.riwayat_transaksi_tiket[y]['nama_petugas']} | Nama Pelanggan : ${json.riwayat_transaksi_tiket[y]['nama_pelanggan']} | Nomor Identitas : ${json.riwayat_transaksi_tiket[y]['nomor_identitas']} </li>`;
             }
          }else{
             info_pembayaran += `<li style="color:red;" class="mb-1 text-center">Riwayat pembayaran tiket tidak ditemukan </li>`;
@@ -891,7 +891,7 @@ function formDetailRiwayatPembayaranTiket(JSONData){
          html += `<tr>
                      <td><b style="color:red">${json[x]['invoice']}</b> <br> ${json[x]['tanggal_transaksi']}</td>
                      <td>${json[x]['nama_pelanggan']} <br> (${json[x]['nomor_identitas']})</td>
-                     <td>Rp ${numberFormat(json[x]['biaya'])}</td>
+                     <td>${kurs} ${numberFormat(json[x]['biaya'])}</td>
                      <td>${json[x]['nama_petugas']}</td>
                      <td style="text-transform:uppercase">${json[x]['ket']}</td>
                   </tr>`;
@@ -953,12 +953,12 @@ function form_bayar_tiket_transaction(JSONData, invoice){
                               <td>${data.riwayat_pembayaran[x]['costumer_name']}</td>
                               <td>${data.riwayat_pembayaran[x]['receiver']}</td>
                               <td>${data.riwayat_pembayaran[x]['ket']}</td>
-                              <td>Rp ${numberFormat(data.riwayat_pembayaran[x]['biaya'])}</td>
+                              <td>${kurs} ${numberFormat(data.riwayat_pembayaran[x]['biaya'])}</td>
                            </tr>`;
                }
                html     +=`<tr style="background-color: #e8e8e8;">
                               <td colspan="5" class="text-right"><b>TOTAL PEMBAYARAN</b></td>
-                              <td><b>Rp ${numberFormat(data.total_pembayaran)}</b></td>
+                              <td><b>${kurs} ${numberFormat(data.total_pembayaran)}</b></td>
                            </tr>`;
             } else {
                html += `<tr><td colspan="7">Data riwayat pembayaran tidak ditemukan</td></tr>`;
@@ -985,19 +985,19 @@ function form_bayar_tiket_transaction(JSONData, invoice){
                            <div class="col-2">
                               <div class="form-group">
                                  <label>Dibayar</label>
-                                 <input type="text" name="dibayar" id="dibayar" class="form-control form-control-sm currency" placeholder="Dibayar" onkeyup="hitungSisaPembayaranTiket()" value="Rp 0"/>
+                                 <input type="text" name="dibayar" id="dibayar" class="form-control form-control-sm currency" placeholder="Dibayar" onkeyup="hitungSisaPembayaranTiket()" value="${kurs} 0"/>
                               </div>
                            </div>
                            <div class="col-2">
                               <div class="form-group">
                                  <label>Sisa</label>
-                                 <input type="text" class="form-control form-control-sm" value="Rp ${numberFormat(data.sisa)}" id="sisa" readonly />
+                                 <input type="text" class="form-control form-control-sm" value="${kurs} ${numberFormat(data.sisa)}" id="sisa" readonly />
                               </div>
                            </div>
                            <div class="col-2">
                               <div class="form-group">
                                  <label>Total Tiket</label>
-                                 <input type="text" class="form-control form-control-sm" value="Rp ${numberFormat(data.total_harga)}" id="total" readonly />
+                                 <input type="text" class="form-control form-control-sm" value="${kurs} ${numberFormat(data.total_harga)}" id="total" readonly />
                               </div>
                            </div>
                         </div>
@@ -1043,7 +1043,7 @@ function hitungSisaPembayaranTiket(){
          type: 'red',
       });
    }
-   $('#sisa').val('Rp ' +numberFormat(sisa));
+   $('#sisa').val(kurs + ' ' +numberFormat(sisa));
 }
 
 function bayarTiket(id){

@@ -58,7 +58,7 @@ function ListLevelAgen(JSONData){
    var html =  `<tr>
                   <td>${json.nama}</td>
                   <td>${json.level}</td>
-                  <td>Rp ${numberFormat(json.default_fee)}</td>
+                  <td>${kurs} ${numberFormat(json.default_fee)}</td>
                   <td>
                      <button type="button" class="btn btn-default btn-action" title="Edit Level Keagenan"
                        onclick="edit_level_keagenan(${json.id})" style="margin:.15rem .1rem  !important">
@@ -162,7 +162,7 @@ function formaddupdate_level_keagenan(level, JSONValue){
       id = `<input type="hidden" value="${value.id}" name="id">`;
       nama = value.nama;
       level = value.level;
-      default_fee_keagenan = 'Rp ' + numberFormat(value.default_fee);
+      default_fee_keagenan = kurs + ' ' + numberFormat(value.default_fee);
    }
    var html = `<form action="${baseUrl}Daftar_agen/proses_addupdate_level_keagenan" id="form_utama" class="formName ">
                   <div class="row px-0 mx-0">

@@ -14,6 +14,9 @@ class Api extends CI_Controller
 	/**
 	 * Construct
 	 */
+
+	private $kurs;
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -21,6 +24,8 @@ class Api extends CI_Controller
 		$this->load->model('Model_api', 'model_api');
 		# model api cud
 		$this->load->model('Model_api_cud', 'model_api_cud');
+		# kurs
+		$this->kurs = $this->session->userdata($this->config->item('apps_name'))['kurs'];
 		# set date timezone
 		ini_set('date.timezone', 'Asia/Jakarta');
 	}
@@ -118,10 +123,10 @@ class Api extends CI_Controller
 											  'nomor_whatsapp' => $info_akun['nomor_whatsapp'],
 											  'birth_place' => $info_akun['birth_place'],
 											  'birth_date' => $info_akun['birth_date'],
-											  'deposit' =>  'Rp' . number_format($info_deposit_tabungan['deposit']),
-											  'tabungan' => 'Rp' . number_format($info_deposit_tabungan['tabungan']),
-											  'markup_withdraw' => 'Rp ' . number_format($info_deposit_tabungan['markup_withdraw']),
-											  'total_markup' => 'Rp ' . number_format($info_deposit_tabungan['deposit'] - $info_deposit_tabungan['markup_withdraw']),
+											  'deposit' =>  $this->kurs . ' ' .  number_format($info_deposit_tabungan['deposit']),
+											  'tabungan' => $this->kurs . ' ' number_format($info_deposit_tabungan['tabungan']),
+											  'markup_withdraw' => $this->kurs . ' ' . number_format($info_deposit_tabungan['markup_withdraw']),
+											  'total_markup' => $this->kurs . ' ' . number_format($info_deposit_tabungan['deposit'] - $info_deposit_tabungan['markup_withdraw']),
 											  'headline' => $headline,
 											  'list_paket' => $info_paket, 
 											  'notif' => strval($get_notif) ) );
@@ -1077,7 +1082,7 @@ class Api extends CI_Controller
 					'description' => $data_paket['description'],
 					'number_member' => $data_paket['number_member'],
 					'status' => ( $data_paket['departure_date'] <= date('Y-m-d') ? "Sudah Berangkat" : "Belum Berangkat" ),
-					'price' => 'Rp '.number_format($data_paket['price']).',-'
+					'price' => $this->kurs . ' '.number_format($data_paket['price']).',-'
 				);
 			} else {
 				$return = array(
@@ -2014,7 +2019,7 @@ class Api extends CI_Controller
 			$feedBack['transaction_code'] = $transaction_code;
 			$feedBack['product_code'] = $get_info_transaksi['product_code'];
 			$feedBack['nomor_tujuan'] = $get_info_transaksi['nomor_tujuan'];
-			$feedBack['price'] = 'Rp '.number_format($get_info_transaksi['company_price']);
+			$feedBack['price'] = $this->kurs . ' '.number_format($get_info_transaksi['company_price']);
 			// 
 			if( $get_info_transaksi['status'] == 'process') {
 				// update status
@@ -2076,7 +2081,7 @@ class Api extends CI_Controller
 					$feedBack['transaction_code'] = $transaction_code;
 					$feedBack['product_code'] = $get_info_transaksi['product_code'];
 					$feedBack['nomor_tujuan'] = $get_info_transaksi['nomor_tujuan'];
-					$feedBack['price'] = 'Rp '.number_format($get_info_transaksi['company_price']);
+					$feedBack['price'] = $this->kurs . ' '.number_format($get_info_transaksi['company_price']);
 					if( $get_info_transaksi['category_code'] == 'TL' ) {
 						if ( isset( $check_status->success ) AND $check_status->success == 1  ) {
 							if ( isset( $check_status->data->status ) AND $check_status->data->status == 1 ) { // sukses
@@ -2318,7 +2323,7 @@ class Api extends CI_Controller
 					$company_markup = ( isset( $get_markup_company[$row2->product_id] ) ? $get_markup_company[$row2->product_id] : $get_markup_company['all']);
 					$feedBack[] = array('product_code' => $row2->product_id, 
 										'product_name' => $row2->product_name, 
-										'product_price' => 'Rp. '.number_format($row2->product_price + $mark_up[$row2->product_id] + $company_markup),
+										'product_price' => $this->kurs . ' ' .number_format($row2->product_price + $mark_up[$row2->product_id] + $company_markup),
 										'status' => $row2->status);
 				}
           	}

@@ -79,7 +79,7 @@ function ListTransMember(JSONData){
                   <td>${json.ref}</td>
                   <td>
                      <ul class="list">
-                        <li>Amount : Rp ${numberFormat(json.amount)}</li>
+                        <li>Amount : ${kurs} ${numberFormat(json.amount)}</li>
                         <li>Tipe Transaksi : ${json.activity_type}</li>
                         <li>Status Request : ${status}</li>
                         <li>Sumber Pembayaran : ${json.payment_source}</li>

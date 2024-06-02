@@ -7,7 +7,7 @@ function beranda_utama_Pages() {
                      </button>
                      <div class="btn-group float-right ml-3">
                         <button class="btn btn-default float-right" type="button" title="Saldo Perusahaan Sekarang">
-                           <i class="fas fa-money-bill-wave"></i> <b>SALDO perusahaan</b> : <b id="saldo">Rp 0,-</b>
+                           <i class="fas fa-money-bill-wave"></i> <b>SALDO perusahaan</b> : <b id="saldo">${kurs} 0,-</b>
                         </button>
                         
                      </div>
@@ -304,7 +304,7 @@ function ListDaftarRequestDeposit(JSONData) {
                   (NO ID : ${json.identity_number})<br>
                   <span style="color: #ffc107!important;">${json.last_update}</span>
                </td>
-               <td>Rp ${numberFormat(json.total_amount)}<br>
+               <td>${kurs} ${numberFormat(json.total_amount)}<br>
                   <b>${json.activity_type}</b><br>
                   <b style="color:red;">Sumber Biaya : ${json.sumber_biaya}</b></td>
                <td>
@@ -550,7 +550,7 @@ function get_data_beranda_utama() {
     baseUrl + "Beranda_utama/get_info_beranda_utama",
     function (e) {
       if (e["error"] == false) {
-        $("#saldo").html("Rp " + numberFormat(e.data.saldo));
+        $("#saldo").html(kurs + ' ' + numberFormat(e.data.saldo));
         $("#jamaah_terdaftar").html(e.data.jamaah_terdaftar);
         $("#paket_berangkat").html(e.data.paket_berangkat);
         $("#jamaah_berangkat").html(e.data.jamaah_berangkat);
@@ -689,7 +689,7 @@ function ListDaftarPaketBerangkat(JSONData) {
                      <ul class="text-left pl-3">`;
   if (json.paket_type.length > 0) {
     for (x in json.paket_type) {
-      html += `<li>${json.paket_type[x].paket_type_name} : Rp ${numberFormat(
+      html += `<li>${json.paket_type[x].paket_type_name} : ${kurs}  ${numberFormat(
         json.paket_type[x].price
       )}</li>`;
     }
@@ -761,7 +761,7 @@ function ListDaftarJamaahBerangkat(JSONData) {
   var json = JSON.parse(JSONData);
   var html = `<tr>
                   <td>${json.identity_number} <br> ${json.fullname}</td>
-                  <td>Rp ${numberFormat(json.price)}</td>
+                  <td>${kurs} ${numberFormat(json.price)}</td>
                   <td>${json.birth_place},<br> ${json.birth_date} </td>
                   <td><b>Kode</b> : ${json.kode} <br> ${json.paket_name}</td>
                   <td>${json.departure_date}<br>${json.return_date}</td>
@@ -852,13 +852,13 @@ function ListDaftarTiketTerjual(JSONData) {
                                     </tr>
                                     <tr>
                                        <td style="border:none" class="text-left px-0 pt-0"><b>HARGA TRAVEL</b></td>
-                                       <td style="border:none" class="text-left px-1 pt-0">: Rp ${numberFormat(
+                                       <td style="border:none" class="text-left px-1 pt-0">: ${kurs} ${numberFormat(
                                          json.detail_transaction[x][
                                            "travel_price"
                                          ]
                                        )}</td>
                                        <td style="border:none" class="text-left px-0 pt-0"><b>HARGA KOSTUMER</b></td>
-                                       <td style="border:none" class="text-left px-1 pt-0">: Rp ${numberFormat(
+                                       <td style="border:none" class="text-left px-1 pt-0">: ${kurs} ${numberFormat(
                                          json.detail_transaction[x][
                                            "costumer_price"
                                          ]
@@ -866,7 +866,7 @@ function ListDaftarTiketTerjual(JSONData) {
                                     </tr>
                                     <tr style="background-color: #ffcbcb;">
                                        <td style="border:none" class="text-right mb-1 pl-0 py-1" colspan="3"><b>SUBTOTAL</b></td>
-                                       <td class="text-left mb-1 px-1 py-1" style="background-color: #f59393;border:none">: Rp ${numberFormat(
+                                       <td class="text-left mb-1 px-1 py-1" style="background-color: #f59393;border:none">: ${kurs} ${numberFormat(
                                          json.detail_transaction[x]["total"]
                                        )}</td>
                                     </tr>
@@ -879,19 +879,19 @@ function ListDaftarTiketTerjual(JSONData) {
                               <tbody>
                                  <tr>
                                     <td style="width:50%;border:none" class="text-left px-0 py-0"><b>TOTAL TRANSAKSI TIKET</b></td>
-                                    <td style="width:50%;border:none" class="text-left px-1 py-0">: Rp ${numberFormat(
+                                    <td style="width:50%;border:none" class="text-left px-1 py-0">: ${kurs} ${numberFormat(
                                       json.total
                                     )} </td>
                                  </tr>
                                  <tr>
                                     <td style="border:none" class="text-left px-0 py-0"><b>TOTAL PEMBAYARAN</b></td>
-                                    <td style="border:none" class="text-left px-1 py-0">: Rp ${numberFormat(
+                                    <td style="border:none" class="text-left px-1 py-0">: ${kurs} ${numberFormat(
                                       json.total_sudah_bayar
                                     )}</td>
                                  </tr>
                                  <tr>
                                     <td style="border:none" class="text-left px-0 py-0"><b>SISA PEMBAYARAN</b></td>
-                                    <td style="border:none" class="text-left px-1 py-0">: Rp ${numberFormat(
+                                    <td style="border:none" class="text-left px-1 py-0">: ${kurs} ${numberFormat(
                                       json.sisa
                                     )}</td>
                                  </tr>
@@ -911,7 +911,7 @@ function ListDaftarTiketTerjual(JSONData) {
         json.riwayat_transaksi_tiket[y]["tanggal_transaksi"]
       } | No Invoice: <b style="color:red">${
         json.riwayat_transaksi_tiket[y]["invoice"]
-      } </b> | Biaya: Rp ${numberFormat(
+      } </b> | Biaya: ${kurs} ${numberFormat(
         json.riwayat_transaksi_tiket[y]["biaya"]
       )} | Nama Petugas: ${
         json.riwayat_transaksi_tiket[y]["nama_petugas"]
@@ -997,7 +997,7 @@ function get_data_riwayat_saldo(perpage) {
 function ListDaftarRiwayatSaldo(JSONData) {
   var json = JSON.parse(JSONData);
   var html = `<tr>
-                  <td>Rp ${numberFormat(json.saldo)}</td>
+                  <td>${kurs} ${numberFormat(json.saldo)}</td>
                   <td>${json.request_type}</td>
                   <td>${json.status}</td>
                   <td>${json.tanggal_transaksi}</td>

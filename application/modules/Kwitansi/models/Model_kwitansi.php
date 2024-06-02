@@ -12,11 +12,13 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 class Model_kwitansi extends CI_Model
 {
    private $company_id;
+   private $kurs;
 
    function __construct()
    {
       parent::__construct();
       $this->company_id = $this->session->userdata($this->config->item('apps_name'))['company_id'];
+      $this->kurs = $this->session->userdata($this->config->item('apps_name'))['kurs'];
    }
 
    function getRiwayatTransaksiPeminjaman( $sesi ){
@@ -487,15 +489,15 @@ class Model_kwitansi extends CI_Model
             $array['order_date'] = $row->input_date;
             $array['departure_date'] = $this->date_ops->change_date_t4($row->departure_date);
             $array['jamaah'] = $getJamaah['list'];
-            $array['harga_per_pax'] = 'Rp.' . number_format($row->price_per_pax);
-            $array['total_paket_price'] = 'Rp.' . number_format($row->price_per_pax * $getJamaah['count']);
-            $array['diskon'] = 'Rp.' . number_format($row->diskon);
-            $array['mahram_fee'] = 'Rp.' . number_format($row->total_mahram_fee);
+            $array['harga_per_pax'] = $this->kurs . number_format($row->price_per_pax);
+            $array['total_paket_price'] = $this->kurs . number_format($row->price_per_pax * $getJamaah['count']);
+            $array['diskon'] = $this->kurs . number_format($row->diskon);
+            $array['mahram_fee'] = $this->kurs . number_format($row->total_mahram_fee);
             $array['receiver'] = $row->receiver;
-            $array['total_tagihan'] = 'Rp.' . number_format($row->total_paket_price);
+            $array['total_tagihan'] = $this->kurs . number_format($row->total_paket_price);
             $totalSisa = $this->totalSisaPembayaranCash($row->paket_transaction_id, $sesi['invoice'], $row->total_paket_price);
-            $array['total_pembayaran'] = 'Rp.' . number_format($totalSisa['total_pembayaran']);
-            $array['sisa'] = 'Rp.' . number_format($totalSisa['sisa_tagihan']);
+            $array['total_pembayaran'] = $this->kurs . number_format($totalSisa['total_pembayaran']);
+            $array['sisa'] = $this->kurs . number_format($totalSisa['sisa_tagihan']);
          }
       }
 
@@ -877,10 +879,10 @@ class Model_kwitansi extends CI_Model
 
             $array['kode'] = $row->kode;
             $array['paket_name'] = $row->paket_name;
-            $array['total_pinjaman'] = 'Rp. ' . number_format($row->total_paket_price - $row->down_payment);
+            $array['total_pinjaman'] = $this->kurs . number_format($row->total_paket_price - $row->down_payment);
             $array['tenor'] = $row->tenor;
             $array['duedate'] = $this->date_ops->change_date_t4($due['jatuh_tempo']);
-            $array['angsuran'] = 'Rp. ' . number_format($due['angsuran']);
+            $array['angsuran'] = $this->kurs . number_format($due['angsuran']);
             $array['nama_penyetor'] = $exp[0];
             $array['hp_penyetor'] = $exp[1];
             $array['alamat_penyetor'] = $exp[2];
@@ -892,8 +894,8 @@ class Model_kwitansi extends CI_Model
                $array['dp'] = array(
                   'term' => '#',
                   'ket' => 'Pembayaran DP',
-                  'bayar' => 'Rp ' . number_format($row->down_payment),
-                  'sisa' => 'Rp ' . number_format($row->total_paket_price - $row->down_payment)
+                  'bayar' => $this->kurs . number_format($row->down_payment),
+                  'sisa' => $this->kurs . number_format($row->total_paket_price - $row->down_payment)
                );
                $sisa_pembayaran_setelah_dp = $sisa_pembayaran_setelah_dp - $row->down_payment;
             }
@@ -909,7 +911,7 @@ class Model_kwitansi extends CI_Model
                $pembayaran_cicilan = $pembayaran['pembayaran_cicilan'];
 
                $total_cicilan = $sisa_pembayaran_setelah_dp;
-               $array['total_sudah_bayar'] =  'Rp. ' . number_format($pembayaran_cicilan + $dp);
+               $array['total_sudah_bayar'] =  $this->kurs . number_format($pembayaran_cicilan + $dp);
                $list_skema_cicilan  = array();
                if ($pembayaran_cicilan != 0) {
                   $first = 1;
@@ -920,71 +922,28 @@ class Model_kwitansi extends CI_Model
                         $list_skema_cicilan[] = array(
                            'term' => $key,
                            'ket' => 'Pembayaran ke ' . $key,
-                           'bayar' => 'Rp. ' . number_format($value['amount']),
-                           'sisa' => 'Rp. ' . number_format(abs(0))
+                           'bayar' => $this->kurs . number_format($value['amount']),
+                           'sisa' => $this->kurs . number_format(abs(0))
                         );
                      } else if ($pembayaran_cicilan == 0) {
                         $list_skema_cicilan[] = array(
                            'term' => $key,
                            'ket' => 'Pembayaran ke ' . $key,
-                           'bayar' => 'Rp. ' . number_format($value['amount']),
-                           'sisa' => 'Rp. ' . number_format(abs(0))
+                           'bayar' => $this->kurs . number_format($value['amount']),
+                           'sisa' => $this->kurs . number_format(abs(0))
                         );
                         break;
                      } else {
                         $list_skema_cicilan[] = array(
                            'term' => $key,
                            'ket' => 'Pembayaran ke ' . $key,
-                           'bayar' => 'Rp. ' . number_format($pembayaran_cicilan_sebelum_dibayar),
-                           'sisa' => 'Rp. ' . number_format(abs($pembayaran_cicilan))
+                           'bayar' => $this->kurs . number_format($pembayaran_cicilan_sebelum_dibayar),
+                           'sisa' => $this->kurs . number_format(abs($pembayaran_cicilan))
                         );
                         break;
                      }
                   }
                }
-
-
-               // $listBelumBayar = array();
-               // if( $sudahBayar != 0 ) {
-               //    $sisa = $sudahBayar;
-               //    // get angsuran yang belum bayar
-               //    $first = 0;
-               //    foreach ( $skema as $key => $value ){
-               //       // echo $sisa."<br>";
-               //       $sisa = $sisa - $value['amount'];
-               //       if( $sisa < 0 ){
-               //          if( $first == 0 ){
-               //             $listBelumBayar[$key] = array('amount' => abs($sisa));
-               //          }else{
-               //             $listBelumBayar[$key] = array('amount' => $value['amount']);
-               //          }
-               //          $first++;
-               //       }
-               //    }
-               // }
-               // else{
-               //    foreach ( $skema as $key => $value ) {
-               //       $listBelumBayar[$key] = array('amount' => $value['amount']);
-               //    }
-               // }
-               // $sisa = $bayarSekarang;
-               // $listPembayaran = array();
-               // foreach ($listBelumBayar as $key => $value) {
-               //    $sisaSebelum = $sisa;
-               //    $sisa = $sisa - $value['amount'];
-               //    if( $sisa < 0 ){
-               //       $listPembayaran[] = array('term' => $key,
-               //                                 'ket' => 'Pembayaran ke '.$key,
-               //                                 'bayar' => 'Rp. '.number_format($sisaSebelum),
-               //                                 'sisa' => 'Rp. '.number_format(abs($sisa)));
-               //       break;
-               //    }else{
-               //       $listPembayaran[] = array('term' => $key,
-               //                                 'ket' => 'Pembayaran ke '.$key,
-               //                                 'bayar' => 'Rp. '.number_format($value['amount']),
-               //                                 'sisa' => 'Rp. 0');
-               //    }
-               // }
                $array['listPembayaran'] = $list_skema_cicilan;
             }
          }
@@ -1039,7 +998,7 @@ class Model_kwitansi extends CI_Model
             }
             if ($row->invoice == $invoice) {
                $detail_pembayaran = array(
-                  'paid' => 'Rp. ' . number_format($row->paid),
+                  'paid' => $this->kurs . number_format($row->paid),
                   'penerima' => $row->receiver,
                   'tanggal_transaksi' => $this->date_ops->change_date_t5($row->input_date)
                );
@@ -1145,7 +1104,7 @@ class Model_kwitansi extends CI_Model
             }
             $riwayat_transaksi[] = array(
                'invoice' => $rows->invoice,
-               'debet' => 'Rp. ' . number_format($rows->paid),
+               'debet' => $this->kurs . number_format($rows->paid),
                'ket' => $rows->ket,
                'penyetor' => $rows->deposit_name,
                'penerima' => $rows->receiver,
@@ -1153,10 +1112,10 @@ class Model_kwitansi extends CI_Model
             );
          }
       }
-      $array['total_pembayaran'] = 'Rp. ' . number_format($total_pembayaran);
-      $array['rata_rata_amount'] = 'Rp. ' . number_format($angsuran);
+      $array['total_pembayaran'] = $this->kurs . number_format($total_pembayaran);
+      $array['rata_rata_amount'] = $this->kurs . number_format($angsuran);
       $totalAmount = $total_paket_price - $dp;
-      $array['totalAmount'] = 'Rp. ' . number_format($total_paket_price);
+      $array['totalAmount'] = $this->kurs . number_format($total_paket_price);
       $array['bulan'] = $bulan;
       $bulanSudahBayar = 0;
       foreach ($amoutPerMonth as $key => $value) {
@@ -1166,7 +1125,7 @@ class Model_kwitansi extends CI_Model
       }
       $array['riwayatTransaksi'] = $riwayat_transaksi;
       $array['sisaBulan'] = $bulan - $bulanSudahBayar;
-      $array['sisaPinjaman'] = 'Rp. ' . number_format($totalAmount - $paid);
+      $array['sisaPinjaman'] = $this->kurs . number_format($totalAmount - $paid);
       $array['no_register'] = $sesi['nomor_registrasi'];
       return $array;
    }
@@ -1198,7 +1157,7 @@ class Model_kwitansi extends CI_Model
          foreach ($q->result() as $row) {
             $skema[] = array(
                'term' => $row->term,
-               'amount' =>  'Rp.' . number_format($row->amount),
+               'amount' =>  $this->kurs . number_format($row->amount),
                'duedate' =>  $this->date_ops->change_date_t4($row->duedate)
             );
             $totalAmount = $totalAmount + $row->amount;
@@ -1217,9 +1176,9 @@ class Model_kwitansi extends CI_Model
             $bulan++;
          }
       }
-      $array['rata_rata_amount'] = 'Rp.' . number_format($angsuran);
-      $array['totalAmount'] = 'Rp.' . number_format($totalAmount);
-      $array['total_harga_paket'] = 'Rp.' . number_format($total_price);
+      $array['rata_rata_amount'] = $this->kurs . number_format($angsuran);
+      $array['totalAmount'] = $this->kurs . number_format($totalAmount);
+      $array['total_harga_paket'] = $this->kurs . number_format($total_price);
       $array['bulan'] = $bulan;
       $array['skema'] = $skema;
       $array['no_register'] = $sesi['nomor_registrasi'];
@@ -1713,17 +1672,43 @@ class Model_kwitansi extends CI_Model
       return $total;
    }
 
+
+   function sum_paid_refund($invoice) {
+      $this->db->select('paid, status')
+               ->from('paket_la_transaction_history')
+               ->where('company_id', $this->company_id)
+               ->where('invoice !=', $invoice);
+      $q = $this->db->get();
+      $sudah_bayar = 0;
+      $refund = 0;
+      if( $q->num_rows() > 0 ) {
+         foreach ($q->result() as $rows) {
+            if( $rows->status == 'payment') {
+               $sudah_bayar = $sudah_bayar + $rows->paid;
+            }
+            if( $rows->status == 'refund') {
+               $refund = $refund + $rows->paid;
+            }
+         }
+      }     
+      return array('sudah_bayar' => $sudah_bayar, 'refund' => $refund);    
+   }
+
    function getInfoKwitansiRefundPaketLA($invoice)
    {
-      $this->db->select('plt.register_number, plt.facilities, plt.discount, plt.total_price,
+
+      $sum_paid_refund = $this->sum_paid_refund($invoice);
+
+
+
+      $this->db->select('plt.register_number, plt.discount, plt.total_price,
                          plt.departure_date, plt.arrival_date, plt.jamaah,
                          plth.paid, plth.receiver, plth.deposit_name, plth.deposit_hp_number, plth.deposit_address,
-                         (SELECT SUM(paid) FROM paket_la_transaction_history
-                           WHERE company_id="' . $this->company_id . '" AND status="payment" AND invoice != "' . $invoice . '" ) AS sudahBayar,
-                         (SELECT SUM(paid) FROM paket_la_transaction_history
-                           WHERE company_id="' . $this->company_id . '" AND status="refund" AND invoice != "' . $invoice . '" ) AS refund')
+                         plth.input_date, pc.name, pc.mobile_number, pc.address,
+                         ')
          ->from('paket_la_transaction_history AS plth')
-         ->join('paket_la_transaction AS plt', 'plth.paket_la_transaction_id=plt.id', 'inner')
+         ->join('paket_la_transaction_temp AS plt', 'plth.paket_la_transaction_id=plt.id', 'inner')
+         ->join('paket_la_costumer AS pc', 'plt.costumer_id=pc.id', 'inner')
          ->where('plth.invoice', $invoice)
          ->where('plth.company_id', $this->company_id);
       $q = $this->db->get();
@@ -1731,7 +1716,12 @@ class Model_kwitansi extends CI_Model
       if ($q->num_rows() > 0) {
          foreach ($q->result() as $rows) {
             $list['register_number'] = $rows->register_number;
-            $list['facilities'] = unserialize($rows->facilities)['list_fasilitas'];
+            $list['invoice'] = $invoice;
+            $list['name'] = $rows->name;
+            $list['mobile_phone'] = $rows->mobile_number;
+            $list['address'] = $rows->address;
+            $list['transaction_date'] = $this->date_ops->change_date_t3($rows->input_date);
+            $list['facilities'] = array();
             $list['discount'] = $rows->discount;
             $list['total_price'] = $rows->total_price;
             $list['departure_date'] = $this->date_ops->change_date_t3($rows->departure_date);
@@ -1742,9 +1732,11 @@ class Model_kwitansi extends CI_Model
             $list['payer'] = $rows->deposit_name;
             $list['payer_identity'] = $rows->deposit_hp_number;
             $list['payer_address'] = $rows->deposit_address;
-            $list['sudah_dibayar'] = $rows->sudahBayar - $rows->refund;
+            // 
          }
       }
+
+      $list['sudah_dibayar'] = $sum_paid_refund['sudah_bayar'] - $sum_paid_refund['refund'];
       return $list;
    }
 

@@ -258,10 +258,10 @@ class ModelAdmin extends CI_Model
 
             $array['kode'] = $row->kode;
             $array['paket_name'] = $row->paket_name;
-            $array['total_pinjaman'] = 'Rp. ' . number_format($row->total_paket_price - $row->down_payment);
+            $array['total_pinjaman'] = $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->total_paket_price - $row->down_payment);
             $array['tenor'] = $row->tenor;
             $array['duedate'] = $this->date_ops->change_date_t4($due['jatuh_tempo']);
-            $array['angsuran'] = 'Rp. ' . number_format($due['angsuran']);
+            $array['angsuran'] = $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($due['angsuran']);
             $array['nama_penyetor'] = $exp[0];
             $array['hp_penyetor'] = $exp[1];
             $array['alamat_penyetor'] = $exp[2];
@@ -269,8 +269,8 @@ class ModelAdmin extends CI_Model
             if ($row->down_payment != 0) {
                $array['term'] = '#';
                $array['ket'] = 'Pembayaran DP';
-               $array['bayar'] = 'Rp. ' . number_format($row->down_payment);
-               $array['sisa'] = 'Rp. ' . number_format($row->total_paket_price - $row->down_payment);
+               $array['bayar'] = $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->down_payment);
+               $array['sisa'] = $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->total_paket_price - $row->down_payment);
             }
 
             if (isset($sesi['invoice'])) {
@@ -319,15 +319,15 @@ class ModelAdmin extends CI_Model
                      $listPembayaran[] = array(
                         'term' => $key,
                         'ket' => 'Pembayaran ke ' . $key,
-                        'bayar' => 'Rp. ' . number_format($sisaSebelum),
-                        'sisa' => 'Rp. ' . number_format(abs($sisa))
+                        'bayar' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($sisaSebelum),
+                        'sisa' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format(abs($sisa))
                      );
                      break;
                   } else {
                      $listPembayaran[] = array(
                         'term' => $key,
                         'ket' => 'Pembayaran ke ' . $key,
-                        'bayar' => 'Rp. ' . number_format($value['amount']),
+                        'bayar' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($value['amount']),
                         'sisa' => 'Rp. 0'
                      );
                   }
@@ -360,7 +360,7 @@ class ModelAdmin extends CI_Model
             if ($row->invoice == $invoice) {
 
                $detail_pembayaran = array(
-                  'paid' => 'Rp. ' . number_format($row->paid),
+                  'paid' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($row->paid),
                   'penerima' => $row->receiver,
                   'tanggal_transaksi' => $this->date_ops->change_date_t5($row->input_date)
                );
@@ -439,13 +439,13 @@ class ModelAdmin extends CI_Model
    //          $sisa = $sisa - $row->amount;
    //          if( $sisa <= 0 ){
    //             $riwayat_angsuran = array('term' => $row->term,
-   //                                       'bayar' => 'Rp. '.number_format( $bayar ),
-   //                                       'sisa' => 'Rp. '.number_format( abs($sisa) ),
+   //                                       'bayar' => $this->session->userdata($this->config->item('apps_name'))['kurs'].number_format( $bayar ),
+   //                                       'sisa' => $this->session->userdata($this->config->item('apps_name'))['kurs'].number_format( abs($sisa) ),
    //                                       'ket' => 'Pembayaran angsuran '.$row->term );
    //             break;
    //          }else{
    //             $riwayat_angsuran = array('term' => $row->term,
-   //                                       'bayar' => 'Rp. '.number_format( $row->amount ),
+   //                                       'bayar' => $this->session->userdata($this->config->item('apps_name'))['kurs'].number_format( $row->amount ),
    //                                       'sisa' => 'Rp. 0',
    //                                       'ket' => 'Pembayaran angsuran '. $row->term );
    //          }
@@ -516,7 +516,7 @@ class ModelAdmin extends CI_Model
 
             $riwayat_transaksi[] = array(
                'invoice' => $rows->invoice,
-               'debet' => 'Rp. ' . number_format($rows->paid),
+               'debet' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($rows->paid),
                'ket' => $rows->ket,
                'penyetor' => $rows->deposit_name,
                'penerima' => $rows->receiver,
@@ -525,9 +525,9 @@ class ModelAdmin extends CI_Model
          }
       }
 
-      $array['rata_rata_amount'] = 'Rp. ' . number_format($angsuran);
+      $array['rata_rata_amount'] = $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($angsuran);
       $totalAmount = $total_paket_price - $dp;
-      $array['totalAmount'] = 'Rp. ' . number_format($totalAmount);
+      $array['totalAmount'] = $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($totalAmount);
       $array['bulan'] = $bulan;
       $bulanSudahBayar = 0;
       foreach ($amoutPerMonth as $key => $value) {
@@ -538,7 +538,7 @@ class ModelAdmin extends CI_Model
 
       $array['riwayatTransaksi'] = $riwayat_transaksi;
       $array['sisaBulan'] = $bulan - $bulanSudahBayar;
-      $array['sisaPinjaman'] = 'Rp. ' . number_format($totalAmount - $paid);
+      $array['sisaPinjaman'] = $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($totalAmount - $paid);
       $array['no_register'] = $sesi['nomor_registrasi'];
       return $array;
    }

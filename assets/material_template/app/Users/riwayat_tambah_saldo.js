@@ -81,7 +81,7 @@ function ListDaftarRiwayatTambahSaldo(JSONData){
 							</tr>
 						</table>
 					</td>
-					<td>Rp ${numberFormat(json.total_biaya )}</td>
+					<td>${kurs} ${numberFormat(json.total_biaya )}</td>
 					<td style="text-transform:uppercase; font-weight:bold;color: ${json.status == 'proses' ? 'orange' : ( json.status == 'disetujui' ? 'green' : 'red' ) }!important;">${json.status}</td>
 					<td style="text-transform:uppercase;">${json.status_kirim == 'belum_dikirim' ? 'belum dikirim' : "sudah dikirim"}</td>
 					<td>${json.waktu_kirim}</td>
@@ -173,7 +173,7 @@ function formatambah_saldoperusahaan(JSONData, JSONValue){
 		var value = JSON.parse( JSONValue );
 		id = `<input type="hidden" name="id" value="${value.id}">`;
 		bank_id = value.id;
-		nominal = 'Rp ' + numberFormat(value.biaya);
+		nominal = kurs + ' ' + numberFormat(value.biaya);
 	}
  	var html = `<form action="${baseUrl }Saldo_perusahaan/proses_request_tambah_saldo_perusahaan" id="form_utama" class="formName ">
                   <div class="row px-0 mx-0">

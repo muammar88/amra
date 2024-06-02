@@ -58,7 +58,7 @@ function ListDaftarRiwayatMutasiSaldo(JSONData){
    var json = JSON.parse(JSONData);
    var html = `<tr>
                   <td><b>${json.kode}</b></td>
-                  <td>Rp ${numberFormat(json.saldo)}</td>
+                  <td>${kurs} ${numberFormat(json.saldo)}</td>
                   <td>${json.request_type}</td>
                   <td>${json.ket}</td>
                   <td>${json.status}</td>

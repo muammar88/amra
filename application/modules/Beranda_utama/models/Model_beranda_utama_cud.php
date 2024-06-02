@@ -34,7 +34,7 @@ class Model_beranda_utama_cud extends CI_Model
       $data_company['company_id'] = $this->company_id;
       $data_company['saldo'] = explode('.', $data['gross_amount'])[0];
       $data_company['request_type'] = 'deposit';
-      $data_company['ket'] = 'Deposit saldo perusahaan sebesar Rp '.number_format( explode('.', $data['gross_amount'])[0] );
+      $data_company['ket'] = 'Deposit saldo perusahaan sebesar '.  $this->kurs . ' ' .number_format( explode('.', $data['gross_amount'])[0] );
       $data_company['status'] = 'process';
       $data_company['input_date'] = date('Y-m-d H:i:s');
       $data_company['last_update'] = date('Y-m-d H:i:s');
@@ -58,7 +58,7 @@ class Model_beranda_utama_cud extends CI_Model
          # Transaction Commit
          $this->db->trans_commit();
          $this->status = TRUE;
-         $this->content = 'Melakukan penyimpanan log transaksi deposit saldo sebesar Rp '.number_format( explode('.', $data['gross_amount'])[0] );
+         $this->content = 'Melakukan penyimpanan log transaksi deposit saldo sebesar '. $this->kurs . ' ' . number_format( explode('.', $data['gross_amount'])[0] );
       }
       return $this->status;
    }

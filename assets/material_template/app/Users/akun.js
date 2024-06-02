@@ -168,7 +168,7 @@ function ListDaftarAkun(JSONData){
    }else{
       html += `
                <td>${json.saldo_awal}</td>
-               <td>Rp ${ json.saldo_akhir != undefined ? numberFormat(json.saldo_akhir) : 0 }</td>
+               <td>${kurs}${ json.saldo_akhir != undefined ? numberFormat(json.saldo_akhir) : 0 }</td>
                <td>`;
 
       if( json.tipe == 'bawaan' ){
@@ -396,7 +396,7 @@ function formAddUpdateAkun(nomor_akun, JSONValue){
       id_area = `<input type="hidden" id="akun_id" name="akun_id" value="${value.id}">`;
       new_akun = value.nomor_akun;
       nama_akun = value.nama_akun;
-      saldo = `Rp ` + numberFormat(value.saldo);
+      saldo = `${kurs} ` + numberFormat(value.saldo);
    }
    var form = `<form action="${baseUrl }Akun/add_update_akun" id="form_utama" class="formName ">
                   ${id_area}

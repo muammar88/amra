@@ -16,11 +16,13 @@ class Model_akun extends CI_Model
    private $content;
    private $error;
    private $write_log;
+   private $kurs;
 
    public function __construct()
    {
       parent::__construct();
       $this->company_id = $this->session->userdata($this->config->item('apps_name'))['company_id'];
+      $this->kurs = $this->session->userdata($this->config->item('apps_name'))['kurs'];
       $this->error = 0;
       $this->write_log = 1;
    }
@@ -187,7 +189,7 @@ class Model_akun extends CI_Model
                         'nama_akun' => $exp[2],
                         'tipe' => $exp[3],
                         'level' => 'secondary',
-                        'saldo_awal' => (isset($list_saldo[$exp[0]]) ? 'Rp ' . number_format($list_saldo[$exp[0]]) : 'Rp 0'),
+                        'saldo_awal' => (isset($list_saldo[$exp[0]]) ?  $this->kurs . number_format($list_saldo[$exp[0]]) : $this->kurs . ' 0'),
                         'saldo_exist' => isset($list_saldo[$exp[0]]),
                         'saldo_akhir' => $saldo_akhir
                      );
@@ -202,7 +204,7 @@ class Model_akun extends CI_Model
                $list[$n] = $value;
             }
             $n++;
-            $list[$n_header]['saldo_awal'] = 'Rp ' . number_format($total);
+            $list[$n_header]['saldo_awal'] = $this->kurs. ' ' . number_format($total);
          }
       }
 
@@ -388,9 +390,9 @@ class Model_akun extends CI_Model
             ->where('akun_secondary_id', $id);
          $r = $this->db->get();
          if ($r->num_rows() > 0) {
-            $feedBack['saldo'] = 'Rp ' . number_format($r->row()->saldo);
+            $feedBack['saldo'] = $this->kurs . ' ' . number_format($r->row()->saldo);
          } else {
-            $feedBack['saldo'] = 'Rp 0';
+            $feedBack['saldo'] = $this->kurs . ' 0';
          }
       }
       return $feedBack;

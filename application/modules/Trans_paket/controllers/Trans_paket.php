@@ -1243,9 +1243,9 @@ class Trans_paket extends CI_Controller
 			$paket_type_id = $this->input->post('paket_type_id');
 			$jumlah_jamaah = $this->input->post('jumlah');
 			$jamaah = $this->input->post('jamaah');
-			$pembayaran = $this->text_ops->hide_currency($this->input->post('pembayaran') != '' ? $this->input->post('pembayaran') : 'Rp. 0');
-			$dp = $this->text_ops->hide_currency($this->input->post('dp') != '' ? $this->input->post('dp') : 'Rp. 0');
-			$diskon = $this->text_ops->hide_currency($this->input->post('diskon') != '' ? $this->input->post('diskon') : 'Rp. 0');
+			$pembayaran = $this->text_ops->hide_currency($this->input->post('pembayaran') != '' ? $this->input->post('pembayaran') : $this->session->userdata($this->config->item('apps_name'))['kurs'] . ' 0');
+			$dp = $this->text_ops->hide_currency($this->input->post('dp') != '' ? $this->input->post('dp') : $this->session->userdata($this->config->item('apps_name'))['kurs'] . ' 0');
+			$diskon = $this->text_ops->hide_currency($this->input->post('diskon') != '' ? $this->input->post('diskon') : $this->session->userdata($this->config->item('apps_name'))['kurs'] . ' 0');
 			// PROCESS
 			// get harga paket
 			$harga = $this->model_trans_paket->get_price_transaksi_paket($paket_id, $paket_type_id);
@@ -1267,10 +1267,10 @@ class Trans_paket extends CI_Controller
 			$return = array(
 				'error'	=> false,
 				'error_msg' => 'Data info transaksi paket berhasil ditemukan.',
-				'harga_per_pax' => 'Rp. ' . number_format($harga) . ',-',
-				'harga_total' => 'Rp. ' . number_format($total_paket) . ',-',
-				'biaya_mahram' => 'Rp. ' . number_format($total_biaya_mahram) . ',-',
-				'sisa' => 'Rp. ' . number_format($sisa) . ',-',
+				'harga_per_pax' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($harga) . ',-',
+				'harga_total' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($total_paket) . ',-',
+				'biaya_mahram' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($total_biaya_mahram) . ',-',
+				'sisa' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($sisa) . ',-',
 				// 'needMahram' => $jamaah_needMahram,
 				$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
 			);
@@ -1575,8 +1575,6 @@ class Trans_paket extends CI_Controller
 			$level_akun = $this->session->userdata($this->config->item('apps_name'))['level_akun'];
 			# data
 			$data = array();
-			# pembayaran
-			// $pembayaran = $this->text_ops->hide_currency( $this->input->post('pembayaran') != '' ? $this->input->post('pembayaran') : 'Rp. 0' );
 			# info paket
 			$info_paket = $this->model_trans_paket->get_simple_info_paket($this->input->post('paket_id'));
 			$data['info_paket']['kode'] = $info_paket['kode'];
@@ -3292,9 +3290,9 @@ class Trans_paket extends CI_Controller
 					'error'	=> false,
 					'error_msg' => 'Success.',
 					'listSkemaCicilan' => $feedBack['listSkemaCicilan'],
-					'totalCicilanView' => 'Rp. ' . number_format($feedBack['totalCicilan']),
+					'totalCicilanView' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($feedBack['totalCicilan']),
 					'totalCicilan' => $feedBack['totalCicilan'],
-					'totalAmountView' => 'Rp. ' . number_format($feedBack['totalAmount']),
+					'totalAmountView' => $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($feedBack['totalAmount']),
 					'totalAmount' => $feedBack['totalAmount'],
 					$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
 				);
@@ -4861,7 +4859,7 @@ class Trans_paket extends CI_Controller
 											<tbody>';
 					foreach ($jamaah_berhutang as $key => $value) {
 						$error_msg .= '<tr><td>' . $key . '</td>
-												 <td>Rp ' . number_format($value) . '</td></tr>';
+												 <td>' . $this->session->userdata($this->config->item('apps_name'))['kurs']. ' ' . number_format($value) . '</td></tr>';
 					}
 					$error_msg .= '</tbody>
 										</table>';
@@ -5112,7 +5110,7 @@ class Trans_paket extends CI_Controller
 				} else {
 					$return = array(
 						'error'	=> true,
-						'error_msg' => 'Pembayaran tidak dapat dilakukan karena biaya yang belum dibayarkan adalah Rp 0.',
+						'error_msg' => 'Pembayaran tidak dapat dilakukan karena biaya yang belum dibayarkan adalah '. $this->session->userdata($this->config->item('apps_name'))['kurs'] .' 0.',
 						$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
 					);
 				}

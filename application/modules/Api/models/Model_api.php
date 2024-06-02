@@ -12,9 +12,14 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 class Model_api extends CI_Model
 {
 
+    private $kurs;
+
     public function __construct()
     {
         parent::__construct();
+
+        # kurs
+        $this->kurs = $this->session->userdata($this->config->item('apps_name'))['kurs'];
     }
 
     // get info transaksi by id transaksi
@@ -681,12 +686,12 @@ class Model_api extends CI_Model
         if ($q->num_rows() > 0) {
             foreach ($q->result() as $rows) {
                 if ($low_price == '') {
-                    $low_price = 'Rp ' . $this->text_ops->nominal_currency($rows->price);
+                    $low_price = $this->kurs . ' ' . $this->text_ops->nominal_currency($rows->price);
                 }
-                $list[] = 'Rp ' . number_format($rows->price) . ',00 (Tipe Paket :' . $rows->paket_type_name . ')';
+                $list[] = $this->kurs . ' ' . number_format($rows->price) . ',00 (Tipe Paket :' . $rows->paket_type_name . ')';
             }
         }
-        return array('list' => $list, 'low_price' => $low_price == '' ? 'Rp 0' : $low_price);
+        return array('list' => $list, 'low_price' => $low_price == '' ? $this->kurs . ' 0' : $low_price);
     }
 
     function extract_hotel($arr, $list_hotel)
@@ -829,7 +834,7 @@ class Model_api extends CI_Model
             foreach ($q->result() as $rows) {
                 $list[] = array(
                     'trx_number' => $rows->transaction_number,
-                    'amount' => 'Rp '. number_format($rows->amount + $rows->amount_code),
+                    'amount' => $this->kurs . ' '. number_format($rows->amount + $rows->amount_code),
                     'sending_payment_status' => $rows->sending_payment_status,
                     'status_request' => $rows->status_request,
                     'status_note' => $rows->status_note,
@@ -1060,7 +1065,7 @@ class Model_api extends CI_Model
             foreach ($q->result() as $rows) {
                 $list[] = array('id' => $rows->id, 
                                 'transaction_number' => $rows->transaction_number, 
-                                'amount' => 'Rp. '.number_format($rows->amount).',-',
+                                'amount' => $this->kurs . ' ' . number_format($rows->amount).',-',
                                 'status_request' => $rows->status_request, 
                                 'account_name' => $rows->account_name,
                                 'account_number' => $rows->account_number,
@@ -1230,7 +1235,7 @@ class Model_api extends CI_Model
         $list = array();
         if( $q->num_rows() > 0 ) {
             foreach ( $q->result() as $rows ) {
-                $list[] = array('id' => $rows->paket_type_id, 'name' => $rows->paket_type_name. ' (Rp. '.number_format($rows->price).')' );
+                $list[] = array('id' => $rows->paket_type_id, 'name' => $rows->paket_type_name. ' ('. $this->kurs . ' ' . number_format($rows->price).')' );
             }
         }
         return $list;
@@ -1549,7 +1554,7 @@ class Model_api extends CI_Model
                     $status = 'PPOB';
                 }
 
-                $biaya =  'Rp '.number_format($rows->debet != 0 ? $rows->debet : $rows->kredit).',-';
+                $biaya =  $this->kurs . ' '.number_format($rows->debet != 0 ? $rows->debet : $rows->kredit).',-';
                 $list[] = array('invoice' => $rows->nomor_transaction, 
                                 'biaya' => $biaya, 
                                 'status' => $status,
@@ -1942,7 +1947,7 @@ class Model_api extends CI_Model
                             $feedBack['transaction_code'] = $row->transaction_code;
                             $feedBack['product_code'] = $row->product_code;
                             $feedBack['nomor_tujuan'] = $row->nomor_tujuan;
-                            $feedBack['price'] = 'Rp '.number_format($row->company_price);
+                            $feedBack['price'] = $this->kurs . ' '.number_format($row->company_price);
                             if( $row->category_code == 'TL' ) {
                                 if ( isset( $check_status->success ) AND $check_status->success == true  ) {
                                     if ( isset( $check_status->data->status ) AND $check_status->data->status == 1 ) { // sukses
@@ -1989,7 +1994,7 @@ class Model_api extends CI_Model
                     $list[] = array('id' => $row->id, 
                                     'transaction_code' => $row->transaction_code, 
                                     'product_code' => $row->product_code, 
-                                    'company_price' => 'Rp. '.number_format($row->company_price).',-', 
+                                    'company_price' => $this->kurs . ' ' .number_format($row->company_price).',-', 
                                     'status' => strtoupper($status), 
                                     'created_at' => $row->created_at);
                 }
@@ -2268,7 +2273,7 @@ class Model_api extends CI_Model
                 $list[] = array('operator_name' => $rows->operator_name, 
                                 'product_code' =>  $rows->product_code, 
                                 'product_name' => $rows->product_name, 
-                                'product_price' => 'Rp.'.number_format($price));
+                                'product_price' => $this->kurs . ' ' . number_format($price));
             }
         }
         // list
@@ -2297,7 +2302,7 @@ class Model_api extends CI_Model
                 $list[] = array('id' => $rows->id, 
                                 'product_code' => $rows->product_code, 
                                 'product_name' => $rows->product_name, 
-                                'product_price' => 'Rp. '.number_format($rows->price + $rows->application_markup + $markup_company),
+                                'product_price' => $this->kurs . ' ' . number_format($rows->price + $rows->application_markup + $markup_company),
                                 'status' => $rows->status);
             }
         }

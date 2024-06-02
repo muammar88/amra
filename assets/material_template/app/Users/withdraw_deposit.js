@@ -72,7 +72,7 @@ function ListWithdrawDeposit(JSONData){
    var html = `<tr>
                   <td><b>#${json.transaction_number}</b></td>
                   <td>${json.fullname}<br><b>No Identitas : ${json.identity_number}</b></td>
-                  <td>Rp ${numberFormat(json.amount)}</td>
+                  <td>${kurs} ${numberFormat(json.amount)}</td>
                   <td>${json.nama_bank} | <b>No Rek : ${json.account_number}</b><br><img class="mt-1" src="${json.logo_bank}" style="max-width: 150px;"></td>
                   <td style="text-align: justify !important;">${json.status_request == "diproses" ? `<center><b style="color:orange;">DIPROSES</b></center>` : (json.status_request == "disetujui" ? `<center><b style="color:green;">DISETUJUI</b></center>` : `<center><b style="color:red;">DITOLAK</b></center>`)  } ${json.status_request == 'ditolak' ? `<span style="color:red;"><b>Catatan : </b> ${json.status_note}</span>` : `` }</td>
                   <td><b style="color:orange;">${json.last_update}</b></td>
@@ -223,7 +223,7 @@ function formaddupdate_markup_withdraw(markup){
                            <div class="col-12">
                               <div class="form-group">
                                  <label>Markup Default Perusahaan</label>
-                                 <input type="text" name="markup_withdraw" value="Rp ${numberFormat(markup)}" class="form-control form-control-sm currency" placeholder="Markup Withdraw" />
+                                 <input type="text" name="markup_withdraw" value="${kurs} ${numberFormat(markup)}" class="form-control form-control-sm currency" placeholder="Markup Withdraw" />
                               </div>
                            </div>
                         </div>

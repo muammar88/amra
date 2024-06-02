@@ -41,9 +41,9 @@ function buku_besar_Pages(){
                         <tfoot style="background-color: #ededed;" id="footers">
                            <tr>
                               <td colspan="3" class="text-right"><b>TOTAL</b></td>
-                              <td id="total_akun_debet"><b>Rp 10.000.000,-</b></td>
-                              <td id="total_akun_kredit"><b>Rp 10.000.000,-</b></td>
-                              <td id="total_saldo"><b>Rp 10.000.000,-</b></td>
+                              <td id="total_akun_debet"><b>${kurs} 10.000.000,-</b></td>
+                              <td id="total_akun_kredit"><b>${kurs} 10.000.000,-</b></td>
+                              <td id="total_saldo"><b>${kurs} 10.000.000,-</b></td>
                            </tr>
                         </tfoot>
                      </table>
@@ -88,16 +88,16 @@ function get_buku_besar() {
                               function(seed){
                                  var e = JSON.parse(seed);
                                  if( $('#footers').length > 0 ){
-                                    $("#total_saldo").html('<b>Rp ' + numberFormat(e['saldo_akhir'] + '</b>'));
-                                    $("#total_akun_debet").html('<b>Rp ' + numberFormat(e['total_debet'] + '</b>'));
-                                    $("#total_akun_kredit").html('<b>Rp ' + numberFormat(e['total_kredit'] + '</b>'));
+                                    $("#total_saldo").html('<b>' + kurs + ' ' + numberFormat(e['saldo_akhir'] + '</b>'));
+                                    $("#total_akun_debet").html('<b>' + kurs + ' ' + numberFormat(e['total_debet'] + '</b>'));
+                                    $("#total_akun_kredit").html('<b>' + kurs + ' ' + numberFormat(e['total_kredit'] + '</b>'));
                                  }else{
                                     $('#table-buku-besar').append(`<tfoot style="background-color: #ededed;" id="footers">
                                                                       <tr>
                                                                          <td colspan="3" class="text-right"><b>TOTAL</b></td>
-                                                                         <td id="total_akun_debet"><b>Rp ${numberFormat(e['total_debet'])} </b></td>
-                                                                         <td id="total_akun_kredit"><b>Rp ${numberFormat(e['total_kredit'])}</b></td>
-                                                                         <td id="total_saldo"><b>Rp ${numberFormat(e['saldo_akhir'])}</b></td>
+                                                                         <td id="total_akun_debet"><b>${kurs} ${numberFormat(e['total_debet'])} </b></td>
+                                                                         <td id="total_akun_kredit"><b>${kurs} ${numberFormat(e['total_kredit'])}</b></td>
+                                                                         <td id="total_saldo"><b>${kurs} ${numberFormat(e['saldo_akhir'])}</b></td>
                                                                       </tr>
                                                                    </tfoot>`);
                                  }

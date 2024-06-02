@@ -16,11 +16,14 @@ class Model_buku_besar extends CI_Model
    private $content;
    private $error;
    private $write_log;
+   private $kurs;
 
    public function __construct()
    {
       parent::__construct();
       $this->company_id = $this->session->userdata($this->config->item('apps_name'))['company_id'];
+      # kurs
+      $this->kurs = $this->session->userdata($this->config->item('apps_name'))['kurs'];
       $this->error = 0;
       $this->write_log = 1;
    }
@@ -155,14 +158,14 @@ class Model_buku_besar extends CI_Model
       $total_kredit = ($sn == "K" ? $saldo : 0);
       if ($q->num_rows() > 0) {
          foreach ($q->result() as $rows) {
-            $akun_kredit = 'Rp 0';
+            $akun_kredit = $this->kurs . ' 0';
             if ($param['akun'] == $rows->akun_kredit) {
-               $akun_kredit = 'Rp ' . number_format($rows->saldo);
+               $akun_kredit = $this->kurs . ' ' . number_format($rows->saldo);
             }
 
-            $akun_debet = 'Rp 0';
+            $akun_debet = $this->kurs . ' 0';
             if ($param['akun'] == $rows->akun_debet) {
-               $akun_debet = 'Rp ' . number_format($rows->saldo);
+               $akun_debet = $this->kurs . ' ' . number_format($rows->saldo);
             }
 
             if ($sn == 'D') {

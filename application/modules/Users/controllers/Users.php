@@ -128,7 +128,8 @@ class Users extends CI_Controller
 			'modul_tab' => $modul_submodul_tab['modul_tab'],
 			'submodul_tab' => $modul_submodul_tab['submodul_tab'],
 			'photo' => $this->session->userdata($this->config->item('apps_name'))['photo'],
-			'midtrans_client_key' => $this->config->item('midtrans_client_key')
+			'midtrans_client_key' => $this->config->item('midtrans_client_key'), 
+			'kurs' => $this->session->userdata($this->config->item('apps_name'))['kurs']
 		));
 		// get setting values
 		$data = $this->index_loader->Response();

@@ -11,12 +11,14 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 class Model_sign_in extends CI_Model
 {
    private $CI;
+   private $krs;
 
    public function __construct()
    {
       parent::__construct();
       $this->CI = &get_instance();
       $this->CI->load->model('Model_sign_in_cud', 'model_sign_in_cud');
+      $this->krs = array('rupiah' => 'Rp', 'dollar' => '$', 'riyal' => 'SAR');
    }
 
    	# generated kode akun bank
@@ -294,7 +296,7 @@ class Model_sign_in extends CI_Model
       return $modul_access;
    }
 
-   function _unlimited_user_access( $data_company ){
+   function _unlimited_user_access( $data_company, $kurs ){
       $modul_access = $this->modul_access('unlimited', 'administrator', $data_company);
       ksort( $modul_access );
       # check photo
@@ -307,7 +309,8 @@ class Model_sign_in extends CI_Model
       }
       # define session variable
       return array('Is_login' => true,
-                    'company_type' => 'unlimited',
+                     'kurs' => $this->krs[$kurs], 
+                     'company_type' => 'unlimited',
                      'verified' => 'verified',
                      'start_date_subscribtion' => 'unlimited',
                      'end_date_subscribtion' => 'unlimited',
@@ -322,7 +325,7 @@ class Model_sign_in extends CI_Model
                      'modul_access' => $modul_access);
    }
 
-   function _limited_user_access( $data_company ){
+   function _limited_user_access( $data_company, $kurs ){
       // generated array
       $modul_access = $this->modul_access('limited', 'administrator', $data_company);
       ksort( $modul_access );
@@ -336,6 +339,7 @@ class Model_sign_in extends CI_Model
       }
       //
       return array('Is_login' => true,
+                   'kurs' => $this->krs[$kurs], 
                    'company_type' => 'limited',
                    'verified' => 'verified',
                    'start_date_subscribtion' => $data_company['start_date_subscribtion'],
@@ -351,7 +355,10 @@ class Model_sign_in extends CI_Model
                    'modul_access' => $modul_access);
    }
 
-   function _unlimited_staff_access( $data_staff ){
+   function _unlimited_staff_access( $data_staff, $kurs ){
+
+      // $krs = array('rupiah' => 'Rp', 'dollar' => '$', 'riyal' => 'SAR');
+
       # get module access
       $modul_access = $this->modul_access('unlimited', 'staff', $data_staff, $data_staff['group_access'] );
       ksort( $modul_access );
@@ -365,6 +372,7 @@ class Model_sign_in extends CI_Model
       }
       # feedBack
       return array('Is_login' => true,
+                   'kurs' => $this->krs[$kurs], 
                    'company_type' => 'unlimited',
                    'verified' => 'verified',
                    'start_date_subscribtion' => 'unlimited',
@@ -382,7 +390,7 @@ class Model_sign_in extends CI_Model
                    'modul_access' => $modul_access);
    }
 
-   function _limited_staff_access( $data_staff ){
+   function _limited_staff_access( $data_staff, $kurs ){
       # get module access
      $modul_access = $this->modul_access('limited', 'staff', $data_staff, $data_staff['group_access'] );
      ksort( $modul_access );
@@ -396,6 +404,7 @@ class Model_sign_in extends CI_Model
      }
      # feedBack
      return array('Is_login' => true,
+                  'kurs' => $this->krs[$kurs], 
                   'company_type' => 'limited',
                   'verified' => 'verified',
                   'start_date_subscribtion' => $data_staff['start_date_subscribtion'],
@@ -419,9 +428,10 @@ class Model_sign_in extends CI_Model
       $error_msg = '';
       $active = true;
       $company_code = '';
+      $kurs = 'rupiah';
       $feedBack = array();
       if( $level_akun == 'administrator' ) {
-         $this->db->select('id, code, logo, icon, name, email, password, photo_profil, company_type, verified,
+         $this->db->select('id, code, logo, icon, name, email, password, photo_profil, company_type, verified, kurs,
                             start_date_subscribtion, end_date_subscribtion')
             ->from('company')
             ->where('email', $userNameArray['email'] )
@@ -433,13 +443,12 @@ class Model_sign_in extends CI_Model
          if( $q->num_rows() > 0 ) {
             $rows = $q->row();
             $company_code = $rows->code;
+            $kurs = $rows->kurs;
             if( $rows->end_date_subscribtion < date('Y-m-d') AND $rows->company_type == 'limited' ) {
                $active = false;
                $error = 1;
                $error_msg = 'Masa berlangganan akun anda sudah berakhir. Selahkan perpanjang masa berlangganan akun anda untuk mulai menggunakan kembali aplikasi AMRA';
             }else{
-               
-               
                if ( password_verify( $password . '_' . $this->systems->getSalt(), $rows->password ) ) {
                   $file_name = $q->list_fields();
                   $data_company = array();
@@ -447,10 +456,10 @@ class Model_sign_in extends CI_Model
                      $data_company[$value] = $rows->$value;
                   }
                   if( $rows->company_type == 'unlimited' ) {
-                     $feedBack = $this->_unlimited_user_access( $data_company );
+                     $feedBack = $this->_unlimited_user_access( $data_company, $kurs );
                   } else {
                      // limited
-                     $feedBack = $this->_limited_user_access( $data_company );
+                     $feedBack = $this->_limited_user_access( $data_company, $kurs );
                   }
                }else{
                   $error = 1;
@@ -464,7 +473,7 @@ class Model_sign_in extends CI_Model
       } elseif ( $level_akun == 'staff' ) {
          $this->db->select('u.user_id,
                             p.password, p.photo, p.fullname, p.nomor_whatsapp,
-                            c.id, c.code, c.name, c.email, c.company_type, c.logo, c.icon,
+                            c.id, c.code, c.name, c.email, c.company_type, c.logo, c.icon, c.kurs,
                             c.verified, c.start_date_subscribtion, c.end_date_subscribtion,
                             g.group_access')
             ->from('base_users AS u')
@@ -480,6 +489,7 @@ class Model_sign_in extends CI_Model
          if( $q->num_rows() > 0  ) {
             $rows = $q->row();
             $company_code = $rows->code;
+            $kurs = $rows->kurs;
             if( $rows->end_date_subscribtion < date('Y-m-d') AND $rows->company_type == 'limited' ) {
                $active = false;
                $error = 1;
@@ -492,9 +502,9 @@ class Model_sign_in extends CI_Model
                      $data_staff[$value] = $rows->$value;
                   }
                   if( $rows->company_type == 'unlimited' ){
-                     $feedBack = $this->_unlimited_staff_access( $data_staff );
+                     $feedBack = $this->_unlimited_staff_access( $data_staff, $kurs );
                   }elseif ( $rows->company_type == 'limited' ) {
-                     $feedBack = $this->_limited_staff_access( $data_staff );
+                     $feedBack = $this->_limited_staff_access( $data_staff, $kurs );
                   }
                }else{
                   $error = 1;
@@ -511,6 +521,7 @@ class Model_sign_in extends CI_Model
                    'error_msg' => $error_msg,
                    'active' => $active,
                    'company_code' => $company_code,
+                   'kurs' => $kurs,
                    'feedBack' => $feedBack);
    }
 

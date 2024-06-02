@@ -96,7 +96,7 @@ function ListJurnal(JSONData){
                   <td>${json.nama_akun_debet}</td>
                   <td>${json.akun_kredit}</td>
                   <td>${json.nama_akun_kredit}</td>
-                  <td>Rp ${numberFormat(json.saldo)}</td>
+                  <td>${kurs} ${numberFormat(json.saldo)}</td>
                   <td>
                      <button type="button" class="btn btn-default btn-action" title="Delete jurnal"
                         onclick="delete_jurnal('${json.id}')" style="margin:.15rem .1rem  !important">

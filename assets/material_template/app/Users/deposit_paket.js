@@ -102,7 +102,7 @@ function ListRiwayatDepositPaket(JSONData) {
                            <tr>
                               <td class="text-left" colspan="3" style="width:40%;"><b>TOTAL TABUNGAN UMRAH</b></td>
                               <td class="px-0" style="width:1%;">:</td>
-                              <td class="text-left" colspan="3" style="width:59%;">Rp ${numberFormat(json.total_deposit)},-</td>
+                              <td class="text-left" colspan="3" style="width:59%;">${kurs} ${numberFormat(json.total_deposit)},-</td>
                            </tr>
                            <tr>
                               <td class="text-center" colspan="7" style="background-color: #e7e7e7;"><b>RIWAYAT TABUNGAN UMRAH</b></td>
@@ -120,7 +120,7 @@ function ListRiwayatDepositPaket(JSONData) {
                   html +=`<tr>
                             <td class="text-center" >${num}</td>
                             <td class="text-center" >${json.list_deposit[x].invoice}</td>
-                            <td class="text-center px-0"  colspan="2">Rp ${numberFormat(json.list_deposit[x].biaya)},- ${json.list_deposit[x].transaction_status == 'refund' ? `<br><b style="color:red">(REFUND)</b>` : ''}</td>
+                            <td class="text-center px-0"  colspan="2">${kurs} ${numberFormat(json.list_deposit[x].biaya)},- ${json.list_deposit[x].transaction_status == 'refund' ? `<br><b style="color:red">(REFUND)</b>` : ''}</td>
                             <td class="text-center" >${json.list_deposit[x].date_transaction}</td>
                             <td class="text-center" >${json.list_deposit[x].penerima}</td>
                             <td class="text-center" >`;
@@ -280,7 +280,7 @@ function formRefundTabungan(id, JSONData){
                            <div class="col-12">
                               <div class="form-group">
                                  <label>Total Tabungan</label>
-                                 <input type="text" class="form-control form-control-sm" value="Rp ${numberFormat(json.total_tabungan)}" placeholder="Total Tabungan Umrah" readonly/>
+                                 <input type="text" class="form-control form-control-sm" value="${kurs} ${numberFormat(json.total_tabungan)}" placeholder="Total Tabungan Umrah" readonly/>
                                  <input type="hidden" id="total_tabungan" value="${json.total_tabungan}">
                               </div>
                            </div>
@@ -531,7 +531,7 @@ function CheckDepositJamaah() {
                   $('#area_info_saldo_deposit').html(`<div class="form-group">
                                                          <label>Saldo Deposit Jamaah</label>
                                                          <div class="form-control form-control-sm">
-                                                            <span>Rp ${numberFormat(e.data)}</span>
+                                                            <span>${kurs} ${numberFormat(e.data)}</span>
                                                          </div>
                                                       </div>`);
                }else{
@@ -570,7 +570,7 @@ function getInfoAgen(id) {
           })</label>
                            <input type="text" name="fee_agen[${
                              data[x].id
-                           }]" value="Rp ${numberFormat(data[x].fee)}"
+                           }]" value="${kurs} ${numberFormat(data[x].fee)}"
                            class="form-control form-control-sm currency" placeholder="Fee Agen"/>
                         </div>`;
         }

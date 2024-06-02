@@ -115,8 +115,10 @@ class Text_ops
 	/* hide currency from variable */
 	function hide_currency($value)
 	{
-		if (strpos($value, 'Rp') !== false) {
-			$value = str_replace("Rp", "", $value);
+		$kurs = $my_this->session->userdata($my_this->config->item('apps_name'))['kurs'];
+
+		if (strpos($value, $kurs ) !== false) {
+			$value = str_replace($kurs , "", $value);
 			/*$value = 'Pertama';*/
 			if (strpos($value, '.') !== false) {
 				// print("<br>2");
@@ -154,9 +156,7 @@ class Text_ops
 		if (!is_numeric($value)) {
 			$value = 0;
 		}
-		// if($value == ''){
-		//
-		// }
+		
 		return $value;
 	}
 

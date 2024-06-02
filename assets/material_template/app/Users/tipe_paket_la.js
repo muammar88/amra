@@ -62,7 +62,7 @@ function ListDaftarTipePaketLA(JSONData){
                   <td>
                      <ul class="list my-0">`;
             for( x in fasilitas ) {
-               html += `<li>${fasilitas[x]['nama_fasilitas']} (Harga : Rp ${numberFormat(fasilitas[x]['harga'])} | Pax :${fasilitas[x]['pax']}) </li>`;
+               html += `<li>${fasilitas[x]['nama_fasilitas']} (Harga : ${kurs} ${numberFormat(fasilitas[x]['harga'])} | Pax :${fasilitas[x]['pax']}) </li>`;
             }
          html +=    `</ul>
                   </td>
@@ -225,7 +225,7 @@ function formaddupdate_tipe_paket_la(JSONData, JSONValue){
                                     <div class="col-9">
                                        <select class="form-control form-control-sm" name="fasilitas[]">`;
                                 for( x in json ) {
-                                   html += `<option value="${json[x]['id']}">${json[x]['nama_fasilitas']} (Harga :Rp ${numberFormat(json[x]['harga'])})</option>`;
+                                   html += `<option value="${json[x]['id']}">${json[x]['nama_fasilitas']} (Harga :${kurs} ${numberFormat(json[x]['harga'])})</option>`;
                                 }
                               html += `</select>
                                     </div>
@@ -246,7 +246,7 @@ function formaddupdate_tipe_paket_la(JSONData, JSONValue){
                                        <div class="col-9">
                                           <select class="form-control form-control-sm" name="fasilitas[]">`;
                                    for( x in json ) {
-                                      html += `<option  ${ fasilitas[y]['fasilitas_id'] } value="${json[x]['id']}" ${ fasilitas[y]['fasilitas_id'] == json[x]['id'] ? 'selected' : '' }>${json[x]['nama_fasilitas']} (Harga :Rp ${numberFormat(json[x]['harga'])})</option>`;
+                                      html += `<option  ${ fasilitas[y]['fasilitas_id'] } value="${json[x]['id']}" ${ fasilitas[y]['fasilitas_id'] == json[x]['id'] ? 'selected' : '' }>${json[x]['nama_fasilitas']} (Harga :${kurs} ${numberFormat(json[x]['harga'])})</option>`;
                                    }
                                  html += `</select>
                                        </div>
@@ -313,7 +313,7 @@ function tambah_fasilitas_tipe_paket_la(){
                      <div class="col-9">
                         <select class="form-control form-control-sm" name="fasilitas[]">`;
                 for( x in json ) {
-                    html += `<option value="${json[x]['id']}">${json[x]['nama_fasilitas']} (Harga :Rp ${numberFormat(json[x]['harga'])})</option>`;
+                    html += `<option value="${json[x]['id']}">${json[x]['nama_fasilitas']} (Harga :${kurs} ${numberFormat(json[x]['harga'])})</option>`;
                 }
                html += `</select>
                      </div>

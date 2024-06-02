@@ -356,7 +356,7 @@ class Model_trans_paket_la extends CI_Model
       $feedBack = array();
       if ($q->num_rows() > 0) {
          foreach ($q->result() as $rows) {
-            $feedBack[$rows->id] = $rows->facilities_name . ' (Harga :Rp ' . number_format($rows->price) . ')';
+            $feedBack[$rows->id] = $rows->facilities_name . ' (Harga :' . $this->session->userdata($this->config->item('apps_name'))['kurs'] . number_format($rows->price) . ')';
          }
       }
       return $feedBack;
@@ -590,10 +590,7 @@ class Model_trans_paket_la extends CI_Model
 
    function get_info_kas_transaksi_paket_la($id)
    {
-
-      // plt.facilities,
-      // plt.client_name,
-      $this->db->select('plt.id,  plt.discount, plt.total_price, 
+      $this->db->select('plt.id,  plt.discount, plt.total_price, pc.name, pc.mobile_number, pc.address,
                         (SELECT GROUP_CONCAT( CONCAT_WS(\'$\', plth.paid, plth.status) SEPARATOR \';\')
                            FROM paket_la_transaction_history AS plth
                            WHERE plth.company_id="' . $this->company_id . '" AND plth.paket_la_transaction_id=plt.id ) AS sudahBayar,
@@ -601,8 +598,9 @@ class Model_trans_paket_la extends CI_Model
                            FROM kas_paket_la AS kpl
                            WHERE kpl.company_id="' . $this->company_id . '" AND kpl.paket_la_transaction_id=plt.id ) AS kas_transaction_pakets')
          ->from('paket_la_transaction_temp AS plt')
-         ->where('company_id', $this->company_id)
-         ->where('id', $id);
+         ->join('paket_la_costumer AS pc', 'plt.costumer_id=pc.id', 'inner')
+         ->where('plt.company_id', $this->company_id)
+         ->where('plt.id', $id);
       $q = $this->db->get();
       $list = array();
       if ($q->num_rows() > 0) {
@@ -642,7 +640,7 @@ class Model_trans_paket_la extends CI_Model
             }
             
             $list['id'] = $rows->id;
-            // $list['client_name'] = $rows->client_name;
+            $list['client_name'] = $rows->name;
             $list['discount'] = $rows->discount;
             $list['total_price'] = $rows->total_price;
             $list['sudah_bayar'] = $bayar - $refund;
