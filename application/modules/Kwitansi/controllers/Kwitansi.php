@@ -112,20 +112,15 @@ class Kwitansi extends CI_Controller
          $this->_cetak_kwitansi_pertama_paket_la();
       }elseif( $sesi['type'] == 'cetak_riwayat_transaksi_peminjaman'){
          $this->_cetak_riwayat_transaksi_peminjaman();
-      }elseif( $sesi['type'] == 'download_excel_info_saldo_member'){
-         $this->_download_excel_info_saldo_member();
       }
    }
 
-
-   function _download_excel_info_saldo_member(){
-      
-   }
 
    // cetak riwaya deposit tabungan
    function _cetak_riwayat_transaksi_peminjaman(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getRiwayatTransaksiPeminjaman( $sesi );
+      
       $html  = $this->Header();
       $html .= $this->TitleLaporanRiwayatPeminjaman();
       $html .= $this->ContentLaporanRiwayatPeminjaman();
@@ -135,12 +130,10 @@ class Kwitansi extends CI_Controller
    function _cetak_kwitansi_pertama_paket_la(){
        $sesi = $this->session->userdata('cetak_invoice');
        $this->tempVar = $this->model_kwitansi->getKwitansiPertamaPaketLA( $sesi['id'] );
+       
        $html  = $this->Header();
        $html .= $this->TitleLeftT2("KWITANSI PEMBAYARAN PAKET LA ", $this->tempVar['register_number'],  $this->tempVar['input_date'] );
        $html .= $this->_contentTransaksiPembayaranPaketLAAwal();
-
-
-// .$this->tempVar['register_number']."<br><span class='float-left ml-2'>Keberangkatan : ".$this->tempVar['departure_date']."</span><br><span class='float-left ml-2'> Kepulangan: ".$this->tempVar['arrival_date']."</span>"s
 
        $this->Templating($html);
    }
@@ -155,21 +148,19 @@ class Kwitansi extends CI_Controller
       $html .= $this->OrderKasKeluarMasuk();
       $html .= $this->ContentKasKeluarMasuk();
 
-      // $html .= $this->ContentLaporanDepositTabungan();
       $this->Templating($html);
    }
 
    function _cetak_surat_cuti(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getRiwayatSuratMenyurat( $sesi );
+
       $html  = $this->HeaderSurat();
       $html .= $this->TitleSuratCuti();
-      // $html .= $this->TanggalSurat();
       $html .= $this->TembusanSuratCuti();
       $html .= $this->PenanggungJawab();
       $html .= $this->InfoJamaahSuratCuti();
       $html .= $this->ContentSuratCuti();
-
 
       $this->Templating($html, 'px-5 py-5');      
    }
@@ -178,6 +169,7 @@ class Kwitansi extends CI_Controller
    function _cetak_surat_rekom_paspor(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getRiwayatSuratMenyurat( $sesi );
+
       $html  = $this->HeaderSurat();
       $html .= $this->TitleSuratRekom();
       $html .= $this->TanggalSurat();
@@ -191,7 +183,6 @@ class Kwitansi extends CI_Controller
    }
 
    function ContentSuratCuti() {
-
       $html = '<div class="row">
                   <div class="col-12 justify-content-center container-fluid py-0 mt-4 " style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
                      <p class="text-justify">Adalah calon Jamaah Umroh '.strtoupper($this->tempVar['nama_perusahaan']).' IZIN PPIU NO : '.strtoupper($this->tempVar['izin_perusahaan']).'  Yang akan berangkat Pada Bulan '.$this->tempVar['keberangkatan'].' hingga kepulangan pada tanggal '.$this->tempVar['kepulangan'].'
@@ -200,7 +191,6 @@ class Kwitansi extends CI_Controller
                         Demikian surat Rekomendasi ini kami perbuat dengan sebenar benarnya, atas perhatian dan kerjasama yang baik kami ucapkan terima kasih.
                      </p>
                   </div>
-
                   <div class="col-1 justify-content-center container-fluid py-0 mt-4 " style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
                   </div>
                   <div class="col-5 justify-content-center container-fluid py-0 mt-4 " style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
@@ -219,42 +209,6 @@ class Kwitansi extends CI_Controller
       return $html;
 
    }
-
-   // <div class="col-12 justify-content-center container-fluid py-0 mt-0 pl-5" style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
-   //                   <ol class="pl-5">
-   //                      <li>
-   //                         <p class="text-justify mb-0">Permohonan paspor yang kami urus adalah WNI (Warga Negara Indonesia) yang sebenarnya akan melakukan perjalanan ke ARAB SAUDI dalam rangka melaksanakan IBADAH UMRAH.
-   //                         </p>
-   //                         <p class="text-justify mt-0">Rombongan calon jamaah Umroh yang kami urus tidak akan melakukan pelanggaran peraturan ke imigrasian berupa penyalahgunaan izin tinggal. Tidak lebih dari izin tinggal (OVERSTAY), memalsukan atau membuat palsu paspor yang di berikan kepadanya maupun bekerja secara ilegal.
-   //                         </p>
-   //                      </li>
-   //                      <li>
-   //                         <p class="text-justify">Apabila terjadi pelanggaran sebagaimana dimaksud, maka izin usaha kami sebagai penyelenggara perjalanan ibadah umurah bersedia di Cabut.
-   //                         </p>
-   //                      </li>
-   //                   </ol>
-   //                </div>
-   //                <div class="col-12 justify-content-center container-fluid py-0 mt-2 " style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
-   //                   <p class="text-justify">Demikian surat rekomendasi ini kami perbuat dengan sebenar benarnya, atas perhatian dan kerjasama yang baik kami ucapkan terima kasih.
-   //                   </p>
-   //                </div>
-   //                <div class="col-1 justify-content-center container-fluid py-0 mt-4 " style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
-   //                </div>
-   //                <div class="col-5 justify-content-center container-fluid py-0 mt-4 " style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
-   //                   <p class="text-justify my-0">'.$this->tempVar['alamat_perusahaan'].'</p>
-   //                   <p class="text-justify my-0">'.$this->tempVar['kota_perusahaan'].', '.$this->tempVar['provinsi_perusahaan'].'</p>
-   //                   <p class="text-justify my-0">'.$this->tempVar['no_kontak_perusahaan'].'</p>
-   //                   <p class="text-justify my-0">Website: '.$this->tempVar['website_perusahaan'].'</p>
-   //                   <p class="text-justify my-0">Email: '.$this->tempVar['email_perusahaan'].'</p>
-   //                </div>
-   //                <div class="col-2 justify-content-center container-fluid py-0 mt-4 " style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
-   //                </div>
-   //                <div class="col-3 justify-content-center container-fluid py-0 mt-4 " style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
-   //                   <p class="text-justify mb-5">Hormat Saya</p>
-   //                   <p class="text-justify mt-5"><b><u>'.strtoupper($this->tempVar['nama_tanda_tangan']).'</u></b></p>
-   //                </div>
-   //                <div class="col-1 justify-content-center container-fluid py-0 mt-4 " style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
-   //                </div>
 
    function ContentSuratRekomPaspor(){
       $html = '<div class="row">
@@ -381,7 +335,6 @@ class Kwitansi extends CI_Controller
       return $html;
    }
 
-
    function PenanggungJawab(){
       $html = '<div class="row">
                   <div class="col-12 justify-content-center container-fluid py-0 px-0 mt-3 mb-0" >
@@ -436,7 +389,8 @@ class Kwitansi extends CI_Controller
    // nomor surat
    function NomorSurat(){
        $html = '<div class="row">
-                  <div class="col-12 justify-content-center container-fluid py-2 " style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
+                  <div class="col-12 justify-content-center container-fluid py-2" 
+                     style="font-family: \'times new roman\', sans-serif;font-size:medium!important;">
                      <table>
                         <tbody>
                            <tr>
@@ -505,9 +459,11 @@ class Kwitansi extends CI_Controller
    function _cetak_riwayat_deposit_tabungan(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getRiwayatDepositTabungan( $sesi );
+      
       $html  = $this->Header();
       $html .= $this->TitleLaporanDepositTabungan();
       $html .= $this->ContentLaporanDepositTabungan();
+      
       $this->Templating($html);
    }
 
@@ -515,10 +471,12 @@ class Kwitansi extends CI_Controller
    function _invoiceRefundTabungan(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getInfoRefundTabungan( $sesi['nomor_transaction'] );
+
       $html  = $this->Header();
       $html .= $this->TitleRefundTabunganUmrah();
       $html .= $this->OrderRefundTabunganUmrah();
       $html .= $this->ContentRefundTabunganUmrah();
+      
       $this->Templating($html);
    }
 
@@ -526,10 +484,12 @@ class Kwitansi extends CI_Controller
    function _invoicePembayaranPeminjaman(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getInfoPembayaranPeminjaman( $sesi['invoice'] );
+      
       $html  = $this->Header();
       $html .= $this->TitlePeminjaman();
       $html .= $this->OrderPeminjaman();
       $html .= $this->ContentPeminjaman();
+      
       $this->Templating($html);
    }
 
@@ -537,10 +497,12 @@ class Kwitansi extends CI_Controller
    function _invoicePeminjaman(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getInfoPeminjaman( $sesi['register_number'] );
+      
       $html  = $this->Header();
       $html .= $this->TitlePeminjaman();
       $html .= $this->OrderPeminjaman();
       $html .= $this->ContentPeminjaman();
+      
       $this->Templating($html);
    }
 
@@ -548,10 +510,12 @@ class Kwitansi extends CI_Controller
    function _invoicePembayaranFeeAgen(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getInfoPembayaranFeeAgen( $sesi['invoice'] );
+      
       $html  = $this->Header();
       $html .= $this->TitlePembayaranFeeAgen();
       $html .= $this->OrderPembayaranFeeAgen();
       $html .= $this->ContentPembayaranFee();
+      
       $this->Templating($html);
    }
 
@@ -559,10 +523,12 @@ class Kwitansi extends CI_Controller
    function _invoiceFasilitasDepositPaket(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getInfoKwitansiFasilitasDepositPaket($sesi['invoice']);
+      
       $html  = $this->Header();
       $html .= $this->TitleHanoverFasilitasDepositPaket();
       $html .= $this->OrderHandoverFasilitasDepositPaket();
       $html .= $this->ContentFasilitasDepositPaket();
+      
       $this->Templating($html);
    }
 
@@ -570,10 +536,12 @@ class Kwitansi extends CI_Controller
    function _invoiceDepositPaket(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getInfoKwitansiDepositPaket($sesi['deposit_id']);
+      
       $html  = $this->Header();
       $html .= $this->TitleDepositPaket();
       $html .= $this->OrderDepositPaket();
       $html .= $this->ContentDepositPaket();
+      
       $this->Templating($html);
    }
 
@@ -830,11 +798,13 @@ class Kwitansi extends CI_Controller
    function _paketRiwayatCicilan()
    {
       $this->tempVar = $this->model_kwitansi->getRiwayatCicilan();
+      
       $html   = $this->Header();
       $html  .= $this->RegisterWithTitle('Riwayat Pembayaran Cicilan');
       $html  .= $this->ContentRiwayatCicilan();
       $html  .= $this->RiwayatPembayaranCicilan();
       $html  .= $this->Note();
+
       $this->Templating($html);
    }
 
@@ -842,17 +812,17 @@ class Kwitansi extends CI_Controller
    function _skemaCicilan()
    {
       $this->tempVar = $this->model_kwitansi->getSkemaCicilan();
+
       $html   = $this->Header();
       $html  .= $this->RegisterWithTitle('Skema Pembayaran Cicilan');
       $html  .= $this->ContentSkemaCicilan();
       $html  .= $this->Note();
+      
       $this->Templating($html);
    }
 
 
-
    function ContentKasKeluarMasuk(){
-
       $html = '<div class="row mt-4">
                   <p class="justify-content-left container-fluid text-left mb-2" style="color: #848484 !important;">
                      <b>Detail Transaksi</b>
@@ -896,8 +866,6 @@ class Kwitansi extends CI_Controller
                            </thead>
                            <tbody>';
                $num  = 1;
-               // $total_fee = 0;
-               // $total_sudah_bayar = 0;
                $total = 0;
                foreach ($this->tempVar['detail'] as $key => $value) {
                   $html .='<tr>
@@ -978,39 +946,30 @@ class Kwitansi extends CI_Controller
                         }
                      </style>
                      <table class="table table-hover ">
-                        <thead>
-                           <tr>
-                              <th style="width:15%;">No Registrasi / Invoice</th>
-                              <th style="width:30%;">Info Jamaah</th>
-                              <th style="width:15%;">Biaya</th>
-                              <th style="width:10%;">Status Biaya</th>
-                              <th style="width:15%;">Penerima</th>
-                              <th style="width:15%;">Tanggal Transaksi</th>
-                           </tr>
-                        </thead>
+                        <thead>';
+            $html .= $this->tr( $this->th('No Registrasi / Invoice', 'style="width:15%;"') .
+                                $this->th('Info Jamaah', 'style="width:30%;"') . 
+                                $this->th('Biaya', 'style="width:15%;"') . 
+                                $this->th('Status Biaya', 'style="width:10%;"') . 
+                                $this->th('Penerima', 'style="width:15%;"') . 
+                                $this->th('Tanggal Transaksi', 'style="width:15%;"'));  
+            $html .=   '</thead>
                         <tbody>';
-         if( count($this->tempVar['list']) > 0  ) {
-            foreach ($this->tempVar['list'] as $key => $value) {
-               $html .= '<tr>
-                           <td>'.$value['register_number'].'</td>
-                           <td>'.$value['fullname'].'<br>(ID : '.$value['identity_number'].')</td>
-                           <td>'.$value['status'].'</td>
-                           <td>'.$value['petugas'] . '</td>
-                           <td>'.$value['transaction_date'].'</td>
-                           <td>'. $this->kurs . ' ' .number_format($value['bayar']).'</td>
-                        </tr>';
+            if( count($this->tempVar['list']) > 0  ) {
+               foreach ($this->tempVar['list'] as $key => $value) {
+                  $html .= $this->tr($this->td($value['register_number']) .
+                                     $this->td($value['fullname'].'<br>(ID : '.$value['identity_number'].')') .
+                                     $this->td($value['status']) . 
+                                     $this->td($value['petugas']) . 
+                                     $this->td($value['transaction_date']) . 
+                                     $this->td($this->kurs . ' ' .number_format($value['bayar'])));
+               }
+            }else{
+               $html .= $this->tr($this->td('Riwayat Laporan Riwayat Peminjaman Tidak Ditemukan.', 'colspan="6"'));
             }
-         }else{
-            $html .= '<tr>
-                        <td colspan="6" > Riwayat Laporan Riwayat Peminjaman Tidak Ditemukan.</td>
-                     </tr>';
-         }
-         $html .=      '<tr>
-                           <td colspan="5" class="text-right"><b>TOTAL</b></td>
-                           <td class="text-right">'.$this->kurs . ' ' .number_format($this->tempVar['total']).',-</td>
-                        </tr>
-                        </tbody>
-                        
+            $html .= $this->tr( $this->td('<b>TOTAL</b>', 'colspan="5" class="text-right"') . 
+                                $this->td($this->kurs . ' ' .number_format($this->tempVar['total']).',-', 'class="text-right"')  );
+            $html .=   '</tbody>
                      </table>
                   </div>
                </div>';
@@ -2132,10 +2091,20 @@ class Kwitansi extends CI_Controller
       return $html;
    }
 
+   function tr($input) {
+      return '<tr>'.$input.'</tr>';
+   }
+
+   function td($input, $att = '') {
+      return '<td ' . $att . '>'.$input.'</td>';
+   }
+
+   function th($input, $att = '') {
+      return '<th ' . $att . '>'.$input.'</th>';
+   }
 
    function _contentTransaksiRefundPaketLA()
    {
-
       $html = '<div class="row mt-4">
                   <div class="col-12 px-0">
                      <span class="justify-content-center container-fluid title-order" style="font-weight: normal;">
@@ -2172,26 +2141,21 @@ class Kwitansi extends CI_Controller
                            </tr>
                         <thead>
                         <tbody>';
-      $no = 1;
-      $total = 0;
-      foreach ($this->tempVar['facilities'] as $key => $value) {
-         $html .= '<tr>
-                                 <td>' . $no . '</td>
-                                 <td>' . $value['name'] . '</td>
-                                 <td>' . $value['pax'] . '</td>
-                                 <td>' . $this->kurs . ' ' . number_format($value['harga']) . '</td>
-                                 <td class="text-right">
-                                    ' . $this->kurs . ' ' . number_format($value['pax'] * $value['harga']) . '
-                                 </td>
-                              </tr>';
-         $total = $total + ($value['pax'] * $value['harga']);
-         $no++;
-      }
-      $real_total = $total * $this->tempVar['jamaah'];
+            $no = 1;
+            $total = 0;
+            foreach ($this->tempVar['facilities'] as $key => $value) {
+               $html .= $this->tr( $this->td($no) . 
+                                   $this->td($value['name']) .
+                                   $this->td($this->kurs . ' ' . number_format($value['harga'])) .
+                                   $this->td($this->kurs . ' ' . number_format($value['pax'] * $value['harga']), ' class="text-right" ') .
+                                   $this->td($value['name']) ); 
+               $total = $total + ($value['pax'] * $value['harga']);
+               $no++;
+            }
+            $real_total = $total * $this->tempVar['jamaah'];
+            $now_sudah_dibayar = ($real_total - $this->tempVar['discount']) - ($this->tempVar['sudah_dibayar'] - $this->tempVar['paid']);
 
-      $now_sudah_dibayar = ($real_total - $this->tempVar['discount']) - ($this->tempVar['sudah_dibayar'] - $this->tempVar['paid']);
-
-      $html .=   '</tbody>
+            $html .=   '</tbody>
                         <tfoot>
                            <tr>
                               <td colspan="4" class="text-right">TOTAL</td>
@@ -2239,7 +2203,6 @@ class Kwitansi extends CI_Controller
                </div>';
       return $html;
    }
-
 
    function _contentTransaksiPembayaranPaketLAAwal()
    {
@@ -2382,14 +2345,12 @@ class Kwitansi extends CI_Controller
                         <tbody>';
       $no = 1;
       $total = 0;
-
-
-        $types = array('hotel' => "HOTEL", 
-                         'handling' => 'HANDLING', 
-                         'tiket_pesawat' => 'TIKET PESAWAT', 
-                         'visa' => 'VISA', 
-                         'mobil' => 'MOBIL',
-                         'bus' => 'BUS');
+      $types = array('hotel' => "HOTEL", 
+                     'handling' => 'HANDLING', 
+                     'tiket_pesawat' => 'TIKET PESAWAT', 
+                     'visa' => 'VISA', 
+                     'mobil' => 'MOBIL',
+                     'bus' => 'BUS');
       foreach ($this->tempVar['facilities'] as $key => $value) {
          $html .= '<tr>
                                  <td>' . $no . '</td>
@@ -2402,7 +2363,6 @@ class Kwitansi extends CI_Controller
          $no++;
       }
       $real_total = $total * $this->tempVar['jamaah'];
-
       $html .=   '</tbody>
                         <tfoot>
                            <tr>
@@ -2419,7 +2379,7 @@ class Kwitansi extends CI_Controller
                            </tr>
                            </tr>
                               <tr>
-                              <td colspan="2" class="text-right">PEMBAYARAN</td>
+                              <td colspan="2" class="text-right">'. ( $this->tempVar['status'] == 'refund' ? 'REFUND' : 'PEMBAYARAN' ) .'</td>
                               <td>' . $this->kurs . ' ' . number_format($this->tempVar['paid']) . '</td>
                            </tr>
                            <tr>
@@ -3755,7 +3715,6 @@ class Kwitansi extends CI_Controller
    }
 
 
-// style="border:1px solid #d5d5d5;"
    function  TitleDepositPayment(){
       $html = '<div class="row">
                   <div class="col-12 justify-content-center container-fluid py-2 " >
@@ -3892,13 +3851,6 @@ class Kwitansi extends CI_Controller
                </div>';
       return $html;
    }
-
-   // <div class="col-2"></div>
-   // <div class="col-5 text-right">
-   //    <div class="row" style="font-size: 19px;font-weight: bold;line-height: 21px;">
-   //       <div class="col-12">NOMOR INVOICE : #'.$no_invoice.'</div>
-   //    </div>
-   // </div>
 
    function TitleTiket($title, $nomor_register, $no_invoice)
    {
@@ -4868,58 +4820,6 @@ class Kwitansi extends CI_Controller
                </div>';
    }
 
-   // <div class="row">
-   //    <div class="col-12">
-   //       <span class="justify-content-center container-fluid title-order">
-   //          DITERIMA OLEH :
-   //       </span>
-   //    </div>
-   //    <div class="col-12">
-   //       <p class="justify-content-center container-fluid info-order">
-   //          ' . $this->tempVar['receiver'] . '
-   //       </p>
-   //    </div>
-   // </div>
-
-   // <div class="row">
-   //    <div class="col-12">
-   //       <span class="justify-content-center container-fluid title-order">
-   //          DITERIMA DARI :
-   //       </span>
-   //    </div>
-   //    <div class="col-12">
-   //       <p class="my-0 justify-content-center container-fluid info-order">
-   //          ' . $this->tempVar['payer'] . '<br>
-   //          (' . $this->tempVar['payer_identity'] . ') <br>
-   //          ' . $this->tempVar['payer_address'] . '
-   //       </p>
-   //    </div>
-   // </div>
-
-
-   // <div class="row">
-   //    <div class="col-12">
-   //       <span class="justify-content-center container-fluid title-order">
-   //          TANGGAL KEBERANGKATAN :
-   //       </span>
-   //    </div>
-   //    <div class="col-12 ">
-   //       <span class="justify-content-center container-fluid title-order float-right text-right" style="font-weight:normal;">
-   //          ' . $this->tempVar['departure_date'] . '
-   //       </span>
-   //    </div>
-   //    <div class="col-12">
-   //       <span class="justify-content-center container-fluid title-order">
-   //          TANGGAL KEPULANGAN :
-   //       </span>
-   //    </div>
-   //    <div class="col-12 ">
-   //       <span class="justify-content-center container-fluid title-order float-right text-right" style="font-weight:normal;">
-   //          ' . $this->tempVar['arrival_date'] . '
-   //       </span>
-   //    </div>
-   // </div>
-
    function OrderTransaksiRefundPaketLA()
    {
       return  '<div class="row mt-5">
@@ -5677,7 +5577,7 @@ class Kwitansi extends CI_Controller
                         </tr>
                      </tbody>
                      <tfoot>
-                        <tr >
+                        <tr>
                            <td colspan="3" rowspan="6" class="py-0">
                               <div class="row">
                                  <div class="col-6">
@@ -5745,7 +5645,6 @@ class Kwitansi extends CI_Controller
 
    function Templating($Content, $padding = '')
    {
-
       $html = '<style type = "text/css">
    					.main-title{
    						font-size: 28px;
@@ -5866,7 +5765,7 @@ class Kwitansi extends CI_Controller
                <script src="' . base_url('assets/material_template/plugins/jquery/jquery.min.js') . '"></script>
                <script src="' . base_url('assets/material_template/plugins/jquery-ui/jquery-ui.min.js') . '"></script>
                <script src="' . base_url('assets/material_template/plugins/bootstrap/js/bootstrap.bundle.min.js') . '"></script>
-            <script type="text/javascript">
+               <script type="text/javascript">
    					printDiv(\'printArea\');
    					function printDiv(divName) {
    			             var printContents = document.getElementById(divName).innerHTML;

@@ -1611,7 +1611,7 @@ class Model_kwitansi extends CI_Model
    {
       // plt.facilities,
       $this->db->select('plt.register_number,  plt.discount, plt.total_price,
-                         plt.departure_date, plt.arrival_date, plt.jamaah,
+                         plt.departure_date, plt.arrival_date, plt.jamaah, plth.status, 
                          plth.paid, plth.receiver, plth.deposit_name, plth.deposit_hp_number, plth.deposit_address, plth.paket_la_transaction_id, plth.input_date')
          ->from('paket_la_transaction_history AS plth')
          ->join('paket_la_transaction_temp AS plt', 'plth.paket_la_transaction_id=plt.id', 'inner')
@@ -1634,6 +1634,7 @@ class Model_kwitansi extends CI_Model
             $list['departure_date'] = $this->date_ops->change_date_t3($rows->departure_date);
             $list['arrival_date'] = $this->date_ops->change_date_t3($rows->arrival_date);
             $list['jamaah'] = $rows->jamaah;
+            $list['status'] = $rows->status;
             $list['paid'] = $rows->paid;
             $list['receiver'] = $rows->receiver;
             $list['payer'] = $rows->deposit_name;
