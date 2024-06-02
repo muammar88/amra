@@ -24,11 +24,11 @@ class Model_kwitansi extends CI_Model
    function getRiwayatTransaksiPeminjaman( $sesi ){
        $this->db->select('pp.id, pp.invoice, p.register_number, pp.bayar, pp.status,  pp.petugas, 
                          per.fullname, per.identity_number, pp.transaction_date')
-         ->from('pembayaran_peminjaman AS pp')
-         ->join('peminjaman AS p', 'pp.peminjaman_id=p.id', 'inner')
-         ->join('jamaah AS j', 'p.jamaah_id=j.id', 'inner')
-         ->join('personal AS per', 'j.personal_id=per.personal_id', 'inner')
-         ->where('pp.company_id', $this->company_id);
+                ->from('pembayaran_peminjaman AS pp')
+                ->join('peminjaman AS p', 'pp.peminjaman_id=p.id', 'inner')
+                ->join('jamaah AS j', 'p.jamaah_id=j.id', 'inner')
+                ->join('personal AS per', 'j.personal_id=per.personal_id', 'inner')
+                ->where('pp.company_id', $this->company_id);
      
      if ( array_key_exists( "start_date",$sesi ) AND $sesi['start_date'] != ''  ) {
          $this->db->where( 'pp.transaction_date >=' , $sesi['start_date'] );
@@ -292,11 +292,10 @@ class Model_kwitansi extends CI_Model
 
    function detail_pembayaran($peminjaman_id, $invoice){
       $this->db->select('invoice, bayar, status, transaction_date, petugas')
-         ->from('pembayaran_peminjaman')
-         ->where('company_id', $this->company_id)
-         // ->where('status', 'dp')
-         ->where('peminjaman_id', $peminjaman_id)
-         ->order_by('id', 'desc');
+               ->from('pembayaran_peminjaman')
+               ->where('company_id', $this->company_id)
+               ->where('peminjaman_id', $peminjaman_id)
+               ->order_by('id', 'desc');
       $q = $this->db->get();
       $list = array();
       $total = 0;
@@ -364,8 +363,6 @@ class Model_kwitansi extends CI_Model
            
          }
       }
-
-      // print_r($list);
       return $list;
    }
 
@@ -600,7 +597,6 @@ class Model_kwitansi extends CI_Model
       if ($q->num_rows() > 0) {
          $num = 1;
          foreach ($q->result() as $row) {
-            // $ex = explode('$', $row->petugasJabatan);
             if ($row->petugasJabatan == '') {
                $petugas = 'Admin ' . $this->session->userdata($this->config->item('apps_name'))['company_name'];
                $jabatan = 'Administrator';
@@ -650,7 +646,6 @@ class Model_kwitansi extends CI_Model
 
    function getInfoKwitansiFasilitas($paket_transaction_id, $jamaah_id, $invoice)
    {
-
       $this->db->select('hf.id, hf.facilities_id, m.facilities_name, hf.receiver_name, hf.receiver_identity, hf.date_transaction,
                            (SELECT CONCAT_WS(\'$\', p.fullname, g.nama_group)
                                FROM base_users AS u
@@ -804,7 +799,6 @@ class Model_kwitansi extends CI_Model
             $feedBack['identitas_jamaah'] = $infoJamaah[3];
             $feedBack['alamat_jamaah'] = $infoJamaah[1];
             $feedBack['no_hp_jamaah'] = $infoJamaah[2];
-
             $feedBack['kode_paket_asal'] = $row->kode_paket_asal;
             $feedBack['paket_asal'] = $row->paket_asal;
             $feedBack['tipe_paket_asal'] = $row->tipe_paket_asal;
@@ -821,10 +815,6 @@ class Model_kwitansi extends CI_Model
             $feedBack['invoice_refund'] = $row->invoice_refund;
             $feedBack['invoice_tujuan'] = $row->invoice_tujuan;
             $feedBack['order_date'] = $row->transaction_date;
-
-            // echo  $row->total_paket_price."<br>";
-            // echo  $row->total_mahram_fee."<br>";
-
             $feedBack['sisa_pembayaran'] = $this->hitPembayaranByPaketTransactionID($row->paket_transaction_id, $row->total_paket_price);
          }
       }
@@ -861,7 +851,6 @@ class Model_kwitansi extends CI_Model
       $array = array();
       $sesi = $this->session->userdata('cetak_invoice');
       $invoice = $sesi['invoice'];
-      // $invoice = 'NM168923264177';
       $dp = 0;
       $sisa_pembayaran_setelah_dp = 0;
       $this->db->select('pt.id, p.kode, p.paket_name, p.departure_date, pt.total_paket_price, pt.diskon,
@@ -907,14 +896,10 @@ class Model_kwitansi extends CI_Model
 
             if (isset($sesi['invoice'])) {
                $array['invoice'] = $invoice;
-               // skema pembayaranCicilan
                $skema = $this->skemaPembayaranCicilan($sesi['nomor_registrasi']);
-               // pembayaran
                $pembayaran = $this->info_pembayaran_invoice($sesi['nomor_registrasi'], $invoice);
-
                $array['detailPembayaran'] = $pembayaran['detailPembayaran'];
                $pembayaran_cicilan = $pembayaran['pembayaran_cicilan'];
-
                $total_cicilan = $sisa_pembayaran_setelah_dp;
                $array['total_sudah_bayar'] =  $this->kurs . number_format($pembayaran_cicilan + $dp);
                $list_skema_cicilan  = array();
@@ -974,12 +959,8 @@ class Model_kwitansi extends CI_Model
          foreach ($q->result() as $row) {
             $sumAmount = $sumAmount + $row->amount;
             $skema[$row->term] = array('amount' => $row->amount, 'sumAmount' => $sumAmount);
-            //$skema[$row->term] = array('min' => ($sumAmount - $row->amount + 1), 'max' => $sumAmount);
          }
       }
-
-      // echo "<br>=====Skema=======<br>";
-      // print_r( $skema );
       return $skema;
    }
 
@@ -1308,14 +1289,14 @@ class Model_kwitansi extends CI_Model
    function getDownloadAbsensiJamaah($paket_id)
    {
       $this->db->select('per.fullname, per.address, per.nomor_whatsapp, p.paket_name, pt.no_register')
-         ->from('paket_transaction_jamaah AS ptj')
-         ->join('jamaah AS j', 'ptj.jamaah_id=j.id', 'inner')
-         ->join('personal AS per', 'j.personal_id=per.personal_id', 'inner')
-         ->join('paket_transaction AS pt', 'ptj.paket_transaction_id=pt.id')
-         ->join('paket AS p', 'pt.paket_id=p.id', 'inner')
-         ->where('pt.paket_id', $paket_id)
-         ->where('ptj.company_id', $this->company_id)
-         ->where('pt.batal_berangkat', '0');
+               ->from('paket_transaction_jamaah AS ptj')
+               ->join('jamaah AS j', 'ptj.jamaah_id=j.id', 'inner')
+               ->join('personal AS per', 'j.personal_id=per.personal_id', 'inner')
+               ->join('paket_transaction AS pt', 'ptj.paket_transaction_id=pt.id')
+               ->join('paket AS p', 'pt.paket_id=p.id', 'inner')
+               ->where('pt.paket_id', $paket_id)
+               ->where('ptj.company_id', $this->company_id)
+               ->where('pt.batal_berangkat', '0');
       $q = $this->db->get();
       $paket_name = '';
       $no_register = '';
@@ -1333,13 +1314,13 @@ class Model_kwitansi extends CI_Model
    function _getKeluarga($jamaah_id, $paket_transaction_id)
    {
       $this->db->select('p.fullname, p.nomor_whatsapp')
-         ->from('paket_transaction_jamaah AS ptj')
-         ->join('paket_transaction AS pt', 'ptj.paket_transaction_id=pt.id', 'inner')
-         ->join('jamaah AS j', 'ptj.jamaah_id=j.id', 'inner')
-         ->join('personal AS p', 'j.personal_id=p.personal_id', 'inner')
-         ->where('ptj.paket_transaction_id', $paket_transaction_id)
-         ->where('ptj.company_id', $this->company_id)
-         ->where('pt.batal_berangkat', '0');
+               ->from('paket_transaction_jamaah AS ptj')
+               ->join('paket_transaction AS pt', 'ptj.paket_transaction_id=pt.id', 'inner')
+               ->join('jamaah AS j', 'ptj.jamaah_id=j.id', 'inner')
+               ->join('personal AS p', 'j.personal_id=p.personal_id', 'inner')
+               ->where('ptj.paket_transaction_id', $paket_transaction_id)
+               ->where('ptj.company_id', $this->company_id)
+               ->where('pt.batal_berangkat', '0');
       $q = $this->db->get();
       $array = array();
       if ($q->num_rows() > 0) {
@@ -1436,7 +1417,6 @@ class Model_kwitansi extends CI_Model
                );
                $total_harga = $total_harga + $exp2[9];
             }
-
             $list['id'] = $row->id;
             $list['invoice'] = $row->invoice;
             $list['payer'] = $row->payer;
@@ -1552,7 +1532,6 @@ class Model_kwitansi extends CI_Model
 
    function getInfoKwitansiTransaksiTransport($invoice)
    {
-
       $this->db->select('tt.id, tt.invoice, tt.payer, tt.payer_identity, tt.input_date, tt.address, tt.receiver,
                            (SELECT GROUP_CONCAT( CONCAT_WS(\'$\', mc.car_name, ttd.car_number, ttd.price ) SEPARATOR \';\')
                               FROM transport_transaction_detail AS ttd
@@ -1594,24 +1573,6 @@ class Model_kwitansi extends CI_Model
       return $list;
    }
 
-
-   //   function getListFasilitas( $id ){
-   //    $this->db->select('pf.id, pf.type, pf.total_price')
-   //             ->from('paket_la_fasilitas_transaction AS pf')
-   //             ->where('pf.paket_la_transaction_id', $id)
-   //             ->where('pf.company_id', $this->company_id);
-   //    $q = $this->db->get();
-   //    $list = array();
-   //    if( $q->num_rows() > 0 ) {
-   //       foreach ($q->result() as $rows) {
-   //          $total = $this->getListDetailFasilitas($id);
-   //          $list[] = array('type' => $rows->type, 
-   //                          'total' => $total);
-   //       }
-   //    }         
-   //    return $list;
-   // }
-
    function getInfoKwitansiPembayaranPaketLA($invoice)
    {
       // plt.facilities,
@@ -1626,12 +1587,8 @@ class Model_kwitansi extends CI_Model
       $list = array();
       if ($q->num_rows() > 0) {
          foreach ($q->result() as $rows) {
-
             $sudah_bayar = $this->get_sudah_bayar_paket_la( $rows->paket_la_transaction_id, $invoice );
-
-
             $facilities = $this->getListFasilitas($rows->paket_la_transaction_id);
-
             $list['register_number'] = $rows->register_number;
             $list['facilities'] = $facilities;
             $list['discount'] = $rows->discount;
@@ -1647,7 +1604,6 @@ class Model_kwitansi extends CI_Model
             $list['payer_address'] = $rows->deposit_address;
             $list['sudah_dibayar'] = $sudah_bayar;
             $list['input_date'] = $this->date_ops->change_date_t3($rows->input_date);
-            // $list['sudah_dibayar'] = $rows->sudahBayar - $rows->refund;
          }
       }
       return $list;
@@ -1702,11 +1658,7 @@ class Model_kwitansi extends CI_Model
 
    function getInfoKwitansiRefundPaketLA($invoice)
    {
-
       $sum_paid_refund = $this->sum_paid_refund($invoice);
-
-
-
       $this->db->select('plt.register_number, plt.discount, plt.total_price,
                          plt.departure_date, plt.arrival_date, plt.jamaah,
                          plth.paid, plth.receiver, plth.deposit_name, plth.deposit_hp_number, plth.deposit_address,
@@ -1738,10 +1690,8 @@ class Model_kwitansi extends CI_Model
             $list['payer'] = $rows->deposit_name;
             $list['payer_identity'] = $rows->deposit_hp_number;
             $list['payer_address'] = $rows->deposit_address;
-            // 
          }
       }
-
       $list['sudah_dibayar'] = $sum_paid_refund['sudah_bayar'] - $sum_paid_refund['refund'];
       return $list;
    }
@@ -2079,7 +2029,6 @@ class Model_kwitansi extends CI_Model
             $list['saldo'] = $rows->debet;
             $list['sumber_dana'] = $rows->sumber_dana;
             $list['no_tansaksi_sumber_dana'] = $rows->no_tansaksi_sumber_dana;
-            // sumber_dana
             $list['last_saldo'] = $this->lastSaldoPaket($rows->pool_id, $rows->id, $rows->personal_id, $rows->transaction_requirement);
          }
       }
@@ -2334,10 +2283,7 @@ class Model_kwitansi extends CI_Model
                if( $r->num_rows() > 0 ) {
                   foreach ( $r->result() as $rowr ) {
                      $feedBack['fullname'] =  $rowr->fullname;
-                     // $feedBack['pasport_name'] =  $rowr->pasport_name == '' ? '-' : $rowr->pasport_name;
                      $feedBack['identity_number'] =  $rowr->identity_number;
-                     // $feedBack['birth_place'] =  $rowr->birth_place;
-                     // $feedBack['birth_date'] =  $rowr->birth_date;
                      $feedBack['address'] =  $rowr->address;
                   }
                }

@@ -115,35 +115,25 @@ class Text_ops
 	/* hide currency from variable */
 	function hide_currency($value)
 	{
-		$kurs = $my_this->session->userdata($my_this->config->item('apps_name'))['kurs'];
-
+		$kurs = $this->text->session->userdata($this->text->config->item('apps_name'))['kurs'];
 		if (strpos($value, $kurs ) !== false) {
 			$value = str_replace($kurs , "", $value);
-			/*$value = 'Pertama';*/
 			if (strpos($value, '.') !== false) {
-				// print("<br>2");
 				$value = str_replace(".", "", $value);
-				// print("<br>");
-				// print( $value );
 				if (strpos($value, ',') !== false) {
 					$value = str_replace(",", "", $value);
 				} elseif ($value == 0) {
 					$value = 0;
 				}
 			} else {
-				// print("<br>4");
 				if (strpos($value, ',') !== false) {
-					// print("<br>5");
 					$value = str_replace(",", "", $value);
 				}
 			}
 		} else {
-			// print("<br>6");
 			if (strpos($value, '.') !== false) {
-				// print("<br>7");
 				$value = str_replace(".", "", $value);
 				if (strpos($value, ',') !== false) {
-					// print("<br>8");
 					$value = str_replace(",", "", $value);
 				}
 			} else {
@@ -152,11 +142,9 @@ class Text_ops
 				}
 			}
 		}
-
 		if (!is_numeric($value)) {
 			$value = 0;
 		}
-		
 		return $value;
 	}
 
@@ -169,8 +157,8 @@ class Text_ops
 				$text = $text . '-' . $i;
 			}
 			$this->text->db->select('slug')
-				->from('paket')
-				->where('slug', $text);
+								->from('paket')
+								->where('slug', $text);
 			$q = $this->text->db->get();
 			if ($q->num_rows() == 0) {
 				$feedBack = true;
@@ -240,23 +228,6 @@ class Text_ops
 
 		return $format_angka . $simbol;
 	}
-
-	// function get_invoice_pindah_paket(){
-	// 	$my_this =& get_instance();
-	// 	$feedBack = false;
-	// 	$rand = '';
-	// 	do {
-	// 		$rand = random_num(14);
-	// 		$q = $my_this->db->select('invoice')
-	// 						 ->from('handover_facilities')
-	// 						 ->where('invoice', $rand)
-	// 						 ->get();
-	// 		if($q->num_rows() == 0){
-	// 			$feedBack = true;
-	// 		}
-	// 	} while ($feedBack == false);
-	// 	return $rand;
-	// }
 
 	function generated_invoice_kas()
 	{
@@ -411,7 +382,7 @@ class Text_ops
 
 	function get_invoice_transaksi_paket_cicilan()
 	{
-		$my_this = &get_instance();
+		$my_this 	= &get_instance();
 		$feedBack 	= false;
 		$rand  		= '';
 		do {
@@ -430,7 +401,7 @@ class Text_ops
 
 	function get_invoice_transaksi_paket_cash()
 	{
-		$my_this = &get_instance();
+		$my_this 	= &get_instance();
 		$feedBack 	= false;
 		$rand  		= '';
 		do {
@@ -448,7 +419,7 @@ class Text_ops
 
 	function get_no_register()
 	{
-		$my_this = &get_instance();
+		$my_this 	= &get_instance();
 		$feedBack 	= false;
 		$rand  		= '';
 		do {
@@ -541,25 +512,19 @@ class Text_ops
 	}
 
 	function random_alpha_numeric($size){
-
       $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-      //;
       $alpha_key = '';
       $keys = range('A', 'Z');
       for ($i = 0; $i < 2; $i++) {
          $alpha_key .= $keys[array_rand($keys)];
       }
-
       $length = $size;
-
       $key = '';
       $keys = range(0, 9);
       for ($i = 0; $i < $length; $i++) {
          $key .= $keys[array_rand($keys)];
       }
-
       return substr(str_shuffle($alpha_key . $key .$str_result),0, $size);
-
    }
 
 

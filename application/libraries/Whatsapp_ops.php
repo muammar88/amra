@@ -32,23 +32,12 @@ class Whatsapp_ops
 		$this->CI = &get_instance();
 
 		$this->company_id = $this->CI->session->userdata($this->CI->config->item('apps_name'))['company_id'];
-
-		// $this->url = 'https://wapisender.id/api/v1';
 		$this->url = 'https://wapisender.id/api/v5';
-		// $this->url_send_message = $this->url . '/send-message';
-		// $this->url_device_info = $this->url . '/device-info';
-		//$this->url_restart_device = $this->url . '/restart-device';
 		$this->url_start_device = $this->url . '/device/start';
 		$this->url_stop_device = $this->url . '/device/stop';
-
-		// https://wapisender.id/api/v5/device/start
-		// https://wapisender.id/api/v5/device/stop
 		$this->url_check_message = $this->url . '/check-message';
-
-		
 		$this->url_send_message = $this->url . '/message/text';
 		$this->url_device_info = $this->url . '/device/info';
-		//$this->url_restart_device = '';
 	}
 
 	# define api
