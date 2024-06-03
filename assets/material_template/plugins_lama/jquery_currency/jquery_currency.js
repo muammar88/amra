@@ -15,13 +15,18 @@
 
 (function($) {
 
+
+	console.log("********************");
+	console.log(kurs);
+	console.log("********************");
+
 	$.formatCurrency = {};
 
 	$.formatCurrency.regions = [];
 
 	// default Region is en
 	$.formatCurrency.regions[''] = {
-		symbol: 'Rp ',
+		symbol: kurs + ' ',
 		positiveFormat: '%s%n',
 		negativeFormat: '(%s%n)',
 		decimalSymbol: '.',
@@ -212,7 +217,7 @@
 		}
 		else {
 			if (/(\w+)-(\w+)/g.test(region)) {
-				var culture = region.replace(/(\w+)-(\w+)/g, "Rp 1");
+				var culture = region.replace(/(\w+)-(\w+)/g, kurs + " 1");
 				return $.formatCurrency.regions[culture];
 			}
 		}
@@ -236,7 +241,7 @@
 			return new RegExp("[^\\d" + settings.decimalSymbol + "-]", "g");
 		}
 		else {
-			var symbol = settings.symbol.replace('Rp ', '\\Rp ').replace('.', '\\.');		
+			var symbol = settings.symbol.replace(kurs + ' ', '\\' + kurs + ' ').replace('.', '\\.');		
 			return new RegExp(symbol + "|[^\\d" + settings.decimalSymbol + "-]", "g");
 		}	
 	}

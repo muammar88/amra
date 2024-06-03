@@ -215,6 +215,10 @@ class Akun extends CI_Controller
 			$data_saldo['periode'] = $periode_id;
 			$data_saldo['input_date'] = date('Y-m-d');
 			$data_saldo['last_update'] = date('Y-m-d');
+
+			echo "==============";
+			print_r($data_saldo);
+			echo "==============";
 			# filter
 			if ($this->input->post('akun_id')) {
 				# get akun id

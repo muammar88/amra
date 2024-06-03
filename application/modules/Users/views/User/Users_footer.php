@@ -26,6 +26,9 @@
 		<script src="<?php echo base_url('assets/material_template/plugins/summernote/summernote-bs4.min.js'); ?> "></script>
 		<!-- overlayScrollbars -->
 		<script src="<?php echo base_url('assets/material_template/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js'); ?> "></script>
+		<?php 
+			echo '<script type="text/javascript"> var kurs = "' . $this->session->userdata($this->config->item('apps_name'))['kurs'] . '";</script>';
+		?>
 		<!-- Currency JS -->
 		<script src="<?php echo base_url('assets/material_template/plugins/jquery_currency/jquery_currency.js'); ?> "></script>
 		<!-- File Input JS -->
@@ -69,7 +72,7 @@
 
 		echo '<script type="text/javascript"> let baseUrl = "' . base_url() . '"; </script>';
 		echo '<script type="text/javascript"> var level_akun = "' . $this->session->userdata($this->config->item('apps_name'))['level_akun'] . '";</script>';
-		echo '<script type="text/javascript"> var kurs = "' . $this->session->userdata($this->config->item('apps_name'))['kurs'] . '";</script>';
+	
 
 		if (isset($js)) :
 			if (is_array($js)) :

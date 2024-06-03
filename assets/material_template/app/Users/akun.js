@@ -435,6 +435,9 @@ function formAddUpdateAkun(nomor_akun, JSONValue){
                       var e = window.event || e;
                       var keyUnicode = e.charCode || e.keyCode;
                           if (e !== undefined) {
+                              console.log("======================");
+                              console.log(keyUnicode);
+                              console.log("======================");
                               switch (keyUnicode) {
                                   case 16: break;
                                   case 27: this.value = ''; break;
