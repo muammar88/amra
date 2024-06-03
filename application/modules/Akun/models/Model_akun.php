@@ -162,6 +162,11 @@ class Model_akun extends CI_Model
       if ($q->num_rows() > 0) {
          $n = 0;
          foreach ($q->result() as $row) {
+
+            echo "<br>";
+            echo $row->akun_secondary;
+            echo "<br>";
+
             if (count($list_saldo) == 0) {
                 $list_saldo = $this->list_saldo($row->periode_aktif);
             }
@@ -180,9 +185,9 @@ class Model_akun extends CI_Model
                if ($value != '') {
                   $exp = explode("$", $value);
 
-                  echo "++++++++++++++++++";
-                  print_r($exp);
-                  echo "++++++++++++++++++";
+                  // echo "++++++++++++++++++";
+                  // print_r($exp);
+                  // echo "++++++++++++++++++";
 
                   if (count($exp) > 0) {
                      $total = $total +  (isset($list_saldo[$exp[0]]) ? $list_saldo[$exp[0]] : 0);
