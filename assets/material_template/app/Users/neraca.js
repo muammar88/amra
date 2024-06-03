@@ -129,7 +129,7 @@ function get_neraca(){
                total_kewajiban = total_kewajiban + kewajiban[x]['saldo'];
             }
             $('#bodyTable_kewajiban').html(html_kewajiban);
-            $('#subtotal_kewajiban').html('<b>'+ kurs + ' ' numberFormat(total_kewajiban) + '</b>');
+            $('#subtotal_kewajiban').html('<b>'+ kurs + ' ' + numberFormat(total_kewajiban) + '</b>');
 
 
             var html_ekuitas = '';

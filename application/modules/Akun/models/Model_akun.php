@@ -189,7 +189,7 @@ class Model_akun extends CI_Model
                         'nama_akun' => $exp[2],
                         'tipe' => $exp[3],
                         'level' => 'secondary',
-                        'saldo_awal' => (isset($list_saldo[$exp[0]]) ?  $this->kurs . number_format($list_saldo[$exp[0]]) : $this->kurs . ' 0'),
+                        'saldo_awal' => (isset($list_saldo[$exp[0]]) ?  $this->kurs . ' ' . number_format($list_saldo[$exp[0]]) : $this->kurs . ' 0'),
                         'saldo_exist' => isset($list_saldo[$exp[0]]),
                         'saldo_akhir' => $saldo_akhir
                      );

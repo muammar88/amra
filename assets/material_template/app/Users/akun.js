@@ -168,7 +168,7 @@ function ListDaftarAkun(JSONData){
    }else{
       html += `
                <td>${json.saldo_awal}</td>
-               <td>${kurs}${ json.saldo_akhir != undefined ? numberFormat(json.saldo_akhir) : 0 }</td>
+               <td>${kurs} ${ json.saldo_akhir != undefined ? numberFormat(json.saldo_akhir) : 0 }</td>
                <td>`;
 
       if( json.tipe == 'bawaan' ){

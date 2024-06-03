@@ -59,7 +59,6 @@ class Users extends CI_Controller
 				'Users/airlines',
 				'Users/daftar_fasilitas',
 				'Users/daftar_tipe_paket',
-				// 'Users/fasilitas_paket_la',
 				'Users/tipe_paket_la',
 				'Users/supplier',
 				'Users/daftar_kota',
