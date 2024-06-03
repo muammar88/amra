@@ -179,6 +179,11 @@ class Model_akun extends CI_Model
             foreach (explode(";", $row->akun_secondary) as $key => $value) {
                if ($value != '') {
                   $exp = explode("$", $value);
+
+                  echo "++++++++++++++++++";
+                  print_r($exp);
+                  echo "++++++++++++++++++";
+
                   if (count($exp) > 0) {
                      $total = $total +  (isset($list_saldo[$exp[0]]) ? $list_saldo[$exp[0]] : 0);
 
