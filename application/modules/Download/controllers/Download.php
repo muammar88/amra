@@ -38,16 +38,16 @@ class Download extends CI_Controller
 	{
 		$this->sesi = $this->session->userdata('download_to_excel');
 		$type = 'model_' . $this->sesi['type'];
-		#Fungsi header dengan mengirimkan raw data excel
-		// header("Content-type: application/vnd-ms-excel");
+		# Fungsi header dengan mengirimkan raw data excel
+		header("Content-type: application/vnd-ms-excel");
 		# Mendefinisikan nama file ekspor "excel-buku-besar.xls"
 		if( isset( $this->sesi['periode'] ) ){
 			header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] . "_periode:" . $this->model_download->periode_name($this->sesi['periode']) . ".xls");
 		}elseif( isset( $this->sesi['paket_name'] ) ){
 			header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] . "_kode:".$this->sesi['kode_paket']."_paket:" . $this->sesi['paket_name'] . ".xls");
 		}elseif( $this->sesi['type'] == 'download_manifest_tabungan_umrah'){
-			// header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] . "_:".
-					// ( $this->sesi['filter']['filterTransaksi'] == 'sudah' ? 'Sudah_beli_paket' : 'Belum_beli_paket').".xls");
+			header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] . "_:".
+					( $this->sesi['filter']['filterTransaksi'] == 'sudah' ? 'Sudah_beli_paket' : 'Belum_beli_paket').".xls");
 		}elseif( $this->sesi['type'] == 'download_absensi_kamar'){
 			header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] .".xls");
 		}elseif( $this->sesi['type'] == 'download_excel_daftar_agen'){
@@ -56,8 +56,7 @@ class Download extends CI_Controller
 			header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] .".xls");
 		}elseif( $this->sesi['type'] == 'download_excel_info_saldo_member'){
 			header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] .".xls");
-		}
-		else{
+		}else{
 			header("Content-Disposition: attachment; filename=excel-" . $this->sesi['type'] . ".xls");
 		}
 		echo "<table>" . $this->model_download->$type($this->sesi) . '</table>';
