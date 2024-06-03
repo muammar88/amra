@@ -144,6 +144,8 @@ class Model_akun extends CI_Model
       // check akun default 
       $this->_check_akun_company();      
 
+      $this->db->simple_query('SET SESSION group_concat_max_len=1500000000');
+
       $this->db->select('ap.id, ap.nomor_akun, ap.nama_akun, ap.sn,
                            (SELECT GROUP_CONCAT( CONCAT_WS(\'$\', id, nomor_akun_secondary, nama_akun_secondary, tipe_akun, path ) SEPARATOR \';\' )
                            FROM akun_secondary
