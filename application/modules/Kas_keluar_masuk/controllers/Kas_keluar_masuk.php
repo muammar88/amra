@@ -266,7 +266,7 @@ class Kas_keluar_masuk extends CI_Controller
 			# invoice
 			$source = 'generaltransaksi:invoice:' . $invoice;
 			# get last periode
-			$last_periode = $this->model_kas_keluar_masuk->get_last_periode();
+			// $last_periode = $this->model_kas_keluar_masuk->get_last_periode();
 			# data jurnal
 			$data_jurnal = array();
 			foreach ($saldo as $key => $value) {
@@ -278,7 +278,7 @@ class Kas_keluar_masuk extends CI_Controller
 					'akun_debet' => $akun_debet[$key],
 					'akun_kredit' => $akun_kredit[$key],
 					'saldo' => $this->text_ops->hide_currency($value),
-					'periode_id' => $last_periode,
+					'periode_id' => 0,
 					'input_date' => date('Y-m-d H:i:s'),
 					'last_update'  => date('Y-m-d H:i:s')
 				);

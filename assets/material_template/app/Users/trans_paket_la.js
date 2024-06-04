@@ -36,7 +36,7 @@ function trans_paket_la_Pages(){
                         </tbody>
                      </table>
                   </div>
-                  <div class="col-lg-12 px-3 pb-3" >
+                  <div class="col-lg-12 px-3 pb-3" > 
                      <div class="row" id="pagination_trans_paket_la"></div>
                   </div>
                </div>
@@ -72,17 +72,25 @@ function ListDaftarTransPaketLA(JSONData){
          fasilitas += `<table class="table mb-0">
                         <tbody>
                            <tr>
-                              <td class="text-left border border-right-0 " style="width:10%;background-color: #e7e7e7;">INVOICE</td>
-                              <td class="border border-left-0 border-right-0 border-top-1 px-2" style="width:1%;">:</td>
-                              <td class="border text-left border-left-0 border-top-1 px-0" style="width:39%;">${json.fasilitas[x].invoice}</td>
-                              <td class="text-left border border-right-0 " style="width:10%;background-color: #e7e7e7;">TYPE</td>
-                              <td class="border border-left-0 border-right-0 border-top-1 px-2" style="width:1%;">:</td>
-                              <td class="border text-left border-left-0 border-top-1 px-0"  style="width:39%;text-transform:uppercase;">${json.fasilitas[x].type.replace('_', ' ')}</td>
+                              <td class="text-left border border-right-0 align-middle" style="width:15%;background-color: #e7e7e7;">INVOICE</td>
+                              <td class="border border-left-0 border-right-0 border-top-1 px-2 align-middle" style="width:1%;">:</td>
+                              <td class="border text-left border-left-0 border-top-1 px-0 align-middle" style="width:34%;">${json.fasilitas[x].invoice}</td>
+                              <td class="text-left border border-right-0 align-middle" style="width:15%;background-color: #e7e7e7;">TYPE</td>
+                              <td class="border border-left-0 border-right-0 border-top-1 px-2 align-middle" style="width:1%;">:</td>
+                              <td class="border text-left border-left-0 border-top-1 px-0 align-middle"  style="width:34%;text-transform:uppercase;">${json.fasilitas[x].type.replace('_', ' ')}</td>
                            <tr>
                            <tr>
-                             <td class="text-left border border-right-0 " style="width:10%;background-color: #e7e7e7;">TOTAL</td>
-                              <td class="border border-left-0 border-right-0 border-top-1 px-2" style="width:1%;">:</td>
-                              <td class="border text-left border-left-0 border-top-1 px-0" colspan="4" style="width:39%;">${kurs} ${numberFormat(json.fasilitas[x].total_price)}</td>
+                              <td class="text-left border border-right-0 align-middle" style="width:15%;background-color: #e7e7e7;">TOTAL</td>
+                              <td class="border border-left-0 border-right-0 border-top-1 px-2 align-middle" style="width:1%;">:</td>
+                              <td class="border text-left border-left-0 border-top-1 px-0 align-middle" style="width:34%;">${kurs} ${numberFormat(json.fasilitas[x].total_price)}</td>
+                              <td class="text-left border border-right-0 align-middle" style="width:15%;background-color: #e7e7e7;">PRINT BTN</td>
+                              <td class="border border-left-0 border-right-0 border-top-1 px-2 align-middle" style="width:1%;">:</td>
+                              <td class="border text-left border-left-0 border-top-1 pl-0 align-middle"  style="width:34%;text-transform:uppercase;">
+                                 <button type="button" class="btn btn-default w-100" title="Cetak Kwitansi Detail Item Paket LA"
+                                    onclick="cetak_kwitansi_detail_item_paket_la('${json.fasilitas[x].id}')" style="margin:.15rem .1rem  !important">
+                                     <i class="fas fa-print" style="font-size: 11px;"></i> Cetak Invoice
+                                 </button>
+                              </td>
                            <tr>
                         </tbody>
                      </table>`;
@@ -97,14 +105,14 @@ function ListDaftarTransPaketLA(JSONData){
                                  <th style="background-color: #e7e7e7;">Day</th>
                                  <th style="background-color: #e7e7e7;">Pax</th>
                                  <th style="background-color: #e7e7e7;">Price</th>
-                                 <th style="width:15%;background-color: #e7e7e7;">Aksi</th>
+                                 <th style="width:10%;background-color: #e7e7e7;">Aksi</th>
                               </tr>`;
             }else{
                fasilitas +=  `<tr>
                                  <th style="background-color: #e7e7e7;">Deskripsi</th>
                                  <th style="background-color: #e7e7e7;">Pax</th>
                                  <th style="background-color: #e7e7e7;">Price</th>
-                                 <th style="width:15%;background-color: #e7e7e7;">Aksi</th>
+                                 <th style="width:10%;background-color: #e7e7e7;">Aksi</th>
                               </tr>`;
             }
          fasilitas +=  `</thead>
@@ -120,10 +128,6 @@ function ListDaftarTransPaketLA(JSONData){
                                     <td class="align-middle">${json.fasilitas[x].detail[c].pax}</td>
                                     <td class="align-middle">${kurs} ${numberFormat(json.fasilitas[x].detail[c].price)}</td>
                                     <td class="align-middle">
-                                       <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Detail Item Paket LA"
-                                          onclick="cetak_kwitansi_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
-                                           <i class="fas fa-print" style="font-size: 11px;"></i>
-                                       </button>
                                        <button type="button" class="btn btn-danger btn-action" title="Delete Detail Item Paket LA"
                                           onclick="delete_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
                                            <i class="fas fa-times" style="font-size: 11px;"></i>
@@ -144,10 +148,6 @@ function ListDaftarTransPaketLA(JSONData){
                                     <td class="align-middle">${json.fasilitas[x].detail[c].pax}</td>
                                     <td class="align-middle">${kurs} ${numberFormat(json.fasilitas[x].detail[c].price)}</td>
                                     <td class="align-middle">
-                                       <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Detail Item Paket LA"
-                                          onclick="cetak_kwitansi_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
-                                           <i class="fas fa-print" style="font-size: 11px;"></i>
-                                       </button>
                                        <button type="button" class="btn btn-danger btn-action" title="Delete Paket LA"
                                           onclick="delete_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
                                            <i class="fas fa-times" style="font-size: 11px;"></i>
@@ -225,6 +225,19 @@ function ListDaftarTransPaketLA(JSONData){
          html += `</td>
                </tr>`;
    return html;
+}
+
+function cetak_kwitansi_detail_item_paket_la(id) {
+   ajax_x_t2(
+      baseUrl + "Trans_paket_la/cetak_kwitansi_detail_item_paket_la", function(e) {
+         if ( e['error'] == true ) {
+            return false;
+         } else {
+             // window.open(baseUrl + "Download/", "_blank");
+             window.open(baseUrl + "Kwitansi/", "_blank");
+         }
+      },[{id:id}]
+   );
 }
 
 function add_item_detail_paket_la(id){

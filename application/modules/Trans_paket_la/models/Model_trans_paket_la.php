@@ -215,7 +215,8 @@ class Model_trans_paket_la extends CI_Model
       $list = array();
       if( $q->num_rows() > 0 ){
          foreach ($q->result() as $rows) {
-            $list[] = array('invoice' => $rows->invoice, 
+            $list[] = array('id' => $rows->id,
+                            'invoice' => $rows->invoice, 
                             'type' => $rows->type, 
                             'total_price' => $rows->total_price, 
                             'detail' => $this->get_detail_fasilitas_transaction($rows->id));
@@ -745,6 +746,19 @@ class Model_trans_paket_la extends CI_Model
    function check_id_paket_la($id){
      $this->db->select('id')
                ->from('paket_la_transaction_temp')
+               ->where('company_id', $this->company_id)
+               ->where('id', $id);
+      $q = $this->db->get();
+      $price = 0;
+      if( $q->num_rows() > 0 ) {
+         return true;
+      }
+      return false;
+   }
+
+   function check_fasilitas_id_trans_paket_la($id) {
+      $this->db->select('id')
+               ->from('paket_la_fasilitas_transaction')
                ->where('company_id', $this->company_id)
                ->where('id', $id);
       $q = $this->db->get();

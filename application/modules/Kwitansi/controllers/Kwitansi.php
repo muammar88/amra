@@ -112,9 +112,24 @@ class Kwitansi extends CI_Controller
          $this->_cetak_kwitansi_pertama_paket_la();
       }elseif( $sesi['type'] == 'cetak_riwayat_transaksi_peminjaman'){
          $this->_cetak_riwayat_transaksi_peminjaman();
+      }elseif( $sesi['type'] == 'kwitansi_detail_item_paket_la'){
+         $this->_cetak_kwitansi_item_paket_la();
       }
    }
 
+
+   // cetak kwitansi item paket la
+
+   function _cetak_kwitansi_item_paket_la() {
+      $sesi = $this->session->userdata('cetak_invoice');
+      // $this->tempVar = $this->model_kwitansi->getRiwayatTransaksiPeminjaman( $sesi );
+      
+      $html  = $this->Header();
+      // $html .= $this->TitleLaporanRiwayatPeminjaman();
+      // $html .= $this->ContentLaporanRiwayatPeminjaman();
+      $this->Templating($html);
+
+   }
 
    // cetak riwaya deposit tabungan
    function _cetak_riwayat_transaksi_peminjaman(){

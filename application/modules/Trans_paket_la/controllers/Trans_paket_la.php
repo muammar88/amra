@@ -1180,4 +1180,47 @@ class Trans_paket_la extends CI_Controller
 		}
 		echo json_encode($return);
 	}
+
+
+	function _ck_id_fasilitas_trans_paket_la($id) {
+		if ($this->model_trans_paket_la->check_fasilitas_id_trans_paket_la($nomor_identitas)) {
+			$this->form_validation->set_message('_ck_id_fasilitas_trans_paket_la', 'ID Fasilitas Transaksi Paket LA Tidak Ditemukan');
+			return FALSE;
+		} else {
+			return TRUE;
+		}
+	}
+
+	function cetak_kwitansi_detail_item_paket_la() {
+		$return = array();
+		$error = 0;
+		$error_msg = '';
+		$this->form_validation->set_rules('id', '<b>Id Fasilitas Trans Paket LA<b>', 'trim|required|xss_clean|numeric|min_length[1]|callback__ck_id_fasilitas_trans_paket_la');
+		/*
+			Validation process
+		*/
+		if ($this->form_validation->run()) {
+			// create session priting here
+			$this->session->set_userdata(array('cetak_invoice' => array(
+				'type' => 'kwitansi_detail_item_paket_la',
+				'id' => $this->input->post('id')
+			)));
+			// feedBack
+			$return = array(
+				'error'	=> false,
+				'error_msg' => 'Proses cetak kwitansi berhasil dilakukan.',
+				$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+			);
+		} else {
+			if (validation_errors()) {
+				// define return error
+				$return = array(
+					'error'         => true,
+					'error_msg'    => validation_errors(),
+					$this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+				);
+			}
+		}
+		echo json_encode($return);
+	}
 }
