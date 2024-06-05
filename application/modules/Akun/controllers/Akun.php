@@ -212,7 +212,7 @@ class Akun extends CI_Controller
 			$data_saldo = array();
 			$data_saldo['company_id'] = $this->company_id;
 			$data_saldo['saldo'] = $this->text_ops->hide_currency($this->input->post('saldo'));
-			$data_saldo['periode'] = $periode_id;
+			$data_saldo['periode'] = 0;
 			$data_saldo['input_date'] = date('Y-m-d');
 			$data_saldo['last_update'] = date('Y-m-d');
 			# filter
@@ -421,7 +421,7 @@ class Akun extends CI_Controller
 			$data['company_id'] = $this->company_id;
 			$data['akun_secondary_id'] = $this->input->post('id');
 			$data['saldo'] = $this->text_ops->hide_currency($this->input->post('saldo'));
-			$data['periode'] = $this->model_daftar_akun->last_periode();
+			$data['periode'] = 0;
 			$data['input_date'] = date('Y-m-d');
 			$data['last_update'] = date('Y-m-d');
 			# delete process

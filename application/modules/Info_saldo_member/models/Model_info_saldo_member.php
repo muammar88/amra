@@ -184,11 +184,8 @@ class Model_info_saldo_member extends CI_Model
    {
         $this->db->select('dt.debet, dt.kredit, dt.transaction_requirement')
                  ->from('deposit_transaction AS dt')
-                 // ->join('pool_deposit_transaction AS pd', 'dt.id=pd.deposit_transaction_id', 'inner')
-                 // ->join('pool AS p', 'pd.pool_id=p.id', 'inner')
                  ->where('dt.personal_id', $personal_id)
                  ->where('dt.company_id', $company_id)
-                 // ->where('p.active', 'active')
                  ->order_by('dt.id', 'desc');
         $q = $this->db->get();
         $debet_deposit = 0;

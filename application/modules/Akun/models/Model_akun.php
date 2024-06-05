@@ -165,7 +165,7 @@ class Model_akun extends CI_Model
          $n = 0;
          foreach ($q->result() as $row) {
             if (count($list_saldo) == 0) {
-                $list_saldo = $this->list_saldo($row->periode_aktif);
+                $list_saldo = $this->list_saldo();
             }
             $list[$n] = array(
                'id' => $row->id,
@@ -175,13 +175,23 @@ class Model_akun extends CI_Model
                'link' => '',
                'level' => 'primary'
             );
+
+           
             $n_header = $n;
             $total = 0;
             $akun_secondary = array();
             foreach (explode(";", $row->akun_secondary) as $key => $value) {
+
                if ($value != '') {
                   $exp = explode("$", $value);
                   if (count($exp) > 0) {
+
+                  // if( $exp[0] == '1578') {
+                  //    print("<br>-------------------<br>");
+                  //    print_r($list_saldo);
+                  //    print("<br>-------------------<br>");
+                  // }
+
                      $total = $total +  (isset($list_saldo[$exp[0]]) ? $list_saldo[$exp[0]] : 0);
 
                      $saldo_akhir = $this->hit_saldo_sekarang($row->sn, $exp[1]) + (isset($list_saldo[$exp[0]]) ? $list_saldo[$exp[0]] : 0);
@@ -389,6 +399,7 @@ class Model_akun extends CI_Model
          $this->db->select('saldo')
             ->from('saldo')
             ->where('company_id', $this->company_id)
+            ->where('periode', 0)
             ->where('akun_secondary_id', $id);
          $r = $this->db->get();
          if ($r->num_rows() > 0) {
