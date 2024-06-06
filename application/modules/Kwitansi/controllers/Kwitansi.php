@@ -134,7 +134,7 @@ class Kwitansi extends CI_Controller
       $html = '<div class="row">
                   <div class="col-12 justify-content-center container-fluid py-2 " >
                      <p class="justify-content-center container-fluid text-center mb-0" style="font-size:17px;">
-                        <b>ITEM FASILITAS PAKET LA</b>
+                        <b>INVOICE ITEM FASILITAS PAKET LA</b>
                      </p>
                   </div>
                   <div class="w-100"></div>
