@@ -21,6 +21,45 @@ class Model_kwitansi extends CI_Model
       $this->kurs = $this->session->userdata($this->config->item('apps_name'))['kurs'];
    }
 
+
+   function getItemPaketLA($sesi){
+      $this->db->select('pd.*, pf.invoice, pf.type, pf.total_price, pf.input_date AS trans, pc.*, c.note_paket_la, c.city')
+               ->from('paket_la_detail_fasilitas_transaction AS pd')
+               ->join('paket_la_fasilitas_transaction AS pf', 'pd.paket_la_fasilitas_transaction_id=pf.id', 'inner')
+               ->join('paket_la_transaction_temp AS pl', 'pf.paket_la_transaction_id=pl.id', 'inner')
+               ->join('paket_la_costumer AS pc', 'pl.costumer_id=pc.id', 'inner')
+               ->join('company AS c', 'pc.company_id=c.id', 'inner')
+               ->where('pf.id', $sesi['id'])
+               ->where('pf.company_id', $this->company_id);
+      $q = $this->db->get();
+      $list = array();
+      $list_fasilitas = array();
+      if( $q->num_rows() > 0 ) {
+         foreach ($q->result() as $rows) {
+            if( count($list_fasilitas) == 0  ) {
+                $list_fasilitas["invoice"]  = $rows->invoice;
+                $list_fasilitas["type"]  = $rows->type;
+                $list_fasilitas["total_price"]  = $rows->total_price;
+                $list_fasilitas["name"]  = $rows->name;
+                $list_fasilitas["mobile_number"]  = $rows->mobile_number;
+                $list_fasilitas["input_date"]  = $this->date_ops->change_date($rows->trans);
+                $list_fasilitas["trans_date"]  = $this->date_ops->change_date($rows->trans);
+                $list_fasilitas["address"]  = $rows->address;
+                $list_fasilitas['note'] = $rows->note_paket_la;
+                $list_fasilitas['city'] = $rows->city;
+            }
+            $list[] = array('description' => $rows->description, 
+                            'check_in' => $rows->check_in,
+                            'check_out' => $rows->check_out,
+                            'day' => $rows->day,
+                            'pax' => $rows->pax,
+                            'price' => $rows->price,
+                            'input_date' => $rows->input_date);
+         }
+      }
+      return array('detail' => $list, 'info_fasilitas' => $list_fasilitas);
+   }
+
    function getRiwayatTransaksiPeminjaman( $sesi ){
        $this->db->select('pp.id, pp.invoice, p.register_number, pp.bayar, pp.status,  pp.petugas, 
                          per.fullname, per.identity_number, pp.transaction_date')
@@ -29,7 +68,7 @@ class Model_kwitansi extends CI_Model
                 ->join('jamaah AS j', 'p.jamaah_id=j.id', 'inner')
                 ->join('personal AS per', 'j.personal_id=per.personal_id', 'inner')
                 ->where('pp.company_id', $this->company_id);
-     
+
      if ( array_key_exists( "start_date",$sesi ) AND $sesi['start_date'] != ''  ) {
          $this->db->where( 'pp.transaction_date >=' , $sesi['start_date'] );
          if (array_key_exists( "end_date" , $sesi ) AND $sesi['end_date'] != '' ) {

@@ -1140,7 +1140,7 @@ class Trans_paket_la extends CI_Controller
 				}
 				$temp_data['pax'] = $pax[$key];
 				$temp_data['price'] = $this->text_ops->hide_currency($price[$key]);
-				$temp_data['input_date'] = date('Y-m-d');;
+				$temp_data['input_date'] = date('Y-m-d');
 				
 				// receive data
 				$data_item[] = $temp_data;
@@ -1152,6 +1152,8 @@ class Trans_paket_la extends CI_Controller
 			$data_fasilitas['invoice'] = $invoice;
 			$data_fasilitas['type'] = $type;
 			$data_fasilitas['total_price'] = $total_price;
+			$data_fasilitas['input_date'] = date('Y-m-d');
+			$data_fasilitas['last_update'] = date('Y-m-d');
 			// total paket transaction la
 			$total_paket_transaction_la = $total + $total_price;
 			// input process
@@ -1183,11 +1185,11 @@ class Trans_paket_la extends CI_Controller
 
 
 	function _ck_id_fasilitas_trans_paket_la($id) {
-		if ($this->model_trans_paket_la->check_fasilitas_id_trans_paket_la($nomor_identitas)) {
+		if ($this->model_trans_paket_la->check_fasilitas_id_trans_paket_la($id)) {
+			return TRUE;
+		} else {
 			$this->form_validation->set_message('_ck_id_fasilitas_trans_paket_la', 'ID Fasilitas Transaksi Paket LA Tidak Ditemukan');
 			return FALSE;
-		} else {
-			return TRUE;
 		}
 	}
 

@@ -122,14 +122,220 @@ class Kwitansi extends CI_Controller
 
    function _cetak_kwitansi_item_paket_la() {
       $sesi = $this->session->userdata('cetak_invoice');
-      // $this->tempVar = $this->model_kwitansi->getRiwayatTransaksiPeminjaman( $sesi );
+      $this->tempVar = $this->model_kwitansi->getItemPaketLA( $sesi );
       
       $html  = $this->Header();
-      // $html .= $this->TitleLaporanRiwayatPeminjaman();
-      // $html .= $this->ContentLaporanRiwayatPeminjaman();
+      $html .= $this->TitleKwitansiPaketLa();
+      $html .= $this->ContentKwitansiPaketLa();
       $this->Templating($html);
+   }
+
+   function TitleKwitansiPaketLa(){
+      $html = '<div class="row">
+                  <div class="col-12 justify-content-center container-fluid py-2 " >
+                     <p class="justify-content-center container-fluid text-center mb-0" style="font-size:17px;">
+                        <b>ITEM FASILITAS PAKET LA</b>
+                     </p>
+                  </div>
+                  <div class="w-100"></div>
+               </div>';
+      return $html;  
+   }
+
+   function ContentKwitansiPaketLa(){
+
+         $hotelHandling = false;
+         if( $this->tempVar['info_fasilitas']['type'] == 'hotel' || $this->tempVar['info_fasilitas']['type'] == 'handling' )  {
+            $hotelHandling = true;
+         }
+
+       $html = '<div class="row mt-4">
+                  <div class="col-6">
+                     <table class="table table-hover" style="font-size:12px;">
+                        <tbody>
+                           <tr>
+                              <td class="text-left py-1" style="width:30%;border: none !important;">NAMA CLIEN</td>
+                              <td class="px-0 py-1" style="width:1%;border: none !important;">:</td>
+                              <td class="text-left py-1" style="border: none !important;">'.$this->tempVar['info_fasilitas']['name'].'</td>
+                           </tr>
+                           <tr>
+                              <td class="text-left py-1" style="border: none !important;">NO HP</td>
+                              <td class="px-0 py-1" style="border: none !important;">:</td>
+                              <td class="text-left py-1" style="border: none !important;">'.$this->tempVar['info_fasilitas']['mobile_number'].'</td>
+                           </tr>
+                           <tr>
+                              <td class="text-left py-1" style="border: none !important;">ALAMAT</td>
+                              <td class="px-0 py-1" style="border: none !important;">:</td>
+                              <td class="text-left py-1" style="border: none !important;">'.$this->tempVar['info_fasilitas']['address'].'</td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+                  <div class="col-2">
+                  </div>
+                  <div class="col-4">
+                     <table class="table table-hover" style="font-size:12px;">
+                        <tbody>
+                           <tr>
+                              <td class="text-right py-1" style="width:60%;border: none !important;">NO INVOICE</td>
+                              <td class="px-0 py-1" style="width:1%;border: none !important;">:</td>
+                              <td class="text-right py-1" style="border: none !important;">#'.$this->tempVar['info_fasilitas']['invoice'].'</td>
+                           </tr>
+                            <tr>
+                              <td class="text-right py-1" style="border: none !important;">ORDER DATE</td>
+                              <td class="px-0 py-1" style="border: none !important;">:</td>
+                              <td class="text-right py-1" style="border: none !important;">'.$this->tempVar['info_fasilitas']['input_date'].'</td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+               <div class="row mt-4">
+                  <div class="col-12 px-0">
+                     <span class="justify-content-center container-fluid title-order" style="font-weight: normal;font-size:12px;">
+                        DETAIL ITEM PAKET LA :
+                     </span>
+                  </div>
+                  <div class="col-12">
+                     <style>
+                        .table td {
+                           border: none !important;
+                        }
+                        .table tbody td {
+                           font-size: 12px !important;
+                           border-bottom: 1px solid #dee2e6 !important;
+                           border-left: 1px solid #dee2e6 !important;
+                           border-right: 1px solid #dee2e6 !important;
+                        }
+                        .table thead th {
+                            font-size: 12px !important;
+                        }
+                        .values::before {
+                          content: ": ";
+                        }
+                        .border-t1{
+                           border: 1px solid black;
+                        }
+                        .box-checking{
+                           height: 14px;
+                           width:20px;
+                           border: 1px solid #9a9a9a;
+                           border-radius: 3px;
+                           display:inline-block;
+                        }
+                        .border-bottom {
+                           font-size: 12px !important;
+                           border-bottom: 1px solid #dee2e6 !important;
+                        }
+                     </style>
+                     <table class="table table-hover ">
+                        <thead>
+                           <tr>';
+
+               if( $hotelHandling )  {
+                  $html .='<th scope="col" style="font-weight: normal;width:30%;">DESCRIPTION</th>
+                           <th scope="col" style="font-weight: normal;width:15%;">CHECK IN</th>
+                           <th scope="col" style="font-weight: normal;width:15%;">CHECK OUT</th>
+                           <th scope="col" style="font-weight: normal;">DAY</th>
+                           <th scope="col" style="font-weight: normal;">QTY</th>
+                           <th scope="col" style="font-weight: normal;width:15%;">PRICE</th>
+                           <th scope="col" style="font-weight: normal;width:20%;">AMOUNT</th>';
+               }else{
+                  $html .='<th scope="col" style="font-weight: normal;width:40%;">DESCRIPTION</th>
+                           <th scope="col" style="font-weight: normal;">QTY</th>
+                           <th scope="col" style="font-weight: normal;">PRICE</th>
+                           <th scope="col" style="font-weight: normal;">AMOUNT</th>';
+               }            
+               $html .=   '</tr>
+                        <thead>
+                        <tbody>';
+               $total = 0;
+               if( count(  $this->tempVar['detail'] ) > 0 ) {
+                  $html .= '';
+                  if( $hotelHandling ) {
+                     foreach ($this->tempVar['detail'] as $key => $value) {
+                        $html .='<tr>
+                                    <td class="border-bottom-1" style="border-left: 1px solid #dee2e6 !important;">'.$value['description'].'</td>
+                                    <td class="border-bottom-1">'.$value['check_in'].'</td>
+                                    <td class="border-bottom-1">'.$value['check_out'].'</td>
+                                    <td class="border-bottom-1">'.$value['day'].'</td>
+                                    <td class="border-bottom-1">'.$value['pax'].'</td>
+                                    <td class="border-bottom-1">'.$this->kurs.' '.number_format($value['price']).'</td>
+                                    <td class="text-right" style="border-right: 1px solid #dee2e6 !important;">'.$this->kurs.' '.number_format( $value['price'] * $value['pax'] * $value['day'] ).'</td>
+                                 </tr>';
+                        $total = $total + ( $value['price'] * $value['pax'] * $value['day'] ) ;       
+                     }
+                     
+                  }else{
+                     $html .='<tr>
+                                 <td>2</td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                              </tr>';
+                  }
+                  // $html .= '</tr>';
+               }else{
+                  $html .= '<tr>
+                              <td colspan="' . ( $hotelHandling == true ? '7' : '4' ) . '"><center>Daftar Item Paket LA Tidak Ditemukan</center></td>
+                            </tr>';
+
+               }
+
+            $html .=   '</tbody>
+                        <tfoot>
+                           <tr>
+                              <td colspan="5" class="text-right"></td>
+                              <td class="text-right border-bottom" style="font-size:12px!important;">TOTAL HARGA</td>
+                              <td class="border-bottom" style="font-size:12px !important;border-bottom: 1px solid #dee2e6 !important;border-right: 1px solid #dee2e6 !important;border-left: 1px solid #dee2e6 !important;">'.$this->kurs.' ' . number_format($total) .'</td>
+                           </tr>
+                        </tfoot>
+                     </table>
+                  </div>
+               </div>
+               <div class="row mt-5">
+                  <div class="col-6">
+                     '.
+                     $this->tempVar['info_fasilitas']['note']
+                     .'
+                  </div>
+                  <div class="col-6 d-flex flex-column">
+                     <div class="row mt-auto">
+                        <div class="col-12 text-center mb-5 pb-5">
+                           <label>'.
+                     $this->tempVar['info_fasilitas']['city']
+                     .', '.$this->tempVar['info_fasilitas']['trans_date'].'</label><br>
+                           <label>SIGNATURE</label>
+                        </div> 
+                     </div>
+                  </div>
+               </div>';
+      return $html;
+
+       //   <tr>
+       //      <td colspan="6" class="text-right">TOTAL REFUND</td>
+       //      <td>' . $this->kurs . ' ' . number_format($total_refund) . '</td>
+       //   </tr>
+       //   <tr>
+       //      <td colspan="6" class="text-right">TOTAL TIDAK DAPAT DIREFUND</td>
+       //      <td>' . $this->kurs . ' ' . number_format($total - $total_refund) . '</td>
+       //   </tr>
+
+      // <div class="row pt-5">
+      //    <div class="col-4 text-center">
+      //       (' . $this->tempVar['costumer_name'] . ')
+      //    </div>
+      //    <div class="col-4">
+      //    </div>
+      //    <div class="col-4 text-center">
+      //       (' . $this->tempVar['receiver'] . ')
+      //    </div>
+      // </div>
 
    }
+
+
+
 
    // cetak riwaya deposit tabungan
    function _cetak_riwayat_transaksi_peminjaman(){
