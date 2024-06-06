@@ -267,19 +267,18 @@ class Kwitansi extends CI_Controller
                      }
                      
                   }else{
-                     $html .='<tr>
-                                 <td>2</td>
-                                 <td></td>
-                                 <td></td>
-                                 <td></td>
-                              </tr>';
+                      $html .='<tr>
+                                    <td class="border-bottom-1" style="border-left: 1px solid #dee2e6 !important;">'.$value['description'].'</td>
+                                    <td class="border-bottom-1">'.$value['pax'].'</td>
+                                    <td class="border-bottom-1">'.$this->kurs.' '.number_format($value['price']).'</td>
+                                    <td class="text-right" style="border-right: 1px solid #dee2e6 !important;">'.$this->kurs.' '.number_format( $value['price'] * $value['pax'] ).'</td>
+                                 </tr>';
                   }
                   // $html .= '</tr>';
                }else{
                   $html .= '<tr>
                               <td colspan="' . ( $hotelHandling == true ? '7' : '4' ) . '"><center>Daftar Item Paket LA Tidak Ditemukan</center></td>
                             </tr>';
-
                }
 
             $html .=   '</tbody>
