@@ -121,7 +121,8 @@ class Users extends CI_Controller
 				'Users/riwayat_transaksi_peminjaman',
 				'Users/riwayat_mutasi_saldo',
 				'Users/riwayat_tambah_saldo', 
-				'Users/kostumer_paket_la'
+				'Users/kostumer_paket_la',
+				'Users/pengaturan_paket_la'
 			),
 			'modul_access' => $this->session->userdata($this->config->item('apps_name'))['modul_access'],
 			'modul_tab' => $modul_submodul_tab['modul_tab'],

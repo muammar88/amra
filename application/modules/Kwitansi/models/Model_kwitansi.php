@@ -44,7 +44,7 @@ class Model_kwitansi extends CI_Model
                 $list_fasilitas["input_date"]  = $this->date_ops->change_date($rows->trans);
                 $list_fasilitas["trans_date"]  = $this->date_ops->change_date($rows->trans);
                 $list_fasilitas["address"]  = $rows->address;
-                $list_fasilitas['note'] = $rows->note_paket_la;
+                $list_fasilitas['note'] = base64_decode($rows->note_paket_la);
                 $list_fasilitas['city'] = $rows->city;
             }
             $list[] = array('description' => $rows->description, 
