@@ -34,6 +34,7 @@ function pengaturan_paket_la_Pages() {
                                  <div class="form-group">
                                     <label>Upload Tanda Tangan</label>
                                     <input type="file" class="form-control form-control-sm" id="tanda_tangan" name="tanda_tangan" value="" placeholder="Tanda Tangan" disabled="">
+                                    <small id="emailHelp" class="form-text text-muted">Tipe File jpg|jpeg|png. Ukuran Max 1MB. Ukuran dimensi 110x80 pixel.</small>
                                  </div>
                               </div>
                               <div class="col-12">

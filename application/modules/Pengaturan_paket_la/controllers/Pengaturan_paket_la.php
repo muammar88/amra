@@ -87,7 +87,7 @@ class Pengaturan_paket_la extends CI_Controller
 				$config['allowed_types'] = 'jpg|jpeg|png';
 				$config['file_name'] = $tanda_tangan_name;
 				$config['max_size']   = 1024;
-				$config['max_width']  = 300;
+				$config['max_width']  = 110;
 				$config['max_height'] = 80;
 				$config['overwrite'] = TRUE;
 				$this->load->library('upload', $config);
