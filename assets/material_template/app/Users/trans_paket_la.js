@@ -892,7 +892,7 @@ function pembayaran_paket_la(id){
                      }
                   },
                   simpan: {
-                     text: 'Simpan',
+                     text: 'Bayar',
                      btnClass: 'btn-blue',
                      action: function () {
                         ajax_submit_t1("#form_utama", function(e) {
