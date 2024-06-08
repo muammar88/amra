@@ -207,7 +207,7 @@ class Model_trans_paket_la extends CI_Model
    }
 
    function get_fasilitas_transaction($id){
-      $this->db->select('id, invoice, type, total_price')
+      $this->db->select('id, invoice, total_price')
                ->from('paket_la_fasilitas_transaction')
                ->where('company_id', $this->company_id)
                ->where('paket_la_transaction_id', $id);
@@ -217,7 +217,6 @@ class Model_trans_paket_la extends CI_Model
          foreach ($q->result() as $rows) {
             $list[] = array('id' => $rows->id,
                             'invoice' => $rows->invoice, 
-                            'type' => $rows->type, 
                             'total_price' => $rows->total_price, 
                             'detail' => $this->get_detail_fasilitas_transaction($rows->id));
          }
@@ -609,9 +608,6 @@ class Model_trans_paket_la extends CI_Model
             $name_fasilitas = array();
             $fasilitas = array();
             $total_aktualisasi = 0;
-            // foreach (unserialize($rows->facilities)['list_fasilitas'] as $key => $value) {
-            //    $fasilitas[$value['id']] = array('id' => $value['id'], 'name' => $value['name'], 'harga' => '0', 'ket' => 'fasilitas', 'action' => 'insert');
-            // }
             if ($rows->kas_transaction_pakets != '') {
                foreach (explode(";", $rows->kas_transaction_pakets) as $key => $value) {
                   $exp = explode('$', $value);
@@ -627,7 +623,6 @@ class Model_trans_paket_la extends CI_Model
             }
             $bayar = 0;
             $refund = 0;
-
             if( $rows->sudahBayar != '' ){
                foreach (explode(';', $rows->sudahBayar) as $key => $value) {
                   $exp = explode('$', $value);
@@ -639,7 +634,6 @@ class Model_trans_paket_la extends CI_Model
                }
 
             }
-            
             $list['id'] = $rows->id;
             $list['client_name'] = $rows->name;
             $list['discount'] = $rows->discount;
@@ -720,7 +714,7 @@ class Model_trans_paket_la extends CI_Model
    }
 
    function get_total_price($id){
-      $this->db->select('pd.check_in, pd.check_out, pd.day, pd.pax, pd.price, pf.type')
+      $this->db->select('pd.check_in, pd.check_out, pd.day, pd.pax, pd.price')
                ->from('paket_la_detail_fasilitas_transaction AS pd')
                ->join('paket_la_fasilitas_transaction AS pf', 'pd.paket_la_fasilitas_transaction_id=pf.id', 'inner')
                ->join('paket_la_transaction_temp AS pt', 'pf.paket_la_transaction_id=pt.id', 'inner')
@@ -731,12 +725,11 @@ class Model_trans_paket_la extends CI_Model
       if( $q->num_rows() > 0 ) {
          foreach ( $q->result() as $rows ) {
             $tot = 0;
-            if( $rows->type == 'hotel' || $rows->type == 'handling' ) {
-                $count_day = $this->date_ops->count_between_two_date($rows->check_in, $rows->check_out);
-                $tot = $count_day * $rows->pax * $rows->price;
-            }else{
-               $tot = $rows->pax * $rows->price;
-            }
+               if( $rows->day != 0 ) {
+                  $tot = $count_day * $rows->pax * $rows->price;
+               }else{
+                  $tot = $rows->pax * $rows->price;
+               }
             $total_price = $total_price + $tot;
          }
       }

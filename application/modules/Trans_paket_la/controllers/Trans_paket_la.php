@@ -1061,7 +1061,6 @@ class Trans_paket_la extends CI_Controller
 		$error = 0;
 		$error_msg = '';
 		$this->form_validation->set_rules('id', '<b>Id Paket La Transaction<b>', 'trim|required|xss_clean|numeric|min_length[1]|callback__ck_id_paket_la_transaction');
-		$this->form_validation->set_rules('type', '<b>Tipe Item Detail Paket La<b>', 'trim|required|xss_clean|min_length[1]|in_list[tiket_pesawat,hotel,bus,mobil,handling,tiket,mutowif_tour_guide,visa]');
 		if ($this->input->post('deskripsi')) {
 			foreach ($this->input->post('deskripsi') as $key => $value) {
 				$this->form_validation->set_rules("deskripsi[" . $key . "]", "Deskripsi Item", 'trim|required|xss_clean|min_length[1]');
@@ -1077,16 +1076,19 @@ class Trans_paket_la extends CI_Controller
 				$this->form_validation->set_rules("price[" . $key . "]", "Harga", 'trim|required|xss_clean|min_length[1]|callback__ck_harga_not_null');
 			}
 		}
-		if( $this->input->post('type') == 'hotel' || $this->input->post('type') == 'handling' ) {
-			if ($this->input->post('')) {
-				foreach ($this->input->post('check_in') as $key => $value) {
-					$this->form_validation->set_rules("check_in[" . $key . "]", "Date Check In", 'trim|required|xss_clean|min_length[1]');
-				}
+		if ($this->input->post('check_in')) {
+			foreach ($this->input->post('check_in') as $key => $value) {
+				$this->form_validation->set_rules("check_in[" . $key . "]", "Date Check In", 'trim|xss_clean|min_length[1]');
 			}
-			if ($this->input->post('check_out')) {
-				foreach ($this->input->post('check_out') as $key => $value) {
-					$this->form_validation->set_rules("check_out[" . $key . "]", "Date Check Out", 'trim|required|xss_clean|min_length[1]');
-				}
+		}
+		if ($this->input->post('check_out')) {
+			foreach ($this->input->post('check_out') as $key => $value) {
+				$this->form_validation->set_rules("check_out[" . $key . "]", "Date Check Out", 'trim|xss_clean|min_length[1]');
+			}
+		}
+		if ($this->input->post('day')) {
+			foreach ($this->input->post('day') as $key => $value) {
+				$this->form_validation->set_rules("day[" . $key . "]", "Day", 'trim|xss_clean|min_length[1]');
 			}
 		}
 		/*
@@ -1095,7 +1097,6 @@ class Trans_paket_la extends CI_Controller
 		if ($this->form_validation->run()) {
 			// post		
 			$id = $this->input->post('id');
-			$type = $this->input->post('type');
 			// generate invoice 
 			$invoice = $this->random_code_ops->generate_invoice_item_paket_la();
 			// get total
@@ -1104,14 +1105,9 @@ class Trans_paket_la extends CI_Controller
 			$deskripsi = $this->input->post('deskripsi');
 			$pax = $this->input->post('pax');
 			$price = $this->input->post('price');
-			$check_in = array();
-			$check_out = array();
-			$day = array();
-			if( $type == 'hotel' || $type == 'handling') {
-				$check_in = $this->input->post('check_in');
-				$check_out = $this->input->post('check_out');
-				$day = $this->input->post('day');
-			}
+			$check_in = $this->input->post('check_in');
+			$check_out = $this->input->post('check_out');
+			$day = $this->input->post('day');
 			// receive data item
 			$data_item = array();
 			$total_price = 0;
@@ -1119,38 +1115,24 @@ class Trans_paket_la extends CI_Controller
 				$temp_data = array();
 				$temp_data['company_id'] = $this->company_id;
 				$temp_data['description'] = $value;
-				if( $type == 'hotel' || $type == 'handling') {
-
-					$temp_data['check_in'] = $check_in[$key];
-					
-					$temp_data['check_out'] = $check_out[$key];
-				
-					$count_day = $this->date_ops->count_between_two_date($check_in[$key], $check_out[$key]);
-
-					$temp_data['day'] = $count_day;
-
-                	$tot = $count_day * $pax[$key] * $this->text_ops->hide_currency($price[$key]);
-                	
-					// total price
-					$total_price = $total_price + $tot;
-
-				}else{
-					// total price
-					$total_price = $total_price + ( $pax[$key] * $this->text_ops->hide_currency($price[$key]) );
-				}
+				$temp_data['check_in'] = $check_in[$key];
+				$temp_data['check_out'] = $check_out[$key];
+				$temp_data['day'] = $day[$key];
 				$temp_data['pax'] = $pax[$key];
 				$temp_data['price'] = $this->text_ops->hide_currency($price[$key]);
 				$temp_data['input_date'] = date('Y-m-d');
-				
 				// receive data
 				$data_item[] = $temp_data;
+
+				$local_total = $day[$key] != '' ? ( $day[$key] * $pax[$key] * $this->text_ops->hide_currency($price[$key]) ) : ($pax[$key] * $this->text_ops->hide_currency($price[$key]));
+
+				$total_price = $total_price + $local_total;
 			}
 			// receive data fasilitas
 			$data_fasilitas = array();
 			$data_fasilitas['company_id'] = $this->company_id;
 			$data_fasilitas['paket_la_transaction_id'] = $id;
 			$data_fasilitas['invoice'] = $invoice;
-			$data_fasilitas['type'] = $type;
 			$data_fasilitas['total_price'] = $total_price;
 			$data_fasilitas['input_date'] = date('Y-m-d');
 			$data_fasilitas['last_update'] = date('Y-m-d');

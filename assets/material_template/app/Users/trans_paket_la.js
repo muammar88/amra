@@ -64,25 +64,16 @@ function ListDaftarTransPaketLA(JSONData){
    var json = JSON.parse(JSONData);
    var tipe_paket = 'tipe paket tidak ditemukan.';
    var except_type = ['hotel', 'handling'];
-
    var except_header = ['Deskripsi', 'Check-in/Check-out', 'Day', 'Pax', 'Price', 'Amount'];
    var fasilitas = '';
    if( json.fasilitas.length > 0 ) {
       for ( let x in json.fasilitas ) {
-         fasilitas += `<table class="table mb-0">
+         fasilitas +=`<table class="table mb-0">
                         <tbody>
                            <tr>
                               <td class="text-left border border-right-0 align-middle" style="width:15%;background-color: #e7e7e7;">INVOICE</td>
                               <td class="border border-left-0 border-right-0 border-top-1 px-2 align-middle" style="width:1%;">:</td>
                               <td class="border text-left border-left-0 border-top-1 px-0 align-middle" style="width:34%;">${json.fasilitas[x].invoice}</td>
-                              <td class="text-left border border-right-0 align-middle" style="width:15%;background-color: #e7e7e7;">TYPE</td>
-                              <td class="border border-left-0 border-right-0 border-top-1 px-2 align-middle" style="width:1%;">:</td>
-                              <td class="border text-left border-left-0 border-top-1 px-0 align-middle"  style="width:34%;text-transform:uppercase;">${json.fasilitas[x].type.replace('_', ' ')}</td>
-                           <tr>
-                           <tr>
-                              <td class="text-left border border-right-0 align-middle" style="width:15%;background-color: #e7e7e7;">TOTAL</td>
-                              <td class="border border-left-0 border-right-0 border-top-1 px-2 align-middle" style="width:1%;">:</td>
-                              <td class="border text-left border-left-0 border-top-1 px-0 align-middle" style="width:34%;">${kurs} ${numberFormat(json.fasilitas[x].total_price)}</td>
                               <td class="text-left border border-right-0 align-middle" style="width:15%;background-color: #e7e7e7;">PRINT BTN</td>
                               <td class="border border-left-0 border-right-0 border-top-1 px-2 align-middle" style="width:1%;">:</td>
                               <td class="border text-left border-left-0 border-top-1 pl-0 align-middle"  style="width:34%;text-transform:uppercase;">
@@ -92,77 +83,44 @@ function ListDaftarTransPaketLA(JSONData){
                                  </button>
                               </td>
                            <tr>
+                           <tr>
+                              <td class="text-left border border-right-0 align-middle" style="width:15%;background-color: #e7e7e7;">TOTAL</td>
+                              <td class="border border-left-0 border-right-0 border-top-1 px-2 align-middle" style="width:1%;">:</td>
+                              <td colspan="4" class="border text-left border-left-0 border-top-1 px-0 align-middle" style="width:34%;">${kurs} ${numberFormat(json.fasilitas[x].total_price)}</td>
+                           <tr>
                         </tbody>
-                     </table>`;
-
-         fasilitas +=`<table class="table mb-4 mt-1">
-                        <thead>`;
-            if( json.fasilitas[x].type == 'hotel' || json.fasilitas[x].type == 'handling') {
-               fasilitas +=  `<tr>
-                                 <th style="width:25%;background-color: #e7e7e7;">Deskripsi</th>
-                                 <th style="background-color: #e7e7e7;">Check-in</th>
-                                 <th style="background-color: #e7e7e7;">Check-out</th>
-                                 <th style="background-color: #e7e7e7;">Day</th>
-                                 <th style="background-color: #e7e7e7;">Pax</th>
-                                 <th style="background-color: #e7e7e7;">Price</th>
-                                 <th style="width:10%;background-color: #e7e7e7;">Aksi</th>
-                              </tr>`;
-            }else{
-               fasilitas +=  `<tr>
-                                 <th style="background-color: #e7e7e7;">Deskripsi</th>
-                                 <th style="background-color: #e7e7e7;">Pax</th>
-                                 <th style="background-color: #e7e7e7;">Price</th>
-                                 <th style="width:10%;background-color: #e7e7e7;">Aksi</th>
-                              </tr>`;
-            }
-         fasilitas +=  `</thead>
+                     </table>
+                     <table class="table mb-4 mt-1">
+                        <thead>
+                           <tr>
+                              <th style="width:25%;background-color: #e7e7e7;">Deskripsi</th>
+                              <th style="background-color: #e7e7e7;">Check-in</th>
+                              <th style="background-color: #e7e7e7;">Check-out</th>
+                              <th style="background-color: #e7e7e7;">Day</th>
+                              <th style="background-color: #e7e7e7;">Pax</th>
+                              <th style="background-color: #e7e7e7;">Price</th>
+                              <th style="width:10%;background-color: #e7e7e7;">Aksi</th>
+                           </tr>
+                        </thead>
                         <tbody>`;
-         if( json.fasilitas[x].type == 'hotel' || json.fasilitas[x].type == 'handling') {
-            if( json.fasilitas[x].detail.length > 0  ) {
-               for ( let c in  json.fasilitas[x].detail ) {
-                  fasilitas += `<tr>
-                                    <td class="align-middle">${json.fasilitas[x].detail[c].description}</td>
-                                    <td class="align-middle">${json.fasilitas[x].detail[c].check_in}</td>
-                                    <td class="align-middle">${json.fasilitas[x].detail[c].check_out}</td>
-                                    <td class="align-middle">${json.fasilitas[x].detail[c].day}</td>
-                                    <td class="align-middle">${json.fasilitas[x].detail[c].pax}</td>
-                                    <td class="align-middle">${kurs} ${numberFormat(json.fasilitas[x].detail[c].price)}</td>
-                                    <td class="align-middle">
-                                       <button type="button" class="btn btn-danger btn-action" title="Delete Detail Item Paket LA"
-                                          onclick="delete_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
-                                           <i class="fas fa-times" style="font-size: 11px;"></i>
-                                       </button>
-                                    </td>
-                                </tr>`;  
-               }
-            }else{
-                fasilitas =   `<tr>
-                                 <td colspan="7">Detail Item Tidak Ditemukan</td>
-                               </tr>`;
-            }
-         }else{
-            if( json.fasilitas[x].detail.length > 0  ) {
-               for ( let c in  json.fasilitas[x].detail ) {
-                  fasilitas += `<tr>
-                                    <td class="align-middle">${json.fasilitas[x].detail[c].description}</td>
-                                    <td class="align-middle">${json.fasilitas[x].detail[c].pax}</td>
-                                    <td class="align-middle">${kurs} ${numberFormat(json.fasilitas[x].detail[c].price)}</td>
-                                    <td class="align-middle">
-                                       <button type="button" class="btn btn-danger btn-action" title="Delete Paket LA"
-                                          onclick="delete_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
-                                           <i class="fas fa-times" style="font-size: 11px;"></i>
-                                       </button>
-                                    </td>
-                                </tr>`;  
-               }
-            }else{
-               fasilitas =    `<tr>
-                                 <td colspan="4">Detail Item Tidak Ditemukan</td>
-                              </tr>`;
-            }
-         }               
+         for ( let c in  json.fasilitas[x].detail ) {
+            fasilitas += `<tr>
+                              <td class="align-middle">${json.fasilitas[x].detail[c].description}</td>
+                              <td class="align-middle">${json.fasilitas[x].detail[c].check_in}</td>
+                              <td class="align-middle">${json.fasilitas[x].detail[c].check_out}</td>
+                              <td class="align-middle">${json.fasilitas[x].detail[c].day}</td>
+                              <td class="align-middle">${json.fasilitas[x].detail[c].pax}</td>
+                              <td class="align-middle">${kurs} ${numberFormat(json.fasilitas[x].detail[c].price)}</td>
+                              <td class="align-middle">
+                                 <button type="button" class="btn btn-danger btn-action" title="Delete Detail Item Paket LA"
+                                    onclick="delete_detail_item_paket_la('${json.fasilitas[x].detail[c].id}')" style="margin:.15rem .1rem  !important">
+                                     <i class="fas fa-times" style="font-size: 11px;"></i>
+                                 </button>
+                              </td>
+                          </tr>`;  
+         }
          fasilitas +=  `</tbody>
-                      </table>`;
+                     </table>`;
       }
    }else{
       fasilitas = `<center>Daftar Item Fasilitas Tidak Ditemukan</center>`;
@@ -196,10 +154,6 @@ function ListDaftarTransPaketLA(JSONData){
                          <i class="fas fa-box" style="font-size: 11px;"></i>
                      </button>
                    
-                     <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Awal Paket LA"
-                        onclick="cetak_kwitansi_awal('${json.id}')" style="margin:.15rem .1rem  !important">
-                         <i class="fas fa-print" style="font-size: 11px;"></i>
-                     </button>
                      <button type="button" class="btn btn-default btn-action" title="Pembayaran Paket LA"
                         onclick="pembayaran_paket_la('${json.id}')" style="margin:.15rem .1rem  !important">
                          <i class="far fa-money-bill-alt" style="font-size: 11px;"></i>
@@ -221,6 +175,11 @@ function ListDaftarTransPaketLA(JSONData){
                          <i class="fas fa-times" style="font-size: 11px;"></i>
                      </button>`;
          }
+
+         // <button type="button" class="btn btn-default btn-action" title="Cetak Kwitansi Awal Paket LA"
+         //    onclick="cetak_kwitansi_awal('${json.id}')" style="margin:.15rem .1rem  !important">
+         //     <i class="fas fa-print" style="font-size: 11px;"></i>
+         // </button>
          
          html += `</td>
                </tr>`;
@@ -242,10 +201,10 @@ function cetak_kwitansi_detail_item_paket_la(id) {
 
 function add_item_detail_paket_la(id){
    $.confirm({
-      columnClass: 'col-4',
-      title: 'Pilih Tipe Item Paket LA',
+      columnClass: 'col-12',
+      title: 'Tambah Item Paket LA',
       theme: 'material',
-      content: form_select_item_paket_la(),
+      content: form_add_hotel_detail_paket_la(id),
       closeIcon: false,
       buttons: {
          cancel:function () {
@@ -255,17 +214,14 @@ function add_item_detail_paket_la(id){
             text: 'Lanjutkan',
             btnClass: 'btn-blue',
             action: function () {
-               var tipe = $('#tipe').val();
-               if( tipe == 0 ) {
-                  frown_alert('Untuk melanjutkan anda harus memilih salah satu tipe item');
-                  return false;
-               }else{
-                  if( tipe == 'hotel' || tipe == 'handling') {
-                     hotel_handling(id, tipe);
-                  }else{
-                     add_detail_paket_la(id, tipe);
+               ajax_submit_t1("#form_utama", function(e) {
+                  e['error'] == true ? frown_alert(e['error_msg']) : smile_alert(e['error_msg']);
+                  if ( e['error'] == true ) {
+                     return false;
+                  } else {
+                     get_trans_paket_la(20);
                   }
-               }
+               });
             }
          }
       }
@@ -411,39 +367,10 @@ function count_date_between_two_date(num) {
    }
 }
 
-function hotel_handling(id, type) {
-   $.confirm({
-      columnClass: 'col-12',
-      title: 'Tambah Item Paket LA',
-      theme: 'material',
-      content: form_add_hotel_detail_paket_la(id, type),
-      closeIcon: false,
-      buttons: {
-         cancel:function () {
-             return true;
-         },
-         simpan: {
-            text: 'Lanjutkan',
-            btnClass: 'btn-blue',
-            action: function () {
-               ajax_submit_t1("#form_utama", function(e) {
-                  e['error'] == true ? frown_alert(e['error_msg']) : smile_alert(e['error_msg']);
-                  if ( e['error'] == true ) {
-                     return false;
-                  } else {
-                     get_trans_paket_la(20);
-                  }
-               });
-            }
-         }
-      }
-   });
-}
-function form_add_hotel_detail_paket_la(id, type){
+function form_add_hotel_detail_paket_la(id){
    var html = `<form id="form_utama" action="${baseUrl }Trans_paket_la/add_update_new_item" class="formName">
                   <div class="row px-0 py-3 mx-0">
                      <input type="hidden" name="id" value="${id}">
-                     <input type="hidden" name="type" value="${type}">
                      <div class="col-12 py-2" style="background-color: #e3e3e3;">
                         <div class="row">
                            <div class="col-3">
@@ -479,7 +406,6 @@ function form_add_hotel_detail_paket_la(id, type){
                         </div>  
                      </div>
                      <div class="col-12" id="area-row-hotel">
-                       
                         ${form_add_row_hotel()}
                      </div>
                      <div class="col-12 text-right py-1" style="background-color: #e3e3e3;">
@@ -518,7 +444,7 @@ function form_add_row_hotel(){
    let num = parseInt($('#nums').val());
    let ns = num  + 1;
    $('#nums').val(ns);
-   return `<div class="row py-3" style="background-color: #efefef;">
+   return  `<div class="row py-3" style="background-color: #efefef;">
                <div class="col-3">
                   <div class="form-group mb-0">
                      <textarea class="form-control form-control-sm" name="deskripsi[]" id="deskripsi" placeholder="Deskripsi" rows="3" style="resize: none;"></textarea>
@@ -526,17 +452,17 @@ function form_add_row_hotel(){
                </div>
                <div class="col-2">
                   <div class="form-group">
-                     <input type="date" class="form-control form-control-sm" id="check_in_${num}" name="check_in[]" value="" onChange="count_date_between_two_date(${num})" placeholder="Check In">
+                     <input type="date" class="form-control form-control-sm" id="check_in_${num}" name="check_in[]" value="" placeholder="Check In">
                   </div>
                </div>
                <div class="col-2">
                   <div class="form-group">
-                     <input type="date" class="form-control form-control-sm" id="check_out_${num}" name="check_out[]" value="" onChange="count_date_between_two_date(${num})" placeholder="Check Out">
+                     <input type="date" class="form-control form-control-sm" id="check_out_${num}" name="check_out[]" value="" placeholder="Check Out">
                   </div>
                </div>
                <div class="col-1">
                   <div class="form-group">
-                     <input type="number" class="form-control form-control-sm" id="day_${num}" name="day[]" value="" disabled="" placeholder="Day">
+                     <input type="number" class="form-control form-control-sm" id="day_${num}" name="day[]" value="" placeholder="Day">
                   </div>
                </div>
                <div class="col-1">
@@ -555,9 +481,6 @@ function form_add_row_hotel(){
                   </button>
                </div>
             </div>`;
-
-
-
 }
 
 

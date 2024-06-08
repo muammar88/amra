@@ -23,7 +23,7 @@ class Model_kwitansi extends CI_Model
 
 
    function getItemPaketLA($sesi){
-      $this->db->select('pd.*, pf.invoice, pf.type, pf.total_price, pf.input_date AS trans, pc.*, c.note_paket_la, c.city')
+      $this->db->select('pd.*, pf.invoice, pf.total_price, pf.input_date AS trans, pc.*, c.note_paket_la, c.city')
                ->from('paket_la_detail_fasilitas_transaction AS pd')
                ->join('paket_la_fasilitas_transaction AS pf', 'pd.paket_la_fasilitas_transaction_id=pf.id', 'inner')
                ->join('paket_la_transaction_temp AS pl', 'pf.paket_la_transaction_id=pl.id', 'inner')
@@ -38,7 +38,6 @@ class Model_kwitansi extends CI_Model
          foreach ($q->result() as $rows) {
             if( count($list_fasilitas) == 0  ) {
                 $list_fasilitas["invoice"]  = $rows->invoice;
-                $list_fasilitas["type"]  = $rows->type;
                 $list_fasilitas["total_price"]  = $rows->total_price;
                 $list_fasilitas["name"]  = $rows->name;
                 $list_fasilitas["mobile_number"]  = $rows->mobile_number;
@@ -113,27 +112,29 @@ class Model_kwitansi extends CI_Model
 
    // get list detail
    function getListDetailFasilitas($id) {
-      $this->db->select('pd.check_in, pd.check_out, pd.day, pd.pax, pd.price, pf.type')
+      $this->db->select('pd.description, pd.check_in, pd.check_out, pd.day, pd.pax, pd.price')
                ->from('paket_la_detail_fasilitas_transaction AS pd')
                ->join('paket_la_fasilitas_transaction AS pf', 'pd.paket_la_fasilitas_transaction_id=pf.id', 'inner')
                ->where('pd.company_id', $this->company_id)
                ->where('pd.paket_la_fasilitas_transaction_id', $id);
       $q = $this->db->get();
-      $total = 0;
+      // $total = 0;
+      $list = array();
       if( $q->num_rows() > 0 ) {
          foreach ($q->result() as $rows) {
-            if( $rows->type == 'hotel' || $rows->type == 'handling' ) {
-               $total = $total + ( $rows->day * $rows->pax * $rows->price );
-            }else{
-               $total = $total + ( $rows->pax * $rows->price );
-            }
+            $list[] = array('description' => $rows->description, 
+                          'check_in' => $rows->check_in,   
+                          'check_out' => $rows->check_out, 
+                          'day' => $rows->day, 
+                          'pax' => $rows->pax,
+                          'price' => $rows->price);
          }
       }
-      return $total;
+      return $list;
    }
 
    function getListFasilitas( $id ){
-      $this->db->select('pf.id, pf.type, pf.total_price')
+      $this->db->select('pf.id, pf.total_price, pf.invoice')
                ->from('paket_la_fasilitas_transaction AS pf')
                ->where('pf.paket_la_transaction_id', $id)
                ->where('pf.company_id', $this->company_id);
@@ -141,9 +142,8 @@ class Model_kwitansi extends CI_Model
       $list = array();
       if( $q->num_rows() > 0 ) {
          foreach ($q->result() as $rows) {
-            $total = $this->getListDetailFasilitas($rows->id);
-            $list[] = array('type' => $rows->type, 
-                            'total' => $total);
+            $list['list'] = $this->getListDetailFasilitas($rows->id);;
+            $list['invoice'] = $rows->invoice;
          }
       }         
       return $list;
@@ -159,8 +159,12 @@ class Model_kwitansi extends CI_Model
       $q = $this->db->get();
       if( $q->num_rows() > 0 ) {
          foreach ( $q->result() as $rows ) {
+
+            $fasilitas = $this->getListFasilitas($rows->id);
+
             $list['register_number'] = $rows->register_number;
-            $list['facilities'] = $this->getListFasilitas($rows->id);
+            $list['invoice'] = $fasilitas['invoice'];
+            $list['facilities'] = $fasilitas['list'];
             $list['discount'] = $rows->discount;
             $list['total_price'] = $rows->total_price;
             $list['departure_date'] = $this->date_ops->change_date_t3($rows->departure_date);
@@ -1628,8 +1632,12 @@ class Model_kwitansi extends CI_Model
          foreach ($q->result() as $rows) {
             $sudah_bayar = $this->get_sudah_bayar_paket_la( $rows->paket_la_transaction_id, $invoice );
             $facilities = $this->getListFasilitas($rows->paket_la_transaction_id);
+            // echo "<br>=====<br>";
+            // print_r($facilities);
+            // echo "<br>=====<br>";
+
             $list['register_number'] = $rows->register_number;
-            $list['facilities'] = $facilities;
+            $list['facilities'] = $facilities['list'];
             $list['discount'] = $rows->discount;
             $list['total_price'] = $rows->total_price;
             $list['departure_date'] = $this->date_ops->change_date_t3($rows->departure_date);

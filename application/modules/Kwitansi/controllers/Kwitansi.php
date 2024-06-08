@@ -143,12 +143,6 @@ class Kwitansi extends CI_Controller
    }
 
    function ContentKwitansiPaketLa(){
-
-         $hotelHandling = false;
-         if( $this->tempVar['info_fasilitas']['type'] == 'hotel' || $this->tempVar['info_fasilitas']['type'] == 'handling' )  {
-            $hotelHandling = true;
-         }
-
        $html = '<div class="row mt-4">
                   <div class="col-6">
                      <table class="table table-hover" style="font-size:12px;">
@@ -230,57 +224,42 @@ class Kwitansi extends CI_Controller
                      </style>
                      <table class="table table-hover ">
                         <thead>
-                           <tr>';
-
-               if( $hotelHandling )  {
-                  $html .='<th scope="col" style="font-weight: normal;width:30%;">DESCRIPTION</th>
-                           <th scope="col" style="font-weight: normal;width:15%;">CHECK IN</th>
-                           <th scope="col" style="font-weight: normal;width:15%;">CHECK OUT</th>
-                           <th scope="col" style="font-weight: normal;">DAY</th>
-                           <th scope="col" style="font-weight: normal;">QTY</th>
-                           <th scope="col" style="font-weight: normal;width:15%;">PRICE</th>
-                           <th scope="col" style="font-weight: normal;width:20%;">AMOUNT</th>';
-               }else{
-                  $html .='<th scope="col" style="font-weight: normal;width:40%;">DESCRIPTION</th>
-                           <th scope="col" style="font-weight: normal;">QTY</th>
-                           <th scope="col" style="font-weight: normal;">PRICE</th>
-                           <th scope="col" style="font-weight: normal;">AMOUNT</th>';
-               }            
-               $html .=   '</tr>
+                           <tr>
+                              <th scope="col" style="font-weight: normal;width:30%;">DESCRIPTION</th>
+                              <th scope="col" style="font-weight: normal;width:15%;">CHECK IN</th>
+                              <th scope="col" style="font-weight: normal;width:15%;">CHECK OUT</th>
+                              <th scope="col" style="font-weight: normal;">DAY</th>
+                              <th scope="col" style="font-weight: normal;">QTY</th>
+                              <th scope="col" style="font-weight: normal;width:15%;">PRICE</th>
+                              <th scope="col" style="font-weight: normal;width:20%;">AMOUNT</th>
+                           </tr>
                         <thead>
                         <tbody>';
                $total = 0;
                if( count(  $this->tempVar['detail'] ) > 0 ) {
                   $html .= '';
-                  if( $hotelHandling ) {
-                     foreach ($this->tempVar['detail'] as $key => $value) {
-                        $html .='<tr>
-                                    <td class="border-bottom-1" style="border-left: 1px solid #dee2e6 !important;">'.$value['description'].'</td>
-                                    <td class="border-bottom-1">'.$value['check_in'].'</td>
-                                    <td class="border-bottom-1">'.$value['check_out'].'</td>
-                                    <td class="border-bottom-1">'.$value['day'].'</td>
-                                    <td class="border-bottom-1">'.$value['pax'].'</td>
-                                    <td class="border-bottom-1">'.$this->kurs.' '.number_format($value['price']).'</td>
-                                    <td class="text-right" style="border-right: 1px solid #dee2e6 !important;">'.$this->kurs.' '.number_format( $value['price'] * $value['pax'] * $value['day'] ).'</td>
-                                 </tr>';
-                        $total = $total + ( $value['price'] * $value['pax'] * $value['day'] ) ;       
+                  foreach ($this->tempVar['detail'] as $key => $value) {
+                     $html .='<tr>
+                                 <td class="border-bottom-1" style="border-left: 1px solid #dee2e6 !important;">'.$value['description'].'</td>
+                                 <td class="border-bottom-1">'.$value['check_in'].'</td>
+                                 <td class="border-bottom-1">'.$value['check_out'].'</td>
+                                 <td class="border-bottom-1">'.$value['day'].'</td>
+                                 <td class="border-bottom-1">'.$value['pax'].'</td>
+                                 <td class="border-bottom-1">'.$this->kurs.' '.number_format($value['price']).'</td>
+                                 <td class="text-right" style="border-right: 1px solid #dee2e6 !important;">'.$this->kurs.' '.number_format( $value['price'] * $value['pax'] * $value['day'] ).'</td>
+                              </tr>';
+                     if( $value['day'] != 0 ) {
+                        $local_total = $value['price'] * $value['pax'] * $value['day'];
+                     }else{
+                        $local_total = $value['price'] * $value['pax'];
                      }
-                     
-                  }else{
-                      $html .='<tr>
-                                    <td class="border-bottom-1" style="border-left: 1px solid #dee2e6 !important;">'.$value['description'].'</td>
-                                    <td class="border-bottom-1">'.$value['pax'].'</td>
-                                    <td class="border-bottom-1">'.$this->kurs.' '.number_format($value['price']).'</td>
-                                    <td class="text-right" style="border-right: 1px solid #dee2e6 !important;">'.$this->kurs.' '.number_format( $value['price'] * $value['pax'] ).'</td>
-                                 </tr>';
+                     $total = $total + $local_total ;       
                   }
-                  // $html .= '</tr>';
                }else{
                   $html .= '<tr>
-                              <td colspan="' . ( $hotelHandling == true ? '7' : '4' ) . '"><center>Daftar Item Paket LA Tidak Ditemukan</center></td>
+                              <td colspan="7"><center>Daftar Item Paket LA Tidak Ditemukan</center></td>
                             </tr>';
                }
-
             $html .=   '</tbody>
                         <tfoot>
                            <tr>
@@ -294,9 +273,7 @@ class Kwitansi extends CI_Controller
                </div>
                <div class="row mt-5">
                   <div class="col-6">
-                     '.
-                     $this->tempVar['info_fasilitas']['note']
-                     .'
+                     '.$this->tempVar['info_fasilitas']['note'].'
                   </div>
                   <div class="col-6 d-flex flex-column">
                      <div class="row mt-auto">
@@ -310,33 +287,8 @@ class Kwitansi extends CI_Controller
                   </div>
                </div>';
       return $html;
-
-       //   <tr>
-       //      <td colspan="6" class="text-right">TOTAL REFUND</td>
-       //      <td>' . $this->kurs . ' ' . number_format($total_refund) . '</td>
-       //   </tr>
-       //   <tr>
-       //      <td colspan="6" class="text-right">TOTAL TIDAK DAPAT DIREFUND</td>
-       //      <td>' . $this->kurs . ' ' . number_format($total - $total_refund) . '</td>
-       //   </tr>
-
-      // <div class="row pt-5">
-      //    <div class="col-4 text-center">
-      //       (' . $this->tempVar['costumer_name'] . ')
-      //    </div>
-      //    <div class="col-4">
-      //    </div>
-      //    <div class="col-4 text-center">
-      //       (' . $this->tempVar['receiver'] . ')
-      //    </div>
-      // </div>
-
    }
 
-
-
-
-   // cetak riwaya deposit tabungan
    function _cetak_riwayat_transaksi_peminjaman(){
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getRiwayatTransaksiPeminjaman( $sesi );
@@ -345,17 +297,6 @@ class Kwitansi extends CI_Controller
       $html .= $this->TitleLaporanRiwayatPeminjaman();
       $html .= $this->ContentLaporanRiwayatPeminjaman();
       $this->Templating($html);
-   }
-
-   function _cetak_kwitansi_pertama_paket_la(){
-       $sesi = $this->session->userdata('cetak_invoice');
-       $this->tempVar = $this->model_kwitansi->getKwitansiPertamaPaketLA( $sesi['id'] );
-       
-       $html  = $this->Header();
-       $html .= $this->TitleLeftT2("KWITANSI PEMBAYARAN PAKET LA ", $this->tempVar['register_number'],  $this->tempVar['input_date'] );
-       $html .= $this->_contentTransaksiPembayaranPaketLAAwal();
-
-       $this->Templating($html);
    }
 
    // cetak kas keluar masuk
@@ -2423,10 +2364,12 @@ class Kwitansi extends CI_Controller
                </div>';
       return $html;
    }
+ 
 
-   function _contentTransaksiPembayaranPaketLAAwal()
+   function _contentTransaksiPembayaranPaketLA()
    {
-      $html = '<div class="row mt-4">
+
+       $html = '<div class="row mt-4">
                   <div class="col-12 px-0">
                      <span class="justify-content-center container-fluid title-order" style="font-weight: normal;font-size:12px!important;">
                         DETAIL INFO TRANSAKSI PEMBAYARAN PAKET LA :
@@ -2460,54 +2403,59 @@ class Kwitansi extends CI_Controller
                      <table class="table table-hover " >
                         <thead>
                            <tr>
-                              <th scope="col" style="width:5%;font-weight: normal;">NO</th>
-                              <th scope="col" style="width:60%;font-weight: normal;">KETERANGAN</th>
+                              <th scope="col" style="width:30%;font-weight: normal;">DESKRIPSI</th>
+                              <th scope="col" style="width:15%;font-weight: normal;">CHECK IN</th>
+                              <th scope="col" style="width:15%;font-weight: normal;">CHECK OUT</th>
+                              <th scope="col" style="width:7%;font-weight: normal;">DAY</th>
+                              <th scope="col" style="width:18%;font-weight: normal;">PRICE</th>
                               <th scope="col" style="width:15%;font-weight: normal;">TOTAL AMOUNT</th>
                            </tr>
                         <thead>
                         <tbody>';
             $no = 1;
             $total = 0;
-            $types = array('hotel' => "HOTEL", 
-                         'handling' => 'HANDLING', 
-                         'tiket_pesawat' => 'TIKET PESAWAT', 
-                         'visa' => 'VISA', 
-                         'mobil' => 'MOBIL',
-                         'bus' => 'BUS');
             foreach ($this->tempVar['facilities'] as $key => $value) {
+               if($value['day'] != 0 ) {
+                  $local_total = $value['day'] * $value['pax'] * $value['price'] ;
+               }else{
+                  $local_total = $value['pax'] * $value['price'] ;
+               }
                $html .= '<tr>
-                           <td >' . $no . '</td>
-                           <td>' . $types[$value['type']] . '</td>
+                           <td>' . $value['description'] . '</td>
+                           <td>' . $value['check_in'] . '</td>
+                           <td>' . $value['check_out'] . '</td>
+                           <td>' . $value['day'] . '</td>
+                           <td>' . $this->kurs . ' ' . number_format($value['price']) . '</td>
                            <td class="text-right">
-                              ' . $this->kurs . ' ' . number_format($value['total']) . '
+                              ' . $this->kurs . ' ' . number_format($local_total) . '
                            </td>
                         </tr>';
-               $total = $total + $value['total'];
+               $total = $total + $local_total;
                $no++;
             }
-            $real_total = $total * $this->tempVar['jamaah'];
+            $real_total = $total;
 
             $html .=   '</tbody>
                         <tfoot>
                            <tr>
-                              <td colspan="2" class="text-right border-0">JUMLAH JAMAAH</td>
+                              <td colspan="5" class="text-right border-0">JUMLAH JAMAAH</td>
                               <td class="border-0" style="text-align:right;">' . number_format($this->tempVar['jamaah']) . ' Orang</td>
                            </tr>
                            <tr>
-                              <td colspan="2" class="text-right border-0">DISKON</td>
+                              <td colspan="5" class="text-right border-0">DISKON</td>
                               <td class="border-0" style="text-align:right;">' . $this->kurs . ' ' . number_format($this->tempVar['discount']) . '</td>
                            </tr>
                               <tr>
-                              <td colspan="2" class="text-right border-0">TOTAL</td>
-                              <td class="border-0" style="text-align:right;">' . $this->kurs . ' ' . number_format($real_total - $this->tempVar['discount']) . '</td>
+                              <td colspan="5" class="text-right border-0">TOTAL</td>
+                              <td class="border-0" style="text-align:right;">' . $this->kurs . ' ' . number_format($total - $this->tempVar['discount']) . '</td>
                            </tr>
                            <tr>
-                              <td colspan="2" class="text-right border-0">SUDAH DIBAYAR</td>
+                              <td colspan="5" class="text-right border-0">SUDAH DIBAYAR</td>
                               <td class="border-0" style="text-align:right;">'. $this->kurs . ' ' . '0</td>
                            </tr>
                            <tr>
-                              <td colspan="2" class="text-right border-0">SISA</td>
-                              <td class="border-0" style="text-align:right;">' . $this->kurs . ' ' . number_format($real_total - $this->tempVar['discount']) . '</td>
+                              <td colspan="5" class="text-right border-0">SISA</td>
+                              <td class="border-0" style="text-align:right;">' . $this->kurs . ' ' . number_format($total - $this->tempVar['discount']) . '</td>
                            </tr>
                         </tfoot>
                      </table>
@@ -2518,123 +2466,118 @@ class Kwitansi extends CI_Controller
                   </div>
                </div>';
       return $html;
-   }
- 
-
-   function _contentTransaksiPembayaranPaketLA()
-   {
-      $html = '<div class="row mt-4">
-                  <div class="col-12 px-0">
-                     <span class="justify-content-center container-fluid title-order" style="font-weight: normal;">
-                        DETAIL INFO TRANSAKSI PEMBAYARAN PAKET LA :
-                     </span>
-                  </div>
-                  <div class="col-12">
-                     <style>
-                        .table > tbody > tr > td {
-                           font-size: 12px !important;
-                        }
-                        .table > tfoot > tr > td {
-                           font-size: 12px !important;
-                        }
-                        .table > thead > tr > th {
-                           font-size: 12px !important;
-                        }
-                        .values::before {
-                          content: ": ";
-                        }
-                        .border-t1{
-                           border: 1px solid black;
-                        }
-                        .box-checking{
-                           height: 14px;
-                           width:20px;
-                           border: 1px solid #9a9a9a;
-                           border-radius: 3px;
-                           display:inline-block;
-                        }
-                     </style>
-                     <table class="table table-hover ">
-                        <thead>
-                           <tr>
-                              <th scope="col" style="width:5%;font-weight: normal;">NO</th>
-                              <th scope="col" style="width:50%;font-weight: normal;">KETERANGAN</th>
-                              <th scope="col" style="width:20%;font-weight: normal;">TOTAL AMOUNT</th>
-                           </tr>
-                        <thead>
-                        <tbody>';
-      $no = 1;
-      $total = 0;
-      $types = array('hotel' => "HOTEL", 
-                     'handling' => 'HANDLING', 
-                     'tiket_pesawat' => 'TIKET PESAWAT', 
-                     'visa' => 'VISA', 
-                     'mobil' => 'MOBIL',
-                     'bus' => 'BUS');
-      foreach ($this->tempVar['facilities'] as $key => $value) {
-         $html .= '<tr>
-                                 <td>' . $no . '</td>
-                                 <td>' . $types[$value['type']] . '</td>
-                                 <td class="text-right">
-                                    ' . $this->kurs . ' ' . number_format($value['total']) . '
-                                 </td>
-                              </tr>';
-         $total = $total + $value['total'];
-         $no++;
-      }
-      $real_total = $total * $this->tempVar['jamaah'];
-      $html .=   '</tbody>
-                        <tfoot>
-                           <tr>
-                              <td colspan="2" class="text-right">JUMLAH JAMAAH</td>
-                              <td>' . number_format($this->tempVar['jamaah']) . ' Orang</td>
-                           </tr>
-                           <tr>
-                              <td colspan="2" class="text-right">DISKON</td>
-                              <td>' . $this->kurs . ' ' . number_format($this->tempVar['discount']) . '</td>
-                           </tr>
-                              <tr>
-                              <td colspan="2" class="text-right">TOTAL</td>
-                              <td>' . $this->kurs . ' ' . number_format($real_total - $this->tempVar['discount']) . '</td>
-                           </tr>
-                           </tr>
-                              <tr>
-                              <td colspan="2" class="text-right">'. ( $this->tempVar['status'] == 'refund' ? 'REFUND' : 'PEMBAYARAN' ) .'</td>
-                              <td>' . $this->kurs . ' ' . number_format($this->tempVar['paid']) . '</td>
-                           </tr>
-                           <tr>
-                              <td colspan="2" class="text-right">SUDAH DIBAYAR</td>
-                              <td>' . $this->kurs . ' ' . number_format($this->tempVar['sudah_dibayar']) . '</td>
-                           </tr>
-                           <tr>
-                              <td colspan="2" class="text-right">SISA</td>
-                              <td>' . $this->kurs . ' ' . number_format(($real_total - $this->tempVar['discount']) - $this->tempVar['sudah_dibayar']) . '</td>
-                           </tr>
-                        </tfoot>
-                     </table>
-                     <div class="row pt-5">
-                        <div class="col-4 text-center">
-                           Penerima
-                        </div>
-                        <div class="col-4">
-                        </div>
-                        <div class="col-4 text-center">
-                           Penyetor
-                        </div>
-                     </div>
-                     <div class="row pt-5">
-                        <div class="col-4 text-center">
-                           (' . $this->tempVar['receiver'] . ')
-                        </div>
-                        <div class="col-4">
-                        </div>
-                        <div class="col-4 text-center">
-                           (' . $this->tempVar['payer'] . ')
-                        </div>
-                     </div>
-                  </div>
-               </div>';
-      return $html;
+      // $html = '<div class="row mt-4">
+      //             <div class="col-12 px-0">
+      //                <span class="justify-content-center container-fluid title-order" style="font-weight: normal;">
+      //                   DETAIL INFO TRANSAKSI PEMBAYARAN PAKET LA :
+      //                </span>
+      //             </div>
+      //             <div class="col-12">
+      //                <style>
+      //                   .table > tbody > tr > td {
+      //                      font-size: 12px !important;
+      //                   }
+      //                   .table > tfoot > tr > td {
+      //                      font-size: 12px !important;
+      //                   }
+      //                   .table > thead > tr > th {
+      //                      font-size: 12px !important;
+      //                   }
+      //                   .values::before {
+      //                     content: ": ";
+      //                   }
+      //                   .border-t1{
+      //                      border: 1px solid black;
+      //                   }
+      //                   .box-checking{
+      //                      height: 14px;
+      //                      width:20px;
+      //                      border: 1px solid #9a9a9a;
+      //                      border-radius: 3px;
+      //                      display:inline-block;
+      //                   }
+      //                </style>
+      //                <table class="table table-hover ">
+      //                   <thead>
+      //                      <tr>
+      //                         <th scope="col" style="width:5%;font-weight: normal;">NO</th>
+      //                         <th scope="col" style="width:50%;font-weight: normal;">KETERANGAN</th>
+      //                         <th scope="col" style="width:20%;font-weight: normal;">TOTAL AMOUNT</th>
+      //                      </tr>
+      //                   <thead>
+      //                   <tbody>';
+      // $no = 1;
+      // $total = 0;
+      // $types = array('hotel' => "HOTEL", 
+      //                'handling' => 'HANDLING', 
+      //                'tiket_pesawat' => 'TIKET PESAWAT', 
+      //                'visa' => 'VISA', 
+      //                'mobil' => 'MOBIL',
+      //                'bus' => 'BUS');
+      // foreach ($this->tempVar['facilities'] as $key => $value) {
+      //    $html .= '<tr>
+      //                            <td>' . $no . '</td>
+      //                            <td>' . $types[$value['type']] . '</td>
+      //                            <td class="text-right">
+      //                               ' . $this->kurs . ' ' . number_format($value['total']) . '
+      //                            </td>
+      //                         </tr>';
+      //    $total = $total + $value['total'];
+      //    $no++;
+      // }
+      // $real_total = $total * $this->tempVar['jamaah'];
+      // $html .=   '</tbody>
+      //                   <tfoot>
+      //                      <tr>
+      //                         <td colspan="2" class="text-right">JUMLAH JAMAAH</td>
+      //                         <td>' . number_format($this->tempVar['jamaah']) . ' Orang</td>
+      //                      </tr>
+      //                      <tr>
+      //                         <td colspan="2" class="text-right">DISKON</td>
+      //                         <td>' . $this->kurs . ' ' . number_format($this->tempVar['discount']) . '</td>
+      //                      </tr>
+      //                         <tr>
+      //                         <td colspan="2" class="text-right">TOTAL</td>
+      //                         <td>' . $this->kurs . ' ' . number_format($real_total - $this->tempVar['discount']) . '</td>
+      //                      </tr>
+      //                      </tr>
+      //                         <tr>
+      //                         <td colspan="2" class="text-right">'. ( $this->tempVar['status'] == 'refund' ? 'REFUND' : 'PEMBAYARAN' ) .'</td>
+      //                         <td>' . $this->kurs . ' ' . number_format($this->tempVar['paid']) . '</td>
+      //                      </tr>
+      //                      <tr>
+      //                         <td colspan="2" class="text-right">SUDAH DIBAYAR</td>
+      //                         <td>' . $this->kurs . ' ' . number_format($this->tempVar['sudah_dibayar']) . '</td>
+      //                      </tr>
+      //                      <tr>
+      //                         <td colspan="2" class="text-right">SISA</td>
+      //                         <td>' . $this->kurs . ' ' . number_format(($real_total - $this->tempVar['discount']) - $this->tempVar['sudah_dibayar']) . '</td>
+      //                      </tr>
+      //                   </tfoot>
+      //                </table>
+      //                <div class="row pt-5">
+      //                   <div class="col-4 text-center">
+      //                      Penerima
+      //                   </div>
+      //                   <div class="col-4">
+      //                   </div>
+      //                   <div class="col-4 text-center">
+      //                      Penyetor
+      //                   </div>
+      //                </div>
+      //                <div class="row pt-5">
+      //                   <div class="col-4 text-center">
+      //                      (' . $this->tempVar['receiver'] . ')
+      //                   </div>
+      //                   <div class="col-4">
+      //                   </div>
+      //                   <div class="col-4 text-center">
+      //                      (' . $this->tempVar['payer'] . ')
+      //                   </div>
+      //                </div>
+      //             </div>
+      //          </div>';
+      // return $html;
    }
 
    function _contentTransaksiTransport()
