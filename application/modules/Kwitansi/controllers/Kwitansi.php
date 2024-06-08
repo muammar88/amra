@@ -282,6 +282,12 @@ class Kwitansi extends CI_Controller
                      $this->tempVar['info_fasilitas']['city']
                      .', '.$this->tempVar['info_fasilitas']['trans_date'].'</label><br>
                            <label>SIGNATURE</label>
+                           '. ($this->tempVar['info_fasilitas']['tanda_tangan'] != '' ? '<img src="' . base_url() . 'image/company/tanda_tangan/' .  $this->tempVar['info_fasilitas']['tanda_tangan'] . '" class="img-fluid list_upper container-fluid" style="width: 160px;float: left;position: absolute;top: 21px;bottom: 7px;right: 147px;">' : ''
+
+                              ) . '
+
+
+                            
                         </div> 
                      </div>
                   </div>

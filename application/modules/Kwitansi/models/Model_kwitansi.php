@@ -23,7 +23,7 @@ class Model_kwitansi extends CI_Model
 
 
    function getItemPaketLA($sesi){
-      $this->db->select('pd.*, pf.invoice, pf.total_price, pf.input_date AS trans, pc.*, c.note_paket_la, c.city')
+      $this->db->select('pd.*, pf.invoice, pf.total_price, pf.input_date AS trans, pc.*, c.note_paket_la, c.city, c.tanda_tangan')
                ->from('paket_la_detail_fasilitas_transaction AS pd')
                ->join('paket_la_fasilitas_transaction AS pf', 'pd.paket_la_fasilitas_transaction_id=pf.id', 'inner')
                ->join('paket_la_transaction_temp AS pl', 'pf.paket_la_transaction_id=pl.id', 'inner')
@@ -38,6 +38,7 @@ class Model_kwitansi extends CI_Model
          foreach ($q->result() as $rows) {
             if( count($list_fasilitas) == 0  ) {
                 $list_fasilitas["invoice"]  = $rows->invoice;
+                $list_fasilitas['tanda_tangan'] = $rows->tanda_tangan;
                 $list_fasilitas["total_price"]  = $rows->total_price;
                 $list_fasilitas["name"]  = $rows->name;
                 $list_fasilitas["mobile_number"]  = $rows->mobile_number;
