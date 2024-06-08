@@ -191,8 +191,14 @@ class Model_trans_paket_la extends CI_Model
                ->where('paket_la_fasilitas_transaction_id', $id);
       $q = $this->db->get();
       $list = array();
+      $total_price = 0;
       if( $q->num_rows() > 0 ){
          foreach ($q->result() as $rows) {
+            if( $rows->day != 0 ) {
+               $local_total = $rows->day * $rows->pax * $rows->price;
+            }else{
+               $local_total = $rows->pax * $rows->price;
+            }
             $list[] = array(
                             'id' => $rows->id, 
                             'description' => $rows->description, 
@@ -201,9 +207,11 @@ class Model_trans_paket_la extends CI_Model
                             'day' => $rows->day, 
                             'pax' => $rows->pax, 
                             'price' => $rows->price);
+
+            $total_price = $total_price + $local_total;
          }
       }
-      return $list;
+      return array('list' => $list, 'total' => $total_price);
    }
 
    function get_fasilitas_transaction($id){
@@ -213,15 +221,21 @@ class Model_trans_paket_la extends CI_Model
                ->where('paket_la_transaction_id', $id);
       $q = $this->db->get();
       $list = array();
+      $total_price = 0;
       if( $q->num_rows() > 0 ){
          foreach ($q->result() as $rows) {
+
+            $detail = $this->get_detail_fasilitas_transaction($rows->id);
+
             $list[] = array('id' => $rows->id,
                             'invoice' => $rows->invoice, 
-                            'total_price' => $rows->total_price, 
-                            'detail' => $this->get_detail_fasilitas_transaction($rows->id));
+                            'total_price' => $detail['total'], 
+                            'detail' =>  $detail['list']);
+
+            $total_price = $total_price +  $detail['total'];
          }
       }
-      return $list;
+      return array( 'list' => $list, 'total_price' => $total_price );
    }
 
 
@@ -249,6 +263,9 @@ class Model_trans_paket_la extends CI_Model
       $list = array();
       if ($q->num_rows() > 0) {
          foreach ($q->result() as $rows) {
+
+            $local_detail_fasilitas = $this->get_fasilitas_transaction($rows->id);
+
             $list[] = array(
                'id' => $rows->id,
                'register_number' => $rows->register_number,
@@ -256,14 +273,14 @@ class Model_trans_paket_la extends CI_Model
                'client_hp_number' => $rows->mobile_number,
                'client_address' => $rows->address,
                'description' => $rows->description,
-               'fasilitas' => $this->get_fasilitas_transaction($rows->id),
+               'fasilitas' => $local_detail_fasilitas['list'],
                'discount' => $rows->discount,
-               'total_price' => $rows->total_price - $rows->discount ,
+               'total_price' =>  $local_detail_fasilitas['total_price'] - $rows->discount ,
                'departure_date' => $this->date_ops->change_date_t3($rows->departure_date),
                'arrival_date' => $this->date_ops->change_date_t3($rows->arrival_date),
                'jamaah' => $rows->jamaah,
                'sudah_dibayar' => ($rows->wasPayment - $rows->wasRefund),
-               'sisa' => (($rows->total_price - $rows->discount) - ($rows->wasPayment - $rows->wasRefund)),
+               'sisa' => (($local_detail_fasilitas['total_price'] - $rows->discount) - ($rows->wasPayment - $rows->wasRefund)),
                'status' => $rows->status
             );
          }

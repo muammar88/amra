@@ -2403,10 +2403,11 @@ class Kwitansi extends CI_Controller
                      <table class="table table-hover " >
                         <thead>
                            <tr>
-                              <th scope="col" style="width:30%;font-weight: normal;">DESKRIPSI</th>
-                              <th scope="col" style="width:15%;font-weight: normal;">CHECK IN</th>
-                              <th scope="col" style="width:15%;font-weight: normal;">CHECK OUT</th>
+                              <th scope="col" style="width:27%;font-weight: normal;">DESKRIPSI</th>
+                              <th scope="col" style="width:13%;font-weight: normal;">CHECK IN</th>
+                              <th scope="col" style="width:13%;font-weight: normal;">CHECK OUT</th>
                               <th scope="col" style="width:7%;font-weight: normal;">DAY</th>
+                              <th scope="col" style="width:7%;font-weight: normal;">PAX</th>
                               <th scope="col" style="width:18%;font-weight: normal;">PRICE</th>
                               <th scope="col" style="width:15%;font-weight: normal;">TOTAL AMOUNT</th>
                            </tr>
@@ -2425,6 +2426,7 @@ class Kwitansi extends CI_Controller
                            <td>' . $value['check_in'] . '</td>
                            <td>' . $value['check_out'] . '</td>
                            <td>' . $value['day'] . '</td>
+                           <td>' . $value['pax'] . '</td>
                            <td>' . $this->kurs . ' ' . number_format($value['price']) . '</td>
                            <td class="text-right">
                               ' . $this->kurs . ' ' . number_format($local_total) . '
@@ -2438,24 +2440,24 @@ class Kwitansi extends CI_Controller
             $html .=   '</tbody>
                         <tfoot>
                            <tr>
-                              <td colspan="5" class="text-right border-0">JUMLAH JAMAAH</td>
+                              <td colspan="6" class="text-right border-0">JUMLAH JAMAAH</td>
                               <td class="border-0" style="text-align:right;">' . number_format($this->tempVar['jamaah']) . ' Orang</td>
                            </tr>
                            <tr>
-                              <td colspan="5" class="text-right border-0">DISKON</td>
+                              <td colspan="6" class="text-right border-0">DISKON</td>
                               <td class="border-0" style="text-align:right;">' . $this->kurs . ' ' . number_format($this->tempVar['discount']) . '</td>
                            </tr>
                               <tr>
-                              <td colspan="5" class="text-right border-0">TOTAL</td>
+                              <td colspan="6" class="text-right border-0">TOTAL</td>
                               <td class="border-0" style="text-align:right;">' . $this->kurs . ' ' . number_format($total - $this->tempVar['discount']) . '</td>
                            </tr>
                            <tr>
-                              <td colspan="5" class="text-right border-0">SUDAH DIBAYAR</td>
-                              <td class="border-0" style="text-align:right;">'. $this->kurs . ' ' . '0</td>
+                              <td colspan="6" class="text-right border-0">SUDAH DIBAYAR</td>
+                              <td class="border-0" style="text-align:right;">'. $this->kurs . ' ' . number_format($this->tempVar['sudah_dibayar']) . '</td>
                            </tr>
                            <tr>
-                              <td colspan="5" class="text-right border-0">SISA</td>
-                              <td class="border-0" style="text-align:right;">' . $this->kurs . ' ' . number_format($total - $this->tempVar['discount']) . '</td>
+                              <td colspan="6" class="text-right border-0">SISA</td>
+                              <td class="border-0" style="text-align:right;">' . $this->kurs . ' ' . number_format($total - $this->tempVar['discount'] - $this->tempVar['sudah_dibayar']) . '</td>
                            </tr>
                         </tfoot>
                      </table>
