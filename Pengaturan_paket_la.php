@@ -38,10 +38,6 @@ class Pengaturan_paket_la extends CI_Controller
 	function get_info_pengaturan_paket_la(){
 		# get info pengaturan
 		$data = $this->model_pengaturan_paket_la->get_info_pengaturan_paket_la($this->company_id);
-		echo "==========<br>";
-		print_r($data);
-		echo "<br>==========<br>";
-
 		# filter
 		if (count($data) == 0) {
 			$return = array(
