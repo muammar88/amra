@@ -112,10 +112,20 @@ class Text_ops
 		return '<p>' . $new_text . '</p>';
 	}
 
+	// $kurs = $this->text->session->userdata($this->text->config->item('apps_name'))['kurs'];
+	// 
+
 	/* hide currency from variable */
 	function hide_currency($value)
 	{
-		$kurs = $this->text->session->userdata($this->text->config->item('apps_name'))['kurs'];
+		$list_kurs = array('Rp', '$', 'SAR');
+		$kurs = '';
+		foreach ($list_kurs as $key => $val) {
+			if( strpos($value, $val ) !== false ) {
+				$kurs = $val;
+			}
+		}
+
 		if (strpos($value, $kurs ) !== false) {
 			$value = str_replace($kurs , "", $value);
 			if (strpos($value, '.') !== false) {
