@@ -34,12 +34,12 @@ class Model_pengaturan_paket_la extends CI_Model
                $tanda_tangan = 'default.png';
             endif;
 
-            $des = str_replace('\n',' ',base64_decode($rows->note_paket_la));
-            $des = str_replace('\r',' ',$des);
+            // $des = str_replace('\n',' ',base64_decode($rows->note_paket_la));
+            // $des = str_replace('\r',' ',$des);
 
             $list = array(
                'kurs' => $rows->kurs, 
-               'note_paket_la' => $des, 
+               'note_paket_la' => $rows->note_paket_la, 
                'tanda_tangan' => $tanda_tangan
             );
          }
