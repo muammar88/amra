@@ -124,7 +124,7 @@ class Api extends CI_Controller
 											  'birth_place' => $info_akun['birth_place'],
 											  'birth_date' => $info_akun['birth_date'],
 											  'deposit' =>  $this->kurs . ' ' .  number_format($info_deposit_tabungan['deposit']),
-											  'tabungan' => $this->kurs . ' ' number_format($info_deposit_tabungan['tabungan']),
+											  'tabungan' => $this->kurs . ' ' . number_format($info_deposit_tabungan['tabungan']),
 											  'markup_withdraw' => $this->kurs . ' ' . number_format($info_deposit_tabungan['markup_withdraw']),
 											  'total_markup' => $this->kurs . ' ' . number_format($info_deposit_tabungan['deposit'] - $info_deposit_tabungan['markup_withdraw']),
 											  'headline' => $headline,
