@@ -292,7 +292,7 @@ class Trans_paket_la extends CI_Controller
 		if ($this->form_validation->run()) {
 			// jumlah jamaah
 			$jumlah_jamaah = $this->input->post('jamaah');
-			$diskon = $this->text_ops->hide_currency($this->input->post('diskon'));
+			$diskon = $this->input->post('diskon') != '' ? $this->text_ops->hide_currency($this->input->post('diskon')) : 0 ;
 			$tanggal_keberangkatan = $this->input->post('tanggal_keberangkatan');
 			$tanggal_kepulangan = $this->input->post('tanggal_kepulangan');
 			$kostumer_id = $this->input->post('kostumer_paket_la');
@@ -300,7 +300,7 @@ class Trans_paket_la extends CI_Controller
 			$data = array();
 			$data['company_id'] = $this->company_id;
 			$data['costumer_id'] = $kostumer_id;
-			$data['discount'] = $this->text_ops->hide_currency($this->input->post('diskon'));
+			$data['discount'] = $diskon;
 			$data['departure_date'] = $this->input->post('tanggal_keberangkatan');
 			$data['arrival_date'] = $this->input->post('tanggal_kepulangan');
 			$data['jamaah'] = $this->input->post('jamaah');
