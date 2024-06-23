@@ -993,6 +993,7 @@ class Superman extends CI_Controller
 			$data['code'] = $this->input->post('kode');
 			$data['company_type'] = $this->input->post('tipe');
 			$data['verified'] = 'verified';
+			$data['verified_time'] = date('Y-m-d H:i:s');
 			$data['whatsapp_number'] = $this->input->post('whatsapp');
 			$data['start_date_subscribtion'] = $start_date;
 			if( $this->input->post('saldo') AND $this->input->post('saldo') != '' ){
