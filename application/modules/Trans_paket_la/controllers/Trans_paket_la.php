@@ -233,13 +233,19 @@ class Trans_paket_la extends CI_Controller
 	# check harga not null
 	function _ck_harga_not_null($harga)
 	{
-		$price = $this->text_ops->hide_currency($harga);
-		if ($price > 0) {
-			return TRUE;
-		} else {
+		if($harga == '' ){
 			$this->form_validation->set_message('_ck_harga_not_null', 'Harga tidak boleh NOL.');
 			return FALSE;
+		}else{
+			$price = $this->text_ops->hide_currency($harga);
+			if ($price > 0) {
+				return TRUE;
+			} else {
+				$this->form_validation->set_message('_ck_harga_not_null', 'Harga tidak boleh NOL.');
+				return FALSE;
+			}	
 		}
+		
 	}
 
 	function _ck_jenis_paket($jenis_paket)
@@ -1119,13 +1125,12 @@ class Trans_paket_la extends CI_Controller
 				$temp_data['check_out'] = $check_out[$key];
 				$temp_data['day'] = $day[$key];
 				$temp_data['pax'] = $pax[$key];
-				$temp_data['price'] = $this->text_ops->hide_currency($price[$key]);
+				$temp_data['price'] = $price[$key] == '' ? 0 : $this->text_ops->hide_currency($price[$key]);
 				$temp_data['input_date'] = date('Y-m-d');
 				// receive data
 				$data_item[] = $temp_data;
 
 				$local_total = $day[$key] != '' ? ( $day[$key] * $pax[$key] * $this->text_ops->hide_currency($price[$key]) ) : ($pax[$key] * $this->text_ops->hide_currency($price[$key]));
-
 				$total_price = $total_price + $local_total;
 			}
 			// receive data fasilitas
