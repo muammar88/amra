@@ -1401,6 +1401,10 @@ class Model_trans_paket_cud extends CI_Model
       $this->db->where('source', 'paketid:' . $paket_id);
       $this->db->where('company_id', $this->company_id);
       $this->db->delete('jurnal');
+      // delete jurnal piutang
+      $this->db->where('source', 'piutangpaketid:' . $paket_id);
+      $this->db->where('company_id', $this->company_id);
+      $this->db->delete('jurnal');
       // update paket tutup_paket
       $this->db->where('id', $paket_id)
          ->where('company_id', $this->company_id)
