@@ -5,6 +5,9 @@ function daftar_peminjaman_Pages(){
                      <button class="btn btn-default" type="button" onclick="add_peminjaman()">
                         <i class="fas fa-money-bill-wave"></i> Tambah Peminjaman
                      </button>
+                     <button class="btn btn-default mx-1" type="button" onClick="downlaad_excel_peminjaman()">
+                        <i class="fas fa-print"></i> Download Excel Peminjaman
+                     </button>
                      <label class="float-right py-2 my-0">Filter :</label>
                   </div>
                   <div class="col-6 col-lg-2 my-3">
@@ -575,9 +578,7 @@ function add_peminjaman(){
 
 
 function formaddupdate_peminjaman(JSONData){
-
    var json = JSON.parse( JSONData );
-
    var html = `<form action="${baseUrl }Daftar_peminjaman/proses_addupdate_peminjaman" id="form_utama" class="formName ">
                <div class="row px-0 mx-0">
                   <div class="col-12">
@@ -662,5 +663,24 @@ function formaddupdate_peminjaman(JSONData){
                } );
             </script>`;
    return html;
+}
+
+function downlaad_excel_peminjaman(){
+    ajax_x_t2(
+    baseUrl + "Daftar_peminjaman/download_excel_daftar_peminjaman",
+    function (e) {
+      if (e["error"] == false) {
+        window.open(baseUrl + "Download/", "_blank");
+      } else {
+        frown_alert(e["error_msg"]);
+      }
+    },
+    [
+      {
+        search: $("#searchAllDaftarPeminjaman").val(),
+        filter: $("#statusPeminjaman option:selected").val(),
+      },
+    ]
+  );
 
 }

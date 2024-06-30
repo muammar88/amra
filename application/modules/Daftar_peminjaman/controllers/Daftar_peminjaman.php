@@ -702,4 +702,41 @@ class Daftar_peminjaman extends CI_Controller
 
    }
 
+   function download_excel_daftar_peminjaman(){
+      $return = array();
+      $error = 0;
+      $error_msg = '';
+      $this->form_validation->set_rules('search',   '<b>Search<b>',    'trim|xss_clean|min_length[1]');
+      $this->form_validation->set_rules('filter',   '<b>filter Transaksi<b>',    'trim|required|xss_clean|min_length[1]|in_list[belum_lunas,lunas]');
+      /*
+      Validation process
+      */
+      if ($this->form_validation->run()) {
+         # search
+         $search = $this->input->post('search');
+         $filter = $this->input->post('filter');
+         # set session
+         $this->session->set_userdata(array('download_to_excel' => 
+                                      array('type' => 'download_daftar_peminjaman',
+                                             'filter' => array('search' => $search, 
+                                                               'filter' => $filter))));
+         # return
+         $return = array(
+            'error'  => false,
+            'error_msg' => 'Proses download daftar peminjaman berhasil dilakukan.',
+            $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+         );
+      } else {
+         if (validation_errors()) {
+            // define return error
+            $return = array(
+               'error'         => true,
+               'error_msg'    => validation_errors(),
+               $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+            );
+         }
+      }
+      echo json_encode($return);
+   }
+
 }

@@ -5,6 +5,7 @@ function riwayat_transaksi_peminjaman_Pages(){
                      <button class="btn btn-default" type="button" onClick="cetak_riwayat_transaksi_peminjaman()">
                         <i class="fas fa-print"></i> Cetak Riwayat Transaksi Peminjaman
                      </button>
+                     
                      <label class="float-right py-2 my-0">Filter :</label>
                   </div>
                   <div class="col-6 col-lg-2 my-3 text-right">

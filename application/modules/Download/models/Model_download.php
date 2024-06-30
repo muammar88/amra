@@ -117,6 +117,69 @@ class Model_download extends CI_Model
          return $html ;
    }
 
+      # sudah bayar peminjaman
+   function sudah_bayar_peminjaman($peminjaman_id){
+      $this->db->select('bayar')
+         ->from('pembayaran_peminjaman')
+         ->where('company_id', $this->company_id)
+         ->where('peminjaman_id', $peminjaman_id);
+      $q =$this->db->get();
+      $bayar = 0;
+      if( $q->num_rows() > 0 ) {
+         foreach ( $q->result() as $rows ) {
+            $bayar = $bayar + $rows->bayar;
+         }
+      }
+      return $bayar;
+   }
+
+   function model_download_daftar_peminjaman($sesi) {
+
+      // print_r($sesi);
+
+      $search = $sesi['filter']['search'];
+      $filter = $sesi['filter']['filter'];
+
+      $this->db->select('p.id, per.fullname, per.identity_number, p.biaya, p.tenor')
+               ->from('peminjaman AS p')
+               ->join('jamaah AS j', 'p.jamaah_id=j.id', 'inner')
+               ->join('personal AS per', 'j.personal_id=per.personal_id', 'inner')
+               ->where('p.company_id', $this->company_id)
+               ->where('p.status_peminjaman', $filter);
+      if ($search != '' or $search != null or !empty($search)) {
+         $this->db->group_start()
+            ->like('per.fullname', $search)
+            ->group_end();
+      }
+      $q    = $this->db->get();
+      $html = '<tr>
+                  <th>NO</th>
+                  <th>NAMA</th>
+                  <th>NOMOR KTP</th>
+                  <th>JUMLAH PEMINJAMAN</th>
+                  <th>SUDAH BAYAR</th>
+                  <th>SISA HUTANG</th>
+                  <th>TENOR</th>
+               </tr>';
+      $n = 1;
+      if( $q->num_rows() > 0 ) {
+         foreach ($q->result() as $row) {
+            $sudah_bayar = $this->sudah_bayar_peminjaman($row->id);
+            $html .= '<tr>
+                        <td>'.$n.'</td>
+                        <td>'.$row->fullname.'</td>
+                        <td>'.$row->identity_number.'</td>
+                        <td>'.$row->biaya.'</td>
+                        <td>'.$sudah_bayar.'</td>
+                        <td>'.$row->tenor.'</td>
+                        <td>'.($row->biaya - $sudah_bayar).'</td>
+                     </tr>';
+            $n++;
+         }
+      }
+      return  $html;
+   }
+
    function model_download_manifest_tabungan_umrah($sesi)
    {
       $this->db->select('po.id, p.identity_number, p.fullname, p.gender, p.birth_place, p.birth_date, j.title, 
