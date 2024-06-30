@@ -3341,7 +3341,7 @@ function get_price_transaksi_paket(){
    var paket_id = $('#paket_id').val();
    var paket_type_id = $('#jenis_paket :selected').val();
    var diskon = $('#diskon').val();
-   var pembayaran = 0;
+   var pembayaran = kurs + ' 0';
    if( $('#pembayaran').val() != '' ){
       pembayaran = $('#pembayaran').val();
    }

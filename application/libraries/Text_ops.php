@@ -125,7 +125,6 @@ class Text_ops
 				$kurs = $val;
 			}
 		}
-
 		if (strpos($value, $kurs ) !== false) {
 			$value = str_replace($kurs , "", $value);
 			if (strpos($value, '.') !== false) {
