@@ -25,6 +25,30 @@ class Model_deposit_paket_cud extends CI_Model
       $this->write_log = 1;
    }
 
+   function update_target_paket($id, $target_paket_id) {
+      # Starting Transaction
+      $this->db->trans_start();
+      # update pool
+      $this->db->where('id', $id)
+               ->where('company_id', $this->company_id)
+               ->update('pool', array('target_paket_id' => $target_paket_id ) );
+      # Transaction Complete
+      $this->db->trans_complete();
+      # Filter Status
+      if ($this->db->trans_status() === FALSE) {
+         # Something Went Wrong.
+         $this->db->trans_rollback();
+         $this->status = FALSE;
+         $this->error = 1;
+      } else {
+         # Transaction Commit
+         $this->db->trans_commit();
+         $this->status = TRUE;
+         $this->content = 'Melakukan update target paket.';
+      }
+      return $this->status;
+   }
+
    # insert deposit paket
    function insert_deposit_paket( $data_pool, $data_deposit_transaction, $data_pool_transaction, $data_fee_keagenan, $data_detail_fee_keagenan, $data_jurnal ){
       # Starting Transaction

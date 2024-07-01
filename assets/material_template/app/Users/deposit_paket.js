@@ -89,9 +89,14 @@ function ListRiwayatDepositPaket(JSONData) {
                               <td class="text-left " >${json.birth_place} / ${ json.birth_date }</td>
                            </tr>
                            <tr>
-                              <td class="text-left border-0" >NAMA AGEN</td>
+                              <td class="text-left"  >NAMA AGEN</td>
+                              <td class="px-0 " >:</td>
+                              <td class="text-left" >${json.agen} (Level : ${json.level_agen})</td>
+                           </tr>
+                           <tr>
+                              <td class="text-left border-0" >NAMA TARGET PAKET</td>
                               <td class="px-0 border-0" >:</td>
-                              <td class="text-left border-0" >${json.agen}<br>(Level : ${json.level_agen})</td>
+                              <td class="text-left border-0" >${json.target_paket}</td>
                            </tr>
                         </tbody>
                      </table>
@@ -190,7 +195,11 @@ function ListRiwayatDepositPaket(JSONData) {
                   <td>`;
 
         if (json.active == "active") {
-          html += `<button type="button" class="btn btn-default btn-action" title="Refund Tabungan Paket"
+          html += `<button type="button" class="btn btn-default btn-action" title="Update Target Paket"
+                      onclick="update_target_paket('${json.id}')" style="margin:.15rem .1rem  !important">
+                      <i class="fas fa-box-open" style="font-size: 11px;"></i>
+                   </button>
+                   <button type="button" class="btn btn-default btn-action" title="Refund Tabungan Paket"
                       onclick="refund_tabungan_paket('${json.id}')" style="margin:.15rem .1rem  !important">
                       <i class="fas fa-hand-holding-usd" style="font-size: 11px;"></i>
                    </button>
@@ -214,6 +223,68 @@ function ListRiwayatDepositPaket(JSONData) {
   return html;
 }
 
+function update_target_paket(id) {
+   ajax_x_t2(
+    baseUrl + "Deposit_paket/get_info_update_target_paket",
+    function (e) {
+      if (e["error"] == false) {
+        $.confirm({
+          columnClass: "col-4",
+          title: "Update Target Paket",
+          theme: "material",
+          content: formUpdateTargetPaket( id, JSON.stringify(e.data), e.value ),
+          closeIcon: false,
+          buttons: {
+            cancel: function () {
+              return true;
+            },
+            simpan: {
+              text: "Update Target Paket",
+              btnClass: "btn-blue",
+              action: function () {
+                 ajax_submit_t1("#form_utama", function (e) {
+                    e["error"] == true ? frown_alert(e["error_msg"]) : smile_alert(e["error_msg"]);
+                    if (e["error"] != true) {
+                       get_deposit_paket(20);
+                    }
+                  });
+              },
+            },
+          },
+        });
+      } else {
+        frown_alert(e["error_msg"]);
+      }
+    },
+    [ {id:id}]
+  );
+}
+
+function formUpdateTargetPaket(id, JSONData, JSONValue) {
+  var json = JSON.parse(JSONData);
+  var html = `<form action="${baseUrl}Deposit_paket/update_target_paket" id="form_utama" class="formName">
+                  <div class="row px-0 mx-0">
+                     <div class="col-12">
+                        <div class="row">
+                           <input type="hidden" name="id" id="id" value="${id}">
+                           <div class="col-12">
+                              <div class="form-group">
+                                 <label>Target Paket</label>
+                                 <select id="target_paket" name="target_paket" class="form-control form-control-sm" title="Target Paket">
+                                  <option value="0">Pilih Target Paket</option>`;
+                        for ( x in  json ) {
+                           html += `<option value="${json[x]['id']}" ${JSONValue == json[x]['id'] ? 'selected' : ''} >${json[x]['paket_name']}</option>`;
+                        }
+                        html += `</select>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </form>`;
+  return html;
+
+}
 
 function refund_tabungan_paket(id){
   ajax_x_t2(
@@ -437,6 +508,15 @@ function start_deposit_paket() {
 
 function formaddupdate_transaksi_deposit_paket(JSONData) {
   var json = JSON.parse(JSONData);
+
+  var list_paket= `<option value="0"> Pilih Target Paket</option>`;
+  for (x in json.list_paket) {
+      list_paket += `<option value="${json.list_paket[x]["id"]}" >${json.list_paket[x]["paket_name"]}</option>`;
+   }
+  var list_jamaah = `<option value="0"> Pilih Jamaah </option>`;
+  for (x in json.list_member) {
+    list_jamaah += `<option value="${json.list_member[x]["id"]}" >${json.list_member[x]["fullname"]} (${json.list_member[x]["nomor_identitas"]})</option>`;
+  }
   var html = `<form action="${baseUrl}Deposit_paket/proses_addupdate_deposit_paket"
                      id="form_utama" class="formName ">
                   <div class="row px-0 mx-0">
@@ -452,13 +532,15 @@ function formaddupdate_transaksi_deposit_paket(JSONData) {
                               <div class="form-group">
                                  <label>Nama Jamaah</label>
                                  <select class="form-control form-control-sm" name="jamaah_id" id="jamaah_id" onChange="getInfoAgen()">
-                                    <option value="0"> Pilih Jamaah </option>`;
-                           for (x in json.list_member) {
-                              html += `<option value="${json.list_member[x]["id"]}" >
-                                          ${json.list_member[x]["fullname"]} (${json.list_member[x]["nomor_identitas"]})
-                                       </option>`;
-                           }
-                        html += `</select>
+                                    ${list_jamaah}</select>
+                              </div>
+                           </div>
+                           <div class="col-12">
+                              <div class="form-group">
+                                 <label>Target Paket</label>
+                                 <select class="form-control form-control-sm" name="target_paket" id="target_paket">
+                                  ${list_paket}
+                                 </select>
                               </div>
                            </div>
                            <div class="col-12">

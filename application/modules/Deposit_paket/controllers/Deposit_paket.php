@@ -94,12 +94,97 @@ class Deposit_paket extends CI_Controller
       echo json_encode($return);
    }
 
+   function get_info_update_target_paket() {
+      $return    = array();
+      $error       = 0;
+      $error_msg = '';
+      $this->form_validation->set_rules('id', '<b>Pool ID<b>', 'trim|required|xss_clean|min_length[1]|callback__ck_pool_id');
+      /*
+        Validation process
+      */
+      if ($this->form_validation->run()) {
+         # list target paket
+         $list_paket = $this->model_deposit_paket->get_list_paket();
+         # get value
+         $value = $this->model_deposit_paket->get_value_tabungan( $this->input->post('id') );
+         # filter
+         if ($error != 0) {
+            $return = array(
+               'error'   => true,
+               'error_msg' => 'Data info target paket tidak ditemukan.',
+               $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+            );
+         } else {
+            $return = array(
+               'error'   => false,
+               'error_msg' => 'Data info target paket berhasil ditemukan.',
+               'data' => $list_paket,
+               'value' => $value, 
+               $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+            );
+         }
+      } else {
+         if (validation_errors()) {
+            // define return error
+            $return = array(
+               'error'         => true,
+               'error_msg'    => validation_errors(),
+               $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+            );
+         }
+      }
+      echo json_encode($return);
+   }
+
+   function update_target_paket() {
+      $return    = array();
+      $error       = 0;
+      $error_msg = '';
+      $this->form_validation->set_rules('id', '<b>Pool ID<b>', 'trim|required|xss_clean|min_length[1]|callback__ck_pool_id');
+      $this->form_validation->set_rules('target_paket', '<b>Target Paket ID</b>', 'trim|required|xss_clean|min_length[1]|callback__ck_target_paket_id');
+      /*
+        Validation process
+      */
+      if ($this->form_validation->run()) {
+
+         $id = $this->input->post('id');
+         $target_paket = $this->input->post('target_paket');
+         // process update target paket
+         if( ! $this->model_deposit_paket_cud->update_target_paket($id, $target_paket) ) {
+            $return = array(
+               'error'   => true,
+               'error_msg' => 'Data info target paket tidak ditemukan.',
+               $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+            );
+         }else{
+            $return = array(
+               'error'   => false,
+               'error_msg' => 'Data info target paket berhasil ditemukan.',
+               $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+            );
+         }
+      } else {
+         if (validation_errors()) {
+            // define return error
+            $return = array(
+               'error'         => true,
+               'error_msg'    => validation_errors(),
+               $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+            );
+         }
+      }
+      echo json_encode($return);
+   }
+
    function get_info_deposit_paket(){
       $error = 0;
       # generated invoice
       $nomor_transaksi = $this->random_code_ops->generated_nomor_transaksi_deposit_saldo();
       # get list member
       $list_member = $this->model_deposit_paket->get_list_member();
+      # list target paket
+      $list_paket = $this->model_deposit_paket->get_list_paket();
+      // filter error
       if ($error != 0) {
          $return = array(
             'error'   => true,
@@ -112,7 +197,8 @@ class Deposit_paket extends CI_Controller
             'error_msg' => 'Data info deposit paket berhasil ditemukan.',
             'data' => array(
                'nomor_transaksi' => $nomor_transaksi,
-               'list_member' => $list_member
+               'list_member' => $list_member, 
+               'list_paket' => $list_paket
             ),
             $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
          );
@@ -174,6 +260,19 @@ class Deposit_paket extends CI_Controller
       }
    }
 
+   function _ck_target_paket_id( $value ) {
+      if($value != 0 ) {
+         if( $this->model_deposit_paket->check_target_paket_id( $value ) ) {
+            return TRUE;
+         }else{
+             $this->form_validation->set_message('_ck_target_paket_id', 'Check Target Paket ID Tidak Ditemukan.');
+            return FALSE;
+         }
+      }else{
+         return TRUE;
+      }
+   }
+
    function proses_addupdate_deposit_paket(){
       $return = array();
       $error = 0;
@@ -182,6 +281,7 @@ class Deposit_paket extends CI_Controller
       $this->form_validation->set_rules('jamaah_id', '<b>Jamaah ID<b>', 'trim|required|xss_clean|min_length[1]|callback__ck_jamaah_id');
       $this->form_validation->set_rules('biaya_deposit', '<b>Biaya Deposit<b>', 'trim|required|xss_clean|min_length[1]|callback__ck_currency_not_null');
       $this->form_validation->set_rules('info', '<b>Info Deposit<b>', 'trim|xss_clean|min_length[1]');
+      $this->form_validation->set_rules('target_paket', '<b>Target Paket ID<b>', 'trim|xss_clean|min_length[1]|callback__ck_target_paket_id');
       $this->form_validation->set_rules('sumber_dana', '<b>Sumber Dana<b>', 'trim|required|xss_clean|min_length[1]|in_list[cash,deposit]|callback__ck_saldo_deposit_paket');
       if( $this->input->post('fee_agen') ) {
          foreach ($this->input->post('fee_agen') as $key => $value) {
@@ -233,6 +333,9 @@ class Deposit_paket extends CI_Controller
             $data_pool = array();
             $data_pool['company_id'] = $this->company_id;
             $data_pool['active'] = 'active';
+            if( $this->input->post('target_paket') != 0 ) {
+               $data_pool['target_paket_id'] = $this->input->post('target_paket');
+            }
             $data_pool['input_date'] = date('Y-m-d H:i:s');
             $data_pool['last_update'] = date('Y-m-d H:i:s');
             $data_pool['jamaah_id'] = $this->input->post('jamaah_id');
@@ -251,6 +354,7 @@ class Deposit_paket extends CI_Controller
             } else {
               $data_deposit_transaction[0]['approver'] = $this->session->userdata($this->config->item('apps_name'))['fullname'];
             }
+
             $data_deposit_transaction[0]['info'] = $this->input->post('info');
             $data_deposit_transaction[0]['input_date'] = date('Y-m-d H:i:s');
             $data_deposit_transaction[0]['last_update'] = date('Y-m-d H:i:s');

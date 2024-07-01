@@ -21,6 +21,37 @@ class Model_deposit_paket extends CI_Model
       $this->company_id = $this->session->userdata($this->config->item('apps_name'))['company_id'];
    }
 
+   function check_target_paket_id( $id ){
+      $this->db->select('id')
+               ->from('paket')
+               ->where('id', $id)
+               ->where('departure_date >= NOW()')
+               ->where('company_id', $this->company_id);
+      $q = $this->db->get();
+      if( $q->num_rows() > 0 ){
+         return true;
+      }else{
+         return false;
+      }
+   }
+
+   // get paket list
+   function get_list_paket() {
+      $this->db->select('id, paket_name')
+               ->from('paket')
+               ->where('departure_date >= NOW()')
+               ->where('company_id', $this->company_id);
+      $q = $this->db->get();
+      $list = array();
+      if( $q->num_rows() > 0 ) {
+         foreach ($q->result() as $rows) {
+            $list[] = array('id' => $rows->id, 
+                            'paket_name' => $rows->paket_name);
+         }
+      }
+      return $list;
+   }
+
    function check_jamaah_id_not_loan_by_pool_id( $pool_id ) {  
       // jamaah id
       $jamaah_id = $this->get_jamaah_id_by_pool_id( $pool_id );
@@ -107,8 +138,26 @@ class Model_deposit_paket extends CI_Model
       return $r->num_rows();
    }
 
+   function get_target_paket($id) {
+      $this->db->select('paket_name')
+               ->from('paket')
+               ->where('company_id', $this->company_id)
+               ->where('id', $id);
+      $q = $this->db->get();
+      return $q->row()->paket_name;
+   }
+
+   function get_value_tabungan($id) {
+      $this->db->select('target_paket_id')
+               ->from('pool')
+               ->where('id', $id)
+               ->where('company_id', $this->company_id);
+      $q = $this->db->get();
+      return $q->row()->target_paket_id;       
+   }
+
    function get_index_deposit_paket($limit = 6, $start = 0, $filterTransaksi, $search = '' ){
-      $this->db->select('p.id, p.active, per.fullname, per.identity_number, per.birth_place, per.birth_date, p.jamaah_id,
+      $this->db->select('p.id, p.active, per.fullname, per.identity_number, per.birth_place, per.birth_date, p.jamaah_id, p.target_paket_id,
                         (SELECT CONCAT_WS(\'$\', person.fullname, l.nama )
                            FROM agen AS a
                            INNER JOIN personal AS person ON a.personal_id=person.personal_id
@@ -153,6 +202,7 @@ class Model_deposit_paket extends CI_Model
             # list
             $list[] = array(
                'id' => $row->id,
+               'target_paket' => ($row->target_paket_id == 0 ? '<b style="color:red;">Target Paket Tidak Ditemukan</b>' : $this->get_target_paket($row->target_paket_id)),
                'fullname' => $row->fullname,
                'identity_number' => $row->identity_number,
                'birth_place' => $row->birth_place,
