@@ -218,6 +218,10 @@ class Model_trans_paket_cud extends CI_Model
       # paket transaction history
       $data['paket_transaction_history']['paket_transaction_id'] = $paket_transaction_id;
       $this->db->insert('paket_transaction_history', $data['paket_transaction_history']);
+      # jurnal 
+      if( isset( $data['jurnal'] ) ) {
+         $this->db->insert('jurnal', $data['jurnal']);
+      }
       #  update pool
       if (isset($data['pool'])) {
          $data['pool']['paket_transaction_id'] = $paket_transaction_id;

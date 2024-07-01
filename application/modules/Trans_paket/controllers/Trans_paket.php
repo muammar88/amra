@@ -1622,16 +1622,28 @@ class Trans_paket extends CI_Controller
 			if ( $sisa <= 0 ) {
 				$paid = $data['paket_transaction']['total_paket_price'];
 				if ( $sisa < 0 ) {
+					$nomor_transaksis = $this->random_code_ops->random_invoice_deposit_transaction();
 					# proses insert sisa deposit ke deposit transaction
-					$data['deposit_transaction'][] = array('nomor_transaction' => $this->random_code_ops->random_invoice_deposit_transaction(),
-																		'personal_id' => $personal_id,
-																		'company_id' => $company_id,
-																		'debet' => abs($sisa),
-																		'approver' => $level_akun == 'administrator' ? "Administrator" : $this->session->userdata($this->config->item('apps_name'))['fullname'],
-																		'transaction_requirement' => 'deposit',
-																		'info' => 'Sisa pembayaran paket dari deposit paket',
-																		'input_date' => date('Y-m-d H:i:s'),
-																		'last_update' => date('Y-m-d H:i:s'));
+					$data['deposit_transaction'][] = array('nomor_transaction' =>$nomor_transaksis,
+															'personal_id' => $personal_id,
+															'company_id' => $company_id,
+															'debet' => abs($sisa),
+															'approver' => $level_akun == 'administrator' ? "Administrator" : $this->session->userdata($this->config->item('apps_name'))['fullname'],
+															'transaction_requirement' => 'deposit',
+															'info' => 'Sisa pembayaran paket dari deposit paket',
+															'input_date' => date('Y-m-d H:i:s'),
+															'last_update' => date('Y-m-d H:i:s'));
+					// proses jurnal 
+					 $data['jurnal'] = array('company_id' => $company_id,
+	                                         'source' => 'depositsaldo:notransaction:'.$nomor_transaksis,
+	                                         'ref' => 'Deposit Saldo Dengan No Transaction :'.$nomor_transaksis,
+	                                         'ket' => 'Deposit Saldo Dengan No Transaction :'.$nomor_transaksis,
+	                                         'akun_debet' => '24000',
+	                                         'akun_kredit' => '23000',
+	                                         'saldo' => abs($sisa),
+	                                         'periode_id' => 0,
+	                                         'input_date' => date('Y-m-d H:i:s'),
+	                                         'last_update'  => date('Y-m-d H:i:s'));
 				}
 				# pembayaran deposit transaction
 				$data['deposit_transaction'][] = array('nomor_transaction' => $this->random_code_ops->random_invoice_deposit_transaction(),
