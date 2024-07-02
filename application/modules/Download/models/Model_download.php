@@ -180,10 +180,27 @@ class Model_download extends CI_Model
       return  $html;
    }
 
+   function get_target_paket_id($target_paket_id){
+      if( $target_paket_id != 0 ) {
+         $this->db->select('paket_name')
+                  ->from('paket')
+                  ->where('id', $target_paket_id)
+                  ->where('company_id', $this->company_id);
+         $q = $this->db->get();
+         $paket_name = '';
+         if( $q->num_rows() > 0 ) {
+            $paket_name = $q->row()->paket_name;
+         }         
+         return $paket_name;
+      }else{
+         return 'Target Paket Tidak Ditemukan.';
+      }
+   }
+
    function model_download_manifest_tabungan_umrah($sesi)
    {
       $this->db->select('po.id, p.identity_number, p.fullname, p.gender, p.birth_place, p.birth_date, j.title, 
-                        j.father_name, p.address, 
+                        j.father_name, p.address, po.target_paket_id,
                         v.name AS kelurahan, d.name AS kecamatan, r.name AS kabupaten_kota, prov.name AS provinsi,
                         pkjr.nama_pekerjaan, j.pasport_name,
                         j.kewarganegaraan, j.jenis_identitas, j.status_nikah, 
@@ -217,6 +234,7 @@ class Model_download extends CI_Model
                   <th>NO</th>
                   <th>TITLE</th>
                   <th>NAMA</th>
+                  <th>TARGET PAKET</th>
                   <th>NAMA AYAH</th>
                   <th>JENIS IDENTITAS</th>
                   <th>NO IDENTITAS</th>
@@ -262,11 +280,13 @@ class Model_download extends CI_Model
                $kat_umur = 'Dewasa';
             }
             $total = $this->total_deposit_tabungan_umrah($rows->id) ;
+            $target_paket = $this->get_target_paket_id($rows->target_paket_id) ;
             //ketegori usia
             $html .= '<tr>
                         <td>'.$n.'</td>
                         <td>'.$rows->title.'</td>
                         <td>'.$rows->fullname.'</td>
+                        <td>'.$target_paket.'</td>
                         <td>'.$rows->father_name.'</td>
                         <td>'.$rows->jenis_identitas.'</td>
                         <td>'.$rows->identity_number.'</td>
