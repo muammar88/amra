@@ -35,6 +35,40 @@ class Model_deposit_paket extends CI_Model
       }
    }
 
+   function get_info_deposit_paket($pool_id) {
+      $this->db->select('jamaah_id, target_paket_id')
+               ->from('pool')
+               ->where('company_id', $this->company_id)
+               ->where('id', $pool_id);
+      $q = $this->db->get();
+      $arr = array();
+      if( $q->num_rows() > 0 ) {
+         $row = $q->row();
+         $arr['jamaah_id'] = $row->jamaah_id;
+         $arr['target_paket_id'] = $row->target_paket_id;
+      }
+      return $arr;
+   }
+
+   function getTandaTanganName($user_id)
+   {
+      $this->db->select('p.fullname, g.nama_group')
+         ->from('base_users AS u')
+         ->join('base_groups AS g', 'u.group_id=g.group_id', 'inner')
+         ->join('personal AS p', 'u.personal_id=p.personal_id', 'inner')
+         ->where('u.user_id', $user_id)
+         ->where('p.company_id', $this->company_id);
+      $q = $this->db->get();
+      $array = array();
+      if ($q->num_rows() > 0) {
+         foreach ($q->result() as $row) {
+            $array['jabatan_petugas'] = $row->nama_group;
+            $array['nama_petugas'] = $row->fullname;
+         }
+      }
+      return $array;
+   }
+
    // get paket list
    function get_list_paket() {
       $this->db->select('id, paket_name')

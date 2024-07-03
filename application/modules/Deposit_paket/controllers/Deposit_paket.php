@@ -1380,7 +1380,54 @@ class Deposit_paket extends CI_Controller
          }
       }
       echo json_encode($return);
+   }
 
+   function cetak_data_jamaah_tabungan_umrah() {
+      $return = array();
+      $error = 0;
+      $error_msg = '';
+      $this->form_validation->set_rules('id', '<b>Tabungan Umroh ID<b>', 'trim|required|xss_clean|min_length[1]|callback__ck_pool_id');
+      /*
+      Validation process
+      */
+      if ($this->form_validation->run()) {
+         $id = $this->input->post('id');
+         // filter tanda tangan
+         if ($this->input->post('tanda_tangan') == 0) {
+            $nama_petugas = 'Administrator ' . $this->session->userdata($this->config->item('apps_name'))['company_name'];
+            $jabatan_petugas = 'Administrator';
+         } else {
+            $getNameJabatan = $this->model_deposit_paket->getTandaTanganName($this->input->post('tanda_tangan'));
+            $nama_petugas = $getNameJabatan['nama_petugas'];
+            $jabatan_petugas = $getNameJabatan['jabatan_petugas'];
+         }
+         // get info tabungan umroh
+         // $info_tabungan = $this->model_deposit_paket->get_info_deposit_paket($id);
+         // create session priting here
+         $this->session->set_userdata(array('cetak_invoice' => array(
+            'type' => 'cetak_data_jamaah_tabungan_umroh',
+            'pool_id' => $id, 
+            'nama_petugas' => $nama_petugas,
+            'jabatan_petugas' => $jabatan_petugas
+         )));
+         // feedBack
+         $return = array(
+            'error'  => false,
+            'error_msg' => 'Success.',
+            $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+         );
+
+      } else {
+         if (validation_errors()) {
+            // define return error
+            $return = array(
+               'error'         => true,
+               'error_msg'    => validation_errors(),
+               $this->security->get_csrf_token_name() => $this->security->get_csrf_hash()
+            );
+         }
+      }
+      echo json_encode($return);
    }
 
 }

@@ -1215,6 +1215,109 @@ class Model_kwitansi extends CI_Model
       return $array;
    }
 
+
+   function get_info_data_jamaah_tabungan_umroh($pool_id )
+   {
+      $bloodType = array(1 => 'O', 2 => 'A', 3 => 'B', 4 => 'AB');
+      $this->db->select('pkt.paket_name, pkt.departure_date,
+                         p.fullname, p.birth_place, p.birth_date, p.gender, p.photo,
+                         j.blood_type, j.passport_number, j.passport_dateissue, j.passport_place,
+                         j.validity_period, p.address, j.pos_code, j.telephone, p.nomor_whatsapp, p.email, j.hajj_experience, 
+                         j.hajj_year, j.umrah_experience, j.umrah_year, j.departing_from, j.desease, j.last_education, 
+                         mp.nama_pekerjaan, j.profession_instantion_name, j.profession_instantion_address, 
+                         j.status_nikah, j.tanggal_nikah, j.father_name,
+                         j.nama_keluarga, j.alamat_keluarga, j.telephone_keluarga')
+               ->from('pool AS po')
+               ->join('jamaah AS j', 'po.jamaah_id=j.id', 'inner')
+               ->join('mst_pekerjaan AS mp', 'j.pekerjaan_id=mp.id', 'left')
+               ->join('personal AS p', 'j.personal_id=p.personal_id', 'inner')
+               ->join('paket AS pkt', 'po.target_paket_id=pkt.id', 'left')
+               ->where('po.company_id', $this->company_id)
+               ->where('po.id', $pool_id);
+      $q = $this->db->get();
+      $feedBack = array();
+      if ($q->num_rows() > 0) {
+         foreach ($q->result() as $rows) {
+
+            $feedBack['paketTransactionID'] = '-';
+            $feedBack['jamaahID'] = '-';
+            $feedBack['namaPaket'] = $this->_isEmpty($rows->paket_name);
+            $feedBack['noRegister'] = '-';
+            $feedBack['namaJamaah'] = $this->_isEmpty($rows->fullname);
+            $feedBack['namaAyahKandung'] = $this->_isEmpty($rows->father_name);
+            $feedBack['tempatLahir'] = $this->_isEmpty($rows->birth_place);
+            $feedBack['tanggalLahir'] = $this->_isEmpty($rows->birth_date);
+            $feedBack['jenisKelamin'] = $rows->gender + 1;
+            $feedBack['umur'] = $this->_isEmpty($rows->birth_date);
+            $feedBack['golonganDarah'] = $bloodType[$this->_isEmpty($rows->blood_type)];
+            $feedBack['nomorPassport'] = $this->_isEmpty($rows->passport_number);
+            $feedBack['tanggalDikeluarkan'] = $this->_isEmpty($rows->passport_dateissue);
+            $feedBack['tempatDikeluarkan'] = $this->_isEmpty($rows->passport_place);
+            $feedBack['masaBerlaku'] = $this->_isEmpty($rows->validity_period);
+            $feedBack['alamatTempatTinggal'] = $this->_isEmpty($rows->address);
+            $feedBack['kodePos'] = $this->_isNool($rows->pos_code);
+            $feedBack['telephone'] = $this->_isEmpty($rows->telephone);
+            $feedBack['hp'] = $this->_isEmpty($rows->nomor_whatsapp);
+            $feedBack['email'] = $this->_isEmpty($rows->email);
+
+            $jumlahHaji = 0;
+            $jumlahUmrah = 0;
+            if ($rows->hajj_experience == 0) {
+               $experience = 'A';
+            } else {
+               $experience = 'B';
+               if ($rows->hajj_experience > 1) {
+                  $jumlahHaji = $rows->hajj_experience - 1;
+               } else {
+                  $jumlahHaji = '-';
+               }
+            }
+
+            if ($rows->umrah_experience == 0) {
+               $experienceUmrah = 'A';
+            } else {
+               $experienceUmrah = 'B';
+               if ($rows->umrah_experience > 1) {
+                  $jumlahUmrah = $rows->umrah_experience - 1;
+               } else {
+                  $jumlahUmrah = '-';
+               }
+            }
+
+            $feedBack['pengalamanHaji'] = $this->_isEmpty($experience);
+            $feedBack['jumlahHaji'] = $this->_isEmpty($jumlahHaji);
+            $feedBack['tahunHaji'] = $this->_isEmpty($rows->hajj_year);
+            $feedBack['pengalamanUmrah'] = $this->_isEmpty($experienceUmrah);
+            $feedBack['jumlahUmrah'] = $this->_isEmpty($jumlahUmrah);
+            $feedBack['tahunUmrah'] = $this->_isEmpty($rows->umrah_year);
+            $feedBack['tanggalKeberangkatan'] = $this->_isEmpty($rows->departure_date);
+            $feedBack['berangkatDari'] = $this->_isEmpty($rows->departing_from);
+            $feedBack['penyakit'] = $this->_isEmpty($rows->desease);
+            $pendidikanTerakhir = 1;
+            if ($rows->last_education > 2) {
+               $pendidikanTerakhir = $rows->last_education - 1;
+            }
+            $feedBack['pendidikanTerakhir'] = $pendidikanTerakhir;
+            $feedBack['pekerjaan'] = $this->_isEmpty($rows->nama_pekerjaan);
+            $feedBack['namaInstansiPekerjaan'] = $this->_isEmpty($rows->profession_instantion_name);
+            $feedBack['alamatInstansiPekerjaan'] = $this->_isEmpty($rows->profession_instantion_address);
+            $feedBack['statusNikah'] = $rows->status_nikah == 'belum nikah' ? '1' : '2';
+            $feedBack['tanggalNikah'] = $this->_isNoolTglNikah($rows->tanggal_nikah);
+            $feedBack['namaKeluarga'] = $this->_isNoolTglNikah($rows->nama_keluarga);
+            $feedBack['alamatKeluarga'] = $this->_isNoolTglNikah($rows->alamat_keluarga);
+            $feedBack['telephoneKeluarga'] = $this->_isNoolTglNikah($rows->telephone_keluarga);
+            $feedBack['photo'] = $rows->photo != '' ? $rows->photo : 'default.png';
+            $feedBack['keluargaBersama'] = $this->_isNoolTglNikah($rows->photo);
+
+
+            //print_r($feedBack);
+
+         }
+      }
+               
+      return $feedBack;
+   }
+
    function getInfoDataJamaah($jamaahID, $paket_transaction_id)
    {
       $bloodType = array(1 => 'O', 2 => 'A', 3 => 'B', 4 => 'AB');
@@ -1222,11 +1325,9 @@ class Model_kwitansi extends CI_Model
                          pt.no_register,
                          p.fullname, p.birth_place, p.birth_date, p.gender, p.photo,
                          j.blood_type, j.passport_number, j.passport_dateissue, j.passport_place,
-                         j.validity_period, p.address, j.pos_code, j.telephone, p.nomor_whatsapp, p.email, j.hajj_experience, j.hajj_year, j.umrah_experience,
-                         j.umrah_year, j.departing_from, j.desease, j.last_education, 
-
+                         j.validity_period, p.address, j.pos_code, j.telephone, p.nomor_whatsapp, p.email, j.hajj_experience, 
+                         j.hajj_year, j.umrah_experience, j.umrah_year, j.departing_from, j.desease, j.last_education, 
                          mp.nama_pekerjaan, j.profession_instantion_name, j.profession_instantion_address, 
-
                          j.status_nikah, j.tanggal_nikah, j.father_name,
                          j.nama_keluarga, j.alamat_keluarga, j.telephone_keluarga')
          ->from('paket_transaction AS pt')

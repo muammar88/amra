@@ -114,12 +114,24 @@ class Kwitansi extends CI_Controller
          $this->_cetak_riwayat_transaksi_peminjaman();
       }elseif( $sesi['type'] == 'kwitansi_detail_item_paket_la'){
          $this->_cetak_kwitansi_item_paket_la();
+      }elseif( $sesi['type'] == 'cetak_data_jamaah_tabungan_umroh'){
+         $this->_cetak_data_jamaah_tabungan_umroh();
       }
+   }
+
+   function _cetak_data_jamaah_tabungan_umroh() {
+      $sesi = $this->session->userdata('cetak_invoice');
+      $this->tempVar = $this->model_kwitansi->get_info_data_jamaah_tabungan_umroh($sesi['pool_id']);
+      $this->tempVar['jabatan_petugas'] = $sesi['jabatan_petugas'];
+      $this->tempVar['nama_petugas'] = $sesi['nama_petugas'];
+      $html  = $this->Header();
+      $html .= $this->TitleMiddle('FORMULIR PENDAFTARAN UMRAH');
+      $html .= $this->_ContentDataJamaah();
+      $this->Templating($html);
    }
 
 
    // cetak kwitansi item paket la
-
    function _cetak_kwitansi_item_paket_la() {
       $sesi = $this->session->userdata('cetak_invoice');
       $this->tempVar = $this->model_kwitansi->getItemPaketLA( $sesi );
@@ -3189,7 +3201,7 @@ class Kwitansi extends CI_Controller
                            <td colspan="2">
                               <div class="row pt-5">
                                  <div class="col-4">
-                                    <div class="float-left" style="border:1px solid black;display:inline-block;width:113px;height:151px;padding-left: 0px !important;margin-right:20px;">
+                                    <div class="float-left" style="display:inline-block;width:113px;height:151px;padding-left: 0px !important;margin-right:20px;">
                                     <img src="' . base_url() . '/image/personal/' . $this->tempVar['photo'] . '" style="width:113px;height:151px;float:left">
                                     </div>
                                  </div>

@@ -195,7 +195,11 @@ function ListRiwayatDepositPaket(JSONData) {
                   <td>`;
 
         if (json.active == "active") {
-          html += `<button type="button" class="btn btn-default btn-action" title="Update Target Paket"
+          html += `<button type="button" class="btn btn-default btn-action" title="Cetak Data Jamaah" 
+                      onclick="cetak_data_jamaah_tabungan_umrah('${json.id}')">
+                      <i class="fas fa-print" style="font-size: 11px;"></i>
+                   </button>
+                   <button type="button" class="btn btn-default btn-action" title="Update Target Paket"
                       onclick="update_target_paket('${json.id}')" style="margin:.15rem .1rem  !important">
                       <i class="fas fa-box-open" style="font-size: 11px;"></i>
                    </button>
@@ -221,6 +225,107 @@ function ListRiwayatDepositPaket(JSONData) {
           html += `</td>
                </tr>`;
   return html;
+}
+
+function cetak_data_jamaah_tabungan_umrah(id) {
+   ajax_x_t2(
+      baseUrl + "Trans_paket/infoTandaTangan", function(e) {
+         var form = `<form action="${baseUrl }Deposit_paket/cetak_data_jamaah_tabungan_umrah" id="form_utama" class="formName ">
+                        <input type="hidden" name="id" value="${id}">
+                        <div class="row px-0 mx-0">
+                           <div class="col-12" >
+                              <div class="form-group">
+                                 <label>Tanda tangan petugas</label>
+                                 <select class="form-control form-control-sm" name="tanda_tangan" id="tanda_tangan" >
+                                    <option value="pilih_petugas">Pilih petugas yang tanda tangan</option>`;
+                              for(  x in e['tanda_tangan'] ){
+                                 form += `<option value="${e['tanda_tangan'][x]['id']}">${e['tanda_tangan'][x]['fullname']} (${e['tanda_tangan'][x]['jabatan']})</option>`;
+                              }
+                        form += `</select>
+                              </div>
+                           </div>
+                        </div>
+                     </form>`;
+         $.confirm({
+            title: 'Form Tanda Tangan',
+            theme: 'material',
+            columnClass: 'col-4',
+            content: form,
+            closeIcon: false,
+            buttons: {
+               cancel: function () {
+                    return true;
+               },
+               formSubmit: {
+                  text: 'Simpan',
+                  btnClass: 'btn-blue',
+                  action: function () {
+
+                     var tanda_tangan =  $('#tanda_tangan :selected').val();
+                     var error = 0;
+                     var error_msg = '';
+
+                     if( tanda_tangan == 'pilih_petugas' ) {
+                        error = 1;
+                        error_msg += 'Untuk Melanjutkan, Anda wajib memilih salah satu petugas yang menandatangan<br>'
+                     }
+
+                     if( error == 1 ) {
+                        frown_alert(error_msg);
+                        return false;
+                     }else{
+                        ajax_submit_t1("#form_utama", function(e) {
+                           if ( e['error'] == true ) {
+                              return false;
+                           } else {
+                              get_deposit_paket(20);
+                              window.open(baseUrl + "Kwitansi/", "_blank");
+                           }
+                        });
+                     }
+                  }
+               }
+            }
+         });
+      },[]
+   );
+
+
+  //  ajax_x_t2(
+  //   baseUrl + "Deposit_paket/cetak_data_jamaah_tabungan_umrah",
+  //   function (e) {
+  //     if (e["error"] == false) {
+  //       // $.confirm({
+  //       //   columnClass: "col-4",
+  //       //   title: "Update Target Paket",
+  //       //   theme: "material",
+  //       //   content: formUpdateTargetPaket( id, JSON.stringify(e.data), e.value ),
+  //       //   closeIcon: false,
+  //       //   buttons: {
+  //       //     cancel: function () {
+  //       //       return true;
+  //       //     },
+  //       //     simpan: {
+  //       //       text: "Update Target Paket",
+  //       //       btnClass: "btn-blue",
+  //       //       action: function () {
+  //       //          ajax_submit_t1("#form_utama", function (e) {
+  //       //             e["error"] == true ? frown_alert(e["error_msg"]) : smile_alert(e["error_msg"]);
+  //       //             if (e["error"] != true) {
+  //       //                get_deposit_paket(20);
+  //       //             }
+  //       //           });
+  //       //       },
+  //       //     },
+  //       //   },
+  //       // });
+  //     } else {
+  //       frown_alert(e["error_msg"]);
+  //     }
+  //   },
+  //   [ {id:id}]
+  // );
+
 }
 
 function update_target_paket(id) {
