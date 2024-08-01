@@ -1357,7 +1357,7 @@ class Model_trans_paket_cud extends CI_Model
       $data[0]['akun_kredit'] = $param['akun']['pendapatan_paket'];
       $data[0]['source'] = 'paketid:' . $paket_id;
       $data[0]['saldo'] = $param['saldo'];
-      $data[0]['periode_id'] = $param['periode'];
+      $data[0]['periode_id'] = 0;
       $data[0]['input_date']    = date('Y-m-d');
       $data[0]['last_update'] = date('Y-m-d');
       // hapus hutang tabungan
@@ -1367,7 +1367,7 @@ class Model_trans_paket_cud extends CI_Model
       $data[1]['akun_kredit'] = '11010';
       $data[1]['source'] = 'piutangpaketid:' . $paket_id;
       $data[1]['saldo'] = $param['info_paket']['total_harga_paket'];
-      $data[1]['periode_id'] = $param['periode'];
+      $data[1]['periode_id'] = 0;
       $data[1]['input_date']    = date('Y-m-d');
       $data[1]['last_update'] = date('Y-m-d');
 

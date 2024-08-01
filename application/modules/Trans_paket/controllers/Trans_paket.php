@@ -4852,8 +4852,8 @@ class Trans_paket extends CI_Controller
 					$param = array(
 						'akun' => $this->model_trans_paket->get_akun_number(array('kas', 'pendapatan_paket')),
 						'info_paket' => $this->model_trans_paket->get_simple_info_paket($paket_id),
-						'saldo' => $this->model_trans_paket->get_data_k_t($paket_id)['keuntungan'],
-						'periode' => $this->model_trans_paket->get_last_periode()
+						'saldo' => $this->model_trans_paket->get_data_k_t($paket_id)['keuntungan']
+						// 'periode' => $this->model_trans_paket->get_last_periode()
 					);
 					// close proses
 					if (!$this->model_trans_paket_cud->close_paket($paket_id, $param)) {
