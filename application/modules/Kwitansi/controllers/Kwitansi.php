@@ -2433,26 +2433,36 @@ class Kwitansi extends CI_Controller
                         <tbody>';
             $no = 1;
             $total = 0;
-            foreach ($this->tempVar['facilities'] as $key => $value) {
-               if($value['day'] != 0 ) {
-                  $local_total = $value['day'] * $value['pax'] * $value['price'] ;
-               }else{
-                  $local_total = $value['pax'] * $value['price'] ;
+
+          
+            if( isset($this->tempVar['facilities']) &&  gettype($this->tempVar['facilities']) != 'string' &&  count($this->tempVar['facilities']) > 0 ) {
+
+               foreach ($this->tempVar['facilities'] as $key => $value) {
+                  if($value['day'] != 0 ) {
+                     $local_total = $value['day'] * $value['pax'] * $value['price'] ;
+                  }else{
+                     $local_total = $value['pax'] * $value['price'] ;
+                  }
+                  $html .= '<tr>
+                              <td>' . $value['description'] . '</td>
+                              <td>' . $value['check_in'] . '</td>
+                              <td>' . $value['check_out'] . '</td>
+                              <td>' . $value['day'] . '</td>
+                              <td>' . $value['pax'] . '</td>
+                              <td>' . $this->kurs . ' ' . number_format($value['price']) . '</td>
+                              <td class="text-right">
+                                 ' . $this->kurs . ' ' . number_format($local_total) . '
+                              </td>
+                           </tr>';
+                  $total = $total + $local_total;
+                  $no++;
                }
+            } else{
                $html .= '<tr>
-                           <td>' . $value['description'] . '</td>
-                           <td>' . $value['check_in'] . '</td>
-                           <td>' . $value['check_out'] . '</td>
-                           <td>' . $value['day'] . '</td>
-                           <td>' . $value['pax'] . '</td>
-                           <td>' . $this->kurs . ' ' . number_format($value['price']) . '</td>
-                           <td class="text-right">
-                              ' . $this->kurs . ' ' . number_format($local_total) . '
-                           </td>
+                           <td colspan="7"><center>Fasilitas Tidak Ditemukan</center></td>
                         </tr>';
-               $total = $total + $local_total;
-               $no++;
-            }
+            }  
+            
             $real_total = $total;
 
             $html .=   '</tbody>

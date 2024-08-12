@@ -164,8 +164,8 @@ class Model_kwitansi extends CI_Model
             $fasilitas = $this->getListFasilitas($rows->id);
 
             $list['register_number'] = $rows->register_number;
-            $list['invoice'] = $fasilitas['invoice'];
-            $list['facilities'] = $fasilitas['list'];
+            $list['invoice'] = isset($fasilitas['invoice']) ? $fasilitas['invoice'] : '' ;
+            $list['facilities'] = isset($fasilitas['list']) ? $fasilitas['list'] : '';
             $list['discount'] = $rows->discount;
             $list['total_price'] = $rows->total_price;
             $list['departure_date'] = $this->date_ops->change_date_t3($rows->departure_date);
@@ -1734,12 +1734,8 @@ class Model_kwitansi extends CI_Model
          foreach ($q->result() as $rows) {
             $sudah_bayar = $this->get_sudah_bayar_paket_la( $rows->paket_la_transaction_id, $invoice );
             $facilities = $this->getListFasilitas($rows->paket_la_transaction_id);
-            // echo "<br>=====<br>";
-            // print_r($facilities);
-            // echo "<br>=====<br>";
-
             $list['register_number'] = $rows->register_number;
-            $list['facilities'] = $facilities['list'];
+            $list['facilities'] = isset($facilities['list']) ? $facilities['list'] : '';
             $list['discount'] = $rows->discount;
             $list['total_price'] = $rows->total_price;
             $list['departure_date'] = $this->date_ops->change_date_t3($rows->departure_date);
