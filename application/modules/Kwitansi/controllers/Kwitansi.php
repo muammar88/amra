@@ -3183,10 +3183,13 @@ class Kwitansi extends CI_Controller
          $this->tempVar['masaBerlaku']
       ));
       $html .= $this->_RowContent('Alamat Tempat Tinggal', $this->_ValueRow($this->tempVar['alamatTempatTinggal']));
-      $html .= $this->_RowContent('Desa/Kelurahan', $this->_ValueRow('Lampeudaya '));
-      $html .= $this->_RowContent('Kecamatan', $this->_ValueRow('Darussalam '));
-      $html .= $this->_RowContent('Kabupaten Kota', $this->_ValueRow('Aceh Besar'));
-      $html .= $this->_RowContent('Provinsi', $this->_ValueRow2('Aceh', 'Kode Pos', $this->tempVar['kodePos'], '0'));
+      
+      $html .= $this->_RowContent('Desa/Kelurahan', $this->_ValueRow($this->tempVar['desa']));
+      $html .= $this->_RowContent('Kecamatan', $this->_ValueRow($this->tempVar['kecamatan']));
+      $html .= $this->_RowContent('Kabupaten Kota', $this->_ValueRow($this->tempVar['kabupaten_kota']));
+
+
+      $html .= $this->_RowContent('Provinsi', $this->_ValueRow2($this->tempVar['provinsi'], 'Kode Pos', $this->tempVar['kodePos'], '0'));
       $html .= $this->_RowContent('Telepon', $this->_ValueRow5($this->tempVar['telephone'], 'HP', $this->tempVar['hp']));
       $html .= $this->_RowContent('Email', $this->_ValueRow($this->tempVar['email']));
       $html .= $this->_RowContent('Pengalaman Haji', $this->_ValueRow6($this->tempVar['pengalamanHaji'], 'A. Belum Pernah B. Sudah ' . $this->tempVar['jumlahHaji'] . ' Kali', 'Tahun Terakhir', $this->tempVar['tahunHaji']));

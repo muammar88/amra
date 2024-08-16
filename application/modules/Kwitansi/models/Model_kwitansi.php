@@ -1226,12 +1226,18 @@ class Model_kwitansi extends CI_Model
                          j.hajj_year, j.umrah_experience, j.umrah_year, j.departing_from, j.desease, j.last_education, 
                          mp.nama_pekerjaan, j.profession_instantion_name, j.profession_instantion_address, 
                          j.status_nikah, j.tanggal_nikah, j.father_name,
-                         j.nama_keluarga, j.alamat_keluarga, j.telephone_keluarga')
+                         j.nama_keluarga, j.alamat_keluarga, j.telephone_keluarga, vil.name AS desa, dis.name AS kecamatan, reg.name AS kabupaten_kota, prov.name AS provinsi')
                ->from('pool AS po')
                ->join('jamaah AS j', 'po.jamaah_id=j.id', 'inner')
                ->join('mst_pekerjaan AS mp', 'j.pekerjaan_id=mp.id', 'left')
                ->join('personal AS p', 'j.personal_id=p.personal_id', 'inner')
                ->join('paket AS pkt', 'po.target_paket_id=pkt.id', 'left')
+               ->join('reg_villages AS vil', 'j.kelurahan_id=vil.id', 'left')
+               ->join('reg_districts AS dis', 'vil.district_id=dis.id', 'left')
+               ->join('reg_regencies AS reg', 'dis.regency_id=reg.id', 'left')
+               ->join('reg_provinces AS prov', 'reg.province_id=prov.id', 'left')
+
+               
                ->where('po.company_id', $this->company_id)
                ->where('po.id', $pool_id);
       $q = $this->db->get();
@@ -1259,6 +1265,11 @@ class Model_kwitansi extends CI_Model
             $feedBack['telephone'] = $this->_isEmpty($rows->telephone);
             $feedBack['hp'] = $this->_isEmpty($rows->nomor_whatsapp);
             $feedBack['email'] = $this->_isEmpty($rows->email);
+
+            $feedBack['desa'] = $this->_isEmpty($rows->desa);
+            $feedBack['kecamatan'] = $this->_isEmpty($rows->kecamatan);
+            $feedBack['kabupaten_kota'] = $this->_isEmpty($rows->kabupaten_kota);
+            $feedBack['provinsi'] = $this->_isEmpty($rows->provinsi);
 
             $jumlahHaji = 0;
             $jumlahUmrah = 0;
