@@ -525,7 +525,7 @@ class Model_trans_paket_la extends CI_Model
    //          'id' => $exp[0],
    //          'invoice' => $exp[1],
    //          'paid' => $exp[2],
-   //          'receiver' => $exp[3],
+   //          'receiver' => $exp[3]
    //          'deposit_name' => $exp[4],
    //          'deposit_hp_number' => $exp[5],
    //          'deposit_address' => $exp[6],
@@ -543,7 +543,11 @@ class Model_trans_paket_la extends CI_Model
 
    function get_data_history_trans_paket_la($id)
    {
-      $this->db->select('plt.id, plt.total_price')
+      $this->db->select('plt.id, 
+                        (SELECT SUM(paid) FROM paket_la_transaction_history
+                        WHERE company_id="' . $this->company_id . '" AND status="payment" AND paket_la_transaction_id=plt.id) AS wasPayment,
+                        (SELECT SUM(paid) FROM paket_la_transaction_history
+                        WHERE company_id="' . $this->company_id . '" AND status="refund" AND paket_la_transaction_id=plt.id) AS wasRefund,')
          ->from('paket_la_transaction_temp AS plt')
          ->where('plt.company_id', $this->company_id)
          ->where('plt.id', $id);
@@ -552,19 +556,22 @@ class Model_trans_paket_la extends CI_Model
       $total_price = 0;
       if ($q->num_rows() > 0) {
          foreach ($q->result() as $rows) {
-            $total_price = $rows->total_price;
+            $total_bayar = $rows->wasPayment - $rows->wasRefund;
          }
       }
+
+      $local_detail_fasilitas = $this->get_fasilitas_transaction($id);
+
       // riwayat pembayaran
       $riwayat = $this->history_paket_la($id);
-      $total_bayar = $riwayat['total_bayar'];
+      
       $list = $riwayat['list'];
 
       return array(
          'invoice' => $this->random_code_ops->generated_invoice_history_paket_la(),
-         'total_harga' => $total_price,
+         'total_harga' => $local_detail_fasilitas['total_price'],
          'total_bayar' => $total_bayar,
-         'sisa' => ($total_price - $total_bayar),
+         'sisa' => ($local_detail_fasilitas['total_price'] - $total_bayar),
          'riwayat' => $list
       );
    }
