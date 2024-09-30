@@ -117,7 +117,7 @@ class Model_kwitansi extends CI_Model
                ->from('paket_la_detail_fasilitas_transaction AS pd')
                ->join('paket_la_fasilitas_transaction AS pf', 'pd.paket_la_fasilitas_transaction_id=pf.id', 'inner')
                ->where('pd.company_id', $this->company_id)
-               ->where('pd.paket_la_fasilitas_transaction_id', $id);
+               ->where('pf.paket_la_transaction_id', $id);
       $q = $this->db->get();
       // $total = 0;
       $list = array();
@@ -143,7 +143,7 @@ class Model_kwitansi extends CI_Model
       $list = array();
       if( $q->num_rows() > 0 ) {
          foreach ($q->result() as $rows) {
-            $list['list'] = $this->getListDetailFasilitas($rows->id);;
+            $list['list'] = $this->getListDetailFasilitas($id);;
             $list['invoice'] = $rows->invoice;
          }
       }         
