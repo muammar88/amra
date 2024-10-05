@@ -75,6 +75,28 @@ class Akuntansi {
                if (isset($saldo_awal[$rows->id])) {
                   $saldo = $saldo + $saldo_awal[$rows->id];
                }
+
+  // if ($rows->sn == 'D') {
+  //                 # akun debet
+  //                 if (isset($akun_debet[$rows->nomor_akun_secondary])) {
+  //                    $saldo = $saldo + $akun_debet[$rows->nomor_akun_secondary];
+  //                 }
+  //                 # akun kredit
+  //                 if (isset($akun_kredit[$rows->nomor_akun_secondary])) {
+  //                    $saldo = $saldo - $akun_kredit[$rows->nomor_akun_secondary];
+  //                 }
+  //              } elseif ($rows->sn == 'K') {
+  //                 # akun debet
+  //                 if (isset($akun_debet[$rows->nomor_akun_secondary])) {
+  //                    $saldo = $saldo - $akun_debet[$rows->nomor_akun_secondary];
+  //                 }
+  //                 # akun kredit
+  //                 if (isset($akun_kredit[$rows->nomor_akun_secondary])) {
+  //                    $saldo = $saldo + $akun_kredit[$rows->nomor_akun_secondary];
+  //                 }
+  //              }
+
+               
                if ($rows->sn == 'D') {
                   # akun debet
                   if (isset($akun_debet[$rows->nomor_akun_secondary])) {

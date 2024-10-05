@@ -614,6 +614,9 @@ class Model_trans_paket_la extends CI_Model
 
    function get_info_kas_transaksi_paket_la($id)
    {
+
+      $local_detail_fasilitas = $this->get_fasilitas_transaction($id);
+
       $this->db->select('plt.id,  plt.discount, plt.total_price, pc.name, pc.mobile_number, pc.address,
                         (SELECT GROUP_CONCAT( CONCAT_WS(\'$\', plth.paid, plth.status) SEPARATOR \';\')
                            FROM paket_la_transaction_history AS plth
@@ -661,7 +664,7 @@ class Model_trans_paket_la extends CI_Model
             $list['id'] = $rows->id;
             $list['client_name'] = $rows->name;
             $list['discount'] = $rows->discount;
-            $list['total_price'] = $rows->total_price;
+            $list['total_price'] = $total_price['total_price'];
             $list['sudah_bayar'] = $bayar - $refund;
             $list['aktualisasi'] = $fasilitas;
             $list['total_aktualisasi'] = $total_aktualisasi;
