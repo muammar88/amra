@@ -664,7 +664,7 @@ class Model_trans_paket_la extends CI_Model
             $list['id'] = $rows->id;
             $list['client_name'] = $rows->name;
             $list['discount'] = $rows->discount;
-            $list['total_price'] = $total_price['total_price'];
+            $list['total_price'] = $local_detail_fasilitas['total_price'];
             $list['sudah_bayar'] = $bayar - $refund;
             $list['aktualisasi'] = $fasilitas;
             $list['total_aktualisasi'] = $total_aktualisasi;
