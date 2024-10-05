@@ -668,7 +668,7 @@ class Model_trans_paket_la extends CI_Model
             $list['sudah_bayar'] = $bayar - $refund;
             $list['aktualisasi'] = $fasilitas;
             $list['total_aktualisasi'] = $total_aktualisasi;
-            $list['keuntungan'] = $rows->total_price - $total_aktualisasi;
+            $list['keuntungan'] = $local_detail_fasilitas['total_price'] - $total_aktualisasi;
          }
       }
       return $list;
